@@ -19,7 +19,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 | # | Phase | Status | Progress |
 |---|-------|--------|----------|
-| 1 | Foundation & Design System | ○ Pending | 0% |
+| 1 | Foundation & Design System | ● In Progress | Planning complete, ready for execution |
 | 2 | Shared Component Library | ○ Pending | 0% |
 | 3 | Layout & Navigation | ○ Pending | 0% |
 | 4 | Public Pages | ○ Pending | 0% |

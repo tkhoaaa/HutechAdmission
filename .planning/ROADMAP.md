@@ -7,7 +7,7 @@
 
 | # | Phase | Status | Description |
 |---|-------|--------|-------------|
-| 1 | Foundation & Design System | ○ Pending | Thiết lập shadcn/ui, design tokens, consolidate dark mode |
+| 1 | Foundation & Design System | ● In Progress | Thiết lập shadcn/ui, design tokens, consolidate dark mode |
 | 2 | Shared Component Library | ○ Pending | Xây dựng lại Button, Card, Input, Modal, Table, v.v. |
 | 3 | Layout & Navigation | ○ Pending | Header, Footer, Auth Layout, Admin Layout refactor |
 | 4 | Public Pages | ○ Pending | Redesign 9 public pages |
