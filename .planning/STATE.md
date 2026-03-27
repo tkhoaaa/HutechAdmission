@@ -22,11 +22,11 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 | 1 | Foundation & Design System | ✅ Complete | 100% |
 | 2 | Shared Component Library | ✅ Complete | 100% |
 | 3 | Layout & Navigation | ✅ Complete | 100% |
-| 4 | Public Pages | ○ Pending | 0% |
+| 4 | Public Pages | ✅ Complete | 100% |
 | 5 | Admin Pages | ○ Pending | 0% |
 | 6 | Polish & Performance | ○ Pending | 0% |
 
-**Active Phase:** None — Phase 3 just completed
+**Active Phase:** None — Phase 4 just completed
 
 ## Phase Status
 
@@ -37,6 +37,33 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 | 1.1 | Tailwind Config Cleanup | ✅ Complete | Reduced from ~285 to 57 lines |
 | 1.2 | Dark Mode Consolidation | ✅ Complete | Deleted ThemeContext, cleaned main.jsx |
 | 1.3 | Animation System | ✅ Complete | Standardized variants, fixed Math.random() |
+
+### Phase 4 — Public Pages ✅
+
+| Plan | Description | Status | Notes |
+|------|-------------|--------|-------|
+| 4.1 | TrangChu redesign | ✅ Complete | Removed infinite loops, fixed colors, CSS animations |
+| 4.2 | ThongTinTuyenSinh redesign | ✅ Complete | Removed useDarkMode, infinite loops, simplified hover |
+| 4.3 | LienHe redesign | ✅ Complete | Deterministic particles, dark: classes, CSS animations |
+| 4.4 | DangKyXetTuyen redesign | ✅ Complete | Removed infinite loops, kept business logic |
+| 4.5 | DangKyTuVan redesign | ✅ Complete | Dark mode via dark: prefix, simplified hover |
+| 4.6 | TraCuuKetQua redesign | ✅ Complete | Fixed JSX nesting, deterministic particles |
+| 4.7 | DangKyHocBong redesign | ✅ Complete | Removed infinite loops, CSS animations |
+| 4.8 | CauHoiThuongGap redesign | ✅ Complete | Removed useDarkMode, deterministic particles |
+| 4.9 | HoSoNguoiDung redesign | ✅ Complete | Simplified hover, removed framer-motion from buttons |
+
+## Phase 4 Acceptance Criteria — All Verified
+
+- [x] All 9 pages: infinite framer-motion loops → CSS animation classes
+- [x] All 9 pages: Math.random() → deterministic index-based formula
+- [x] All 9 pages: dark: Tailwind prefix for dark mode (removed useDarkMode hook)
+- [x] All 9 pages: invalid Tailwind colors replaced with valid ones
+- [x] All 9 pages: whileHover on icons simplified to CSS classes
+- [x] All 9 pages: Button import fixed to named export
+- [x] All 9 pages: business logic preserved (forms, API, state)
+- [x] TraCuuKetQua.jsx: JSX nesting fixed in Card.Header section
+- [x] tailwind.css: CSS @apply directives fixed (hover:, focus:)
+- [x] `npm run build` passes (3226 modules, 7.93s)
 
 ### Phase 3 — Layout & Navigation ✅
 
@@ -87,6 +114,12 @@ See: .planning/PROJECT.md (updated 2026-03-28)
   - Refactored Alert, Modal, FormField for dark mode
   - Deleted orphaned `Card.modern.jsx`
   - Cleaned Hero background pattern
+- ✅ Phase 4 complete — commit `6f0e4926`
+  - Redesigned all 9 public pages (-1398 / +1403 lines net)
+  - Removed infinite framer-motion loops from all pages, replaced with CSS
+  - Replaced Math.random() particles with deterministic positions
+  - Fixed dark mode: dark: Tailwind prefix throughout
+  - Fixed JSX nesting in TraCuuKetQua, CSS @apply issues in tailwind.css
 - ✅ Phase 3 complete — commit `ac81c990`
   - Rewrote ThanhHeader, ChanTrang, AdminLayout (1470 lines removed, 420 added)
   - Removed all infinite framer-motion loops, replaced with CSS animation classes
@@ -105,7 +138,6 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 ### Upcoming
 
-- Phase 4: Public Pages (9 pages redesign)
 - Phase 5: Admin Pages (6 pages redesign)
 - Phase 6: Polish & Performance
 
