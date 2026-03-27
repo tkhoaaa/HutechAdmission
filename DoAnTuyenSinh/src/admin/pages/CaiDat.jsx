@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FaCog, FaSave, FaUndo, FaUpload, FaBell, FaUsers, FaBuilding, 
+import {
+  FaCog, FaSave, FaUndo, FaUpload, FaBell, FaUsers, FaBuilding,
   FaEnvelope, FaPhone, FaGlobe, FaFileUpload, FaTrash, FaEdit,
-  FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaSearch,
-  FaFilter, FaEye, FaEyeSlash, FaUserShield, FaChartLine,
-  FaCloud, FaShieldAlt, FaPalette, FaMoon, FaSun
+  FaCheckCircle, FaExclamationTriangle, FaSearch,
+  FaFilter, FaUserShield,
+  FaCloud, FaShieldAlt, FaPalette, FaMoon, FaSun, FaTimesCircle
 } from 'react-icons/fa';
 import { useUser } from '../../accounts/UserContext';
 import { buildApiUrl } from '../../config/apiConfig';
@@ -42,10 +42,10 @@ const CaiDat = () => {
 
   // File Upload Settings
   const [uploadSettings, setUploadSettings] = useState({
-    maxFileSize: 10, // MB
+    maxFileSize: 10,
     allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-    avatarMaxSize: 5, // MB
-    documentMaxSize: 20, // MB
+    avatarMaxSize: 5,
+    documentMaxSize: 20,
     autoCompress: true,
     storagePath: '/uploads',
     backupEnabled: true
@@ -65,14 +65,11 @@ const CaiDat = () => {
 
   useEffect(() => {
     if (isDemoMode) {
-      // Use demo data
       return;
     }
-    // TODO: Fetch settings from API
     fetchSettings();
   }, [isDemoMode]);
 
-  // Fetch users data
   useEffect(() => {
     if (activeTab === 'users' && !isDemoMode) {
       fetchUsers();
@@ -88,10 +85,10 @@ const CaiDat = () => {
         search: usersSearch,
         status: usersStatus
       });
-      
+
       const response = await fetch(`${buildApiUrl('/api/admin/users')}?${params}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setUsers(data.data.users);
         setUsersPagination({
@@ -101,8 +98,7 @@ const CaiDat = () => {
           totalPages: data.data.totalPages
         });
       }
-    } catch (error) {
-      console.error('Error fetching users:', error);
+    } catch {
     } finally {
       setUsersLoading(false);
     }
@@ -122,8 +118,7 @@ const CaiDat = () => {
       } else {
         alert(data.message || 'Lỗi khi cập nhật trạng thái');
       }
-    } catch (error) {
-      console.error('Error updating user status:', error);
+    } catch {
       alert('Lỗi khi cập nhật trạng thái');
     }
   };
@@ -144,8 +139,7 @@ const CaiDat = () => {
       } else {
         alert(data.message || 'Lỗi khi xóa user');
       }
-    } catch (error) {
-      console.error('Error deleting user:', error);
+    } catch {
       alert('Lỗi khi xóa user');
     }
   };
@@ -155,26 +149,13 @@ const CaiDat = () => {
       setLoading(true);
       const response = await fetch(buildApiUrl('/api/admin/settings'));
       const data = await response.json();
-      
+
       if (data.success) {
         setSystemInfo(data.data.systemInfo);
         setNotificationSettings(data.data.notificationSettings);
         setUploadSettings(data.data.uploadSettings);
-      } else {
-        // Fallback to demo data
-        setSystemInfo({
-          schoolName: 'Trường Đại học Công nghệ TP.HCM (HUTECH)',
-          schoolCode: 'HUTECH',
-          contactEmail: 'tuyensinh@hutech.edu.vn',
-          contactPhone: '028 5445 7777',
-          website: 'https://hutech.edu.vn',
-          address: '475A Điện Biên Phủ, P.25, Q.Bình Thạnh, TP.HCM',
-          description: 'Trường Đại học Công nghệ TP.HCM - HUTECH là một trong những trường đại học hàng đầu về đào tạo công nghệ và kinh tế tại Việt Nam.'
-        });
       }
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-      // Fallback to demo data
+    } catch {
       setSystemInfo({
         schoolName: 'Trường Đại học Công nghệ TP.HCM (HUTECH)',
         schoolCode: 'HUTECH',
@@ -207,8 +188,7 @@ const CaiDat = () => {
       } else {
         throw new Error(data.message || 'Lỗi khi lưu cài đặt');
       }
-    } catch (error) {
-      console.error('Error saving settings:', error);
+    } catch {
       setSaveStatus('error');
       setTimeout(() => setSaveStatus(null), 3000);
     } finally {
@@ -236,9 +216,7 @@ const CaiDat = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.1 }
     }
   };
 
@@ -247,10 +225,7 @@ const CaiDat = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100
-      }
+      transition: { type: "spring", stiffness: 100 }
     }
   };
 
@@ -258,14 +233,13 @@ const CaiDat = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
         <div className="max-w-7xl mx-auto">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="flex items-center justify-center min-h-screen"
           >
             <div className="relative">
               <div className="w-20 h-20 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-              <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-cyan-400 rounded-full animate-spin animate-reverse"></div>
               <div className="mt-4 text-center">
                 <p className="text-white text-lg font-medium">Đang tải cài đặt...</p>
               </div>
@@ -280,7 +254,7 @@ const CaiDat = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -293,7 +267,7 @@ const CaiDat = () => {
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-2xl flex items-center justify-center">
-                      <FaCog className="text-2xl text-white animate-spin-slow" />
+                      <FaCog className="text-2xl text-white" />
                     </div>
                     <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-2xl blur opacity-30"></div>
                   </div>
@@ -306,21 +280,19 @@ const CaiDat = () => {
                     </p>
                   </div>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={() => setDarkMode(!darkMode)}
                   className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
                 >
                   {darkMode ? <FaSun className="text-xl" /> : <FaMoon className="text-xl" />}
-                </motion.button>
+                </button>
               </div>
             </div>
           </div>
         </motion.div>
 
         {/* Tabs */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
@@ -332,13 +304,11 @@ const CaiDat = () => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
                 return (
-                  <motion.button
+                  <button
                     key={tab.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     onClick={() => setActiveTab(tab.id)}
                     className={`relative flex items-center gap-3 px-6 py-4 rounded-xl transition-all duration-300 ${
                       isActive
@@ -346,7 +316,7 @@ const CaiDat = () => {
                         : 'text-gray-300 hover:bg-white/10 hover:text-white'
                     }`}
                   >
-                    <Icon className={`text-lg ${isActive ? 'animate-pulse' : ''}`} />
+                    <Icon className="text-lg" />
                     <span className="font-medium">{tab.name}</span>
                     {isActive && (
                       <motion.div
@@ -354,7 +324,7 @@ const CaiDat = () => {
                         className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-xl"
                       />
                     )}
-                  </motion.button>
+                  </button>
                 );
               })}
             </div>
@@ -363,7 +333,7 @@ const CaiDat = () => {
 
         {/* Tab Content */}
         <AnimatePresence mode="wait">
-          <motion.div 
+          <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -373,7 +343,7 @@ const CaiDat = () => {
           >
             {/* System Information */}
             {activeTab === 'system' && (
-              <motion.div 
+              <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -387,25 +357,21 @@ const CaiDat = () => {
                     <h2 className="text-2xl font-bold text-white">Thông tin hệ thống</h2>
                   </motion.div>
                   <motion.div variants={itemVariants} className="flex gap-3">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    <button
                       onClick={() => saveSettings('system')}
                       disabled={loading}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-green-500/25"
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-green-500/25"
                     >
-                      <FaSave className="animate-pulse" />
+                      <FaSave />
                       Lưu thay đổi
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    </button>
+                    <button
                       onClick={() => fetchSettings()}
-                      className="flex items-center gap-2 px-6 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20"
+                      className="flex items-center gap-2 px-6 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20"
                     >
                       <FaUndo />
                       Khôi phục
-                    </motion.button>
+                    </button>
                   </motion.div>
                 </div>
 
@@ -417,7 +383,7 @@ const CaiDat = () => {
                     { label: 'Số điện thoại', key: 'contactPhone', icon: FaPhone, type: 'text' },
                     { label: 'Website', key: 'website', icon: FaGlobe, type: 'url' },
                     { label: 'Địa chỉ', key: 'address', icon: FaBuilding, type: 'text' }
-                  ].map((field, index) => {
+                  ].map((field) => {
                     const Icon = field.icon;
                     return (
                       <motion.div
@@ -441,7 +407,7 @@ const CaiDat = () => {
                       </motion.div>
                     );
                   })}
-                  
+
                   <motion.div variants={itemVariants} className="lg:col-span-2 group">
                     <label className="block text-sm font-medium text-gray-300 mb-3">
                       <FaEdit className="inline mr-2 text-purple-400" />
@@ -463,7 +429,7 @@ const CaiDat = () => {
 
             {/* User Management */}
             {activeTab === 'users' && (
-              <motion.div 
+              <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -478,7 +444,6 @@ const CaiDat = () => {
                   </motion.div>
                 </div>
 
-                {/* Search and Filter */}
                 <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                   <div className="relative group">
                     <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-purple-400 transition-colors duration-300" />
@@ -515,13 +480,11 @@ const CaiDat = () => {
                   </div>
                 </motion.div>
 
-                {/* Users Table */}
                 <motion.div variants={itemVariants} className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
                   {usersLoading ? (
                     <div className="text-center py-12">
                       <div className="relative inline-block">
                         <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-                        <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-t-cyan-400 rounded-full animate-spin animate-reverse"></div>
                       </div>
                       <p className="mt-4 text-gray-300 text-lg">Đang tải dữ liệu...</p>
                     </div>
@@ -536,12 +499,9 @@ const CaiDat = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {users.map((user, index) => (
-                            <motion.tr 
+                          {users.map((user) => (
+                            <tr
                               key={user.id}
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.05 }}
                               className="border-b border-white/5 hover:bg-white/5 transition-all duration-300"
                             >
                               <td className="px-6 py-4 font-medium text-white">{user.username}</td>
@@ -549,18 +509,18 @@ const CaiDat = () => {
                               <td className="px-6 py-4 text-gray-300">{user.phone}</td>
                               <td className="px-6 py-4">
                                 <span className={`px-3 py-1 text-xs rounded-full font-medium ${
-                                  user.role === 'admin' 
-                                    ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' 
-                                    : 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30'
+                                  user.role === 'admin'
+                                    ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                                 }`}>
                                   {user.role === 'admin' ? 'Admin' : 'User'}
                                 </span>
                               </td>
                               <td className="px-6 py-4">
                                 <span className={`px-3 py-1 text-xs rounded-full font-medium ${
-                                  user.isActive 
-                                    ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30' 
-                                    : 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30'
+                                  user.isActive
+                                    ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
                                 }`}>
                                   {user.isActive ? 'Hoạt động' : 'Không hoạt động'}
                                 </span>
@@ -570,31 +530,27 @@ const CaiDat = () => {
                               </td>
                               <td className="px-6 py-4">
                                 <div className="flex gap-2">
-                                  <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
+                                  <button
                                     onClick={() => toggleUserStatus(user.id, user.isActive)}
-                                    className={`p-2 rounded-lg transition-all duration-300 ${
-                                      user.isActive 
-                                        ? 'text-red-400 hover:bg-red-500/20 hover:text-red-300' 
+                                    className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 active:scale-90 ${
+                                      user.isActive
+                                        ? 'text-red-400 hover:bg-red-500/20 hover:text-red-300'
                                         : 'text-green-400 hover:bg-green-500/20 hover:text-green-300'
                                     }`}
                                     title={user.isActive ? 'Vô hiệu hóa' : 'Kích hoạt'}
                                   >
                                     {user.isActive ? <FaTimesCircle /> : <FaCheckCircle />}
-                                  </motion.button>
-                                  <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
+                                  </button>
+                                  <button
                                     onClick={() => deleteUser(user.id)}
-                                    className="p-2 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-all duration-300"
+                                    className="p-2 text-red-400 hover:bg-red-500/20 hover:text-red-300 hover:scale-110 active:scale-90 rounded-lg transition-all duration-300"
                                     title="Xóa"
                                   >
                                     <FaTrash />
-                                  </motion.button>
+                                  </button>
                                 </div>
                               </td>
-                            </motion.tr>
+                            </tr>
                           ))}
                         </tbody>
                       </table>
@@ -602,7 +558,6 @@ const CaiDat = () => {
                   )}
                 </motion.div>
 
-                {/* Pagination */}
                 {usersPagination.totalPages > 1 && (
                   <motion.div variants={itemVariants} className="flex items-center justify-between mt-8">
                     <div className="text-sm text-gray-300">
@@ -611,27 +566,23 @@ const CaiDat = () => {
                       {usersPagination.total} users
                     </div>
                     <div className="flex gap-2">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <button
                         onClick={() => setUsersPagination({...usersPagination, page: usersPagination.page - 1})}
                         disabled={usersPagination.page === 1}
-                        className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-white hover:bg-white/20 transition-all duration-300"
+                        className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300"
                       >
                         Trước
-                      </motion.button>
+                      </button>
                       <span className="px-4 py-2 text-sm text-gray-300 flex items-center">
                         Trang {usersPagination.page} / {usersPagination.totalPages}
                       </span>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <button
                         onClick={() => setUsersPagination({...usersPagination, page: usersPagination.page + 1})}
                         disabled={usersPagination.page === usersPagination.totalPages}
-                        className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-white hover:bg-white/20 transition-all duration-300"
+                        className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300"
                       >
                         Sau
-                      </motion.button>
+                      </button>
                     </div>
                   </motion.div>
                 )}
@@ -640,7 +591,7 @@ const CaiDat = () => {
 
             {/* Notification Settings */}
             {activeTab === 'notifications' && (
-              <motion.div 
+              <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -649,21 +600,18 @@ const CaiDat = () => {
                 <div className="flex items-center justify-between mb-8">
                   <motion.div variants={itemVariants} className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-                      <FaBell className="text-white text-xl animate-pulse" />
+                      <FaBell className="text-white text-xl" />
                     </div>
                     <h2 className="text-2xl font-bold text-white">Cấu hình thông báo</h2>
                   </motion.div>
-                  <motion.button
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     onClick={() => saveSettings('notifications')}
                     disabled={loading}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-green-500/25"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-green-500/25"
                   >
-                    <FaSave className="animate-pulse" />
+                    <FaSave />
                     Lưu thay đổi
-                  </motion.button>
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -672,7 +620,7 @@ const CaiDat = () => {
                       <FaEnvelope className="text-orange-400" />
                       Thông báo Email
                     </h3>
-                    
+
                     {[
                       { key: 'emailNotifications', title: 'Bật thông báo email', desc: 'Gửi thông báo qua email' },
                       { key: 'applicationSubmitted', title: 'Hồ sơ mới được nộp', desc: 'Thông báo khi có hồ sơ mới' },
@@ -695,12 +643,12 @@ const CaiDat = () => {
                               type="checkbox"
                               checked={notificationSettings[setting.key]}
                               onChange={(e) => setNotificationSettings({
-                                ...notificationSettings, 
+                                ...notificationSettings,
                                 [setting.key]: e.target.checked
                               })}
                               className="sr-only peer"
                             />
-                            <div className="w-14 h-7 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500"></div>
+                            <div className="w-14 h-7 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500"></div>
                           </label>
                         </div>
                       </motion.div>
@@ -709,10 +657,9 @@ const CaiDat = () => {
 
                   <motion.div variants={itemVariants} className="space-y-6">
                     <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                      <FaChartLine className="text-orange-400" />
-                      Báo cáo tự động
+                      Thống kê
                     </h3>
-                    
+
                     {[
                       { key: 'dailyReports', title: 'Báo cáo hàng ngày', desc: 'Gửi báo cáo thống kê hàng ngày' },
                       { key: 'weeklyReports', title: 'Báo cáo hàng tuần', desc: 'Gửi báo cáo thống kê hàng tuần' }
@@ -734,12 +681,12 @@ const CaiDat = () => {
                               type="checkbox"
                               checked={notificationSettings[setting.key]}
                               onChange={(e) => setNotificationSettings({
-                                ...notificationSettings, 
+                                ...notificationSettings,
                                 [setting.key]: e.target.checked
                               })}
                               className="sr-only peer"
                             />
-                            <div className="w-14 h-7 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500"></div>
+                            <div className="w-14 h-7 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500"></div>
                           </label>
                         </div>
                       </motion.div>
@@ -759,7 +706,7 @@ const CaiDat = () => {
                         <select
                           value={notificationSettings.emailTemplate}
                           onChange={(e) => setNotificationSettings({
-                            ...notificationSettings, 
+                            ...notificationSettings,
                             emailTemplate: e.target.value
                           })}
                           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white transition-all duration-300 group-hover:bg-white/10 appearance-none"
@@ -778,7 +725,7 @@ const CaiDat = () => {
 
             {/* Upload Settings */}
             {activeTab === 'upload' && (
-              <motion.div 
+              <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -791,17 +738,14 @@ const CaiDat = () => {
                     </div>
                     <h2 className="text-2xl font-bold text-white">Cấu hình Upload</h2>
                   </motion.div>
-                  <motion.button
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     onClick={() => saveSettings('upload')}
                     disabled={loading}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-green-500/25"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-green-500/25"
                   >
-                    <FaSave className="animate-pulse" />
+                    <FaSave />
                     Lưu thay đổi
-                  </motion.button>
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -810,7 +754,7 @@ const CaiDat = () => {
                       <FaFileUpload className="text-green-400" />
                       Giới hạn kích thước
                     </h3>
-                    
+
                     {[
                       { key: 'maxFileSize', label: 'Kích thước file tối đa (MB)', type: 'number' },
                       { key: 'avatarMaxSize', label: 'Kích thước avatar tối đa (MB)', type: 'number' },
@@ -831,7 +775,7 @@ const CaiDat = () => {
                             type={field.type}
                             value={uploadSettings[field.key]}
                             onChange={(e) => setUploadSettings({
-                              ...uploadSettings, 
+                              ...uploadSettings,
                               [field.key]: parseInt(e.target.value)
                             })}
                             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent text-white transition-all duration-300 group-hover:bg-white/10"
@@ -847,7 +791,7 @@ const CaiDat = () => {
                       <FaShieldAlt className="text-green-400" />
                       Cấu hình khác
                     </h3>
-                    
+
                     <motion.div
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -862,7 +806,7 @@ const CaiDat = () => {
                           type="text"
                           value={uploadSettings.allowedExtensions.join(', ')}
                           onChange={(e) => setUploadSettings({
-                            ...uploadSettings, 
+                            ...uploadSettings,
                             allowedExtensions: e.target.value.split(',').map(ext => ext.trim())
                           })}
                           placeholder="jpg, jpeg, png, pdf, doc, docx"
@@ -887,7 +831,7 @@ const CaiDat = () => {
                           type="text"
                           value={uploadSettings.storagePath}
                           onChange={(e) => setUploadSettings({
-                            ...uploadSettings, 
+                            ...uploadSettings,
                             storagePath: e.target.value
                           })}
                           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent text-white transition-all duration-300 group-hover:bg-white/10"
@@ -917,12 +861,12 @@ const CaiDat = () => {
                               type="checkbox"
                               checked={uploadSettings[setting.key]}
                               onChange={(e) => setUploadSettings({
-                                ...uploadSettings, 
+                                ...uploadSettings,
                                 [setting.key]: e.target.checked
                               })}
                               className="sr-only peer"
                             />
-                            <div className="w-14 h-7 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-green-500 peer-checked:to-teal-500"></div>
+                            <div className="w-14 h-7 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-green-500 peer-checked:to-teal-500"></div>
                           </label>
                         </div>
                       </motion.div>
@@ -937,16 +881,16 @@ const CaiDat = () => {
         {/* Save Status */}
         <AnimatePresence>
           {saveStatus && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 50, scale: 0.9 }}
               className={`fixed bottom-6 right-6 p-6 rounded-2xl shadow-2xl backdrop-blur-xl border ${
-                saveStatus === 'success' 
-                  ? 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/50' 
-                  : saveStatus === 'error' 
-                  ? 'bg-gradient-to-r from-red-500/90 to-pink-500/90 border-red-400/50' 
-                  : 'bg-gradient-to-r from-blue-500/90 to-purple-500/90 border-blue-400/50'
+                saveStatus === 'success'
+                  ? 'bg-green-500/90 border-green-400/50'
+                  : saveStatus === 'error'
+                  ? 'bg-red-500/90 border-red-400/50'
+                  : 'bg-blue-500/90 border-blue-400/50'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -954,7 +898,6 @@ const CaiDat = () => {
                   {saveStatus === 'success' && <FaCheckCircle className="text-2xl text-white" />}
                   {saveStatus === 'error' && <FaExclamationTriangle className="text-2xl text-white" />}
                   {saveStatus === 'saving' && <FaSave className="text-2xl text-white animate-spin" />}
-                  <div className="absolute -inset-1 bg-white/20 rounded-full blur opacity-50"></div>
                 </div>
                 <span className="text-white font-medium text-lg">
                   {saveStatus === 'success' && 'Lưu thành công!'}

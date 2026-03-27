@@ -27,7 +27,6 @@ function HoSoQuanLi() {
 
   useEffect(() => {
     if (user) {
-      // Xử lý URL avatar đúng cách
       let avatarUrl = "";
       if (user.avatar) {
         if (user.avatar.startsWith('http')) {
@@ -50,13 +49,11 @@ function HoSoQuanLi() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       setError("Vui lòng chọn file ảnh hợp lệ");
       return;
     }
 
-    // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
       setError("Kích thước file không được vượt quá 5MB");
       return;
@@ -71,30 +68,19 @@ function HoSoQuanLi() {
       formData.append("avatar", file);
       formData.append("user_id", user.id);
 
-      console.log("Uploading avatar for user:", user.id);
-
-      // Upload file
       const uploadRes = await apiClient.post("/user/upload-avatar", formData, {
-        headers: { 
+        headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
       });
 
-      console.log("Upload response:", uploadRes);
-
       if (uploadRes.success || uploadRes.data?.success) {
         const avatarPath = uploadRes.url || uploadRes.data?.url;
-        const fullAvatarUrl = avatarPath.startsWith('http') 
-          ? avatarPath 
+        const fullAvatarUrl = avatarPath.startsWith('http')
+          ? avatarPath
           : `http://localhost:3001${avatarPath}`;
 
-        console.log("Avatar uploaded successfully:", {
-          path: avatarPath,
-          fullUrl: fullAvatarUrl
-        });
-
-        // Update avatar URL in database
         const updateRes = await apiClient.put("/user/update-avatar", {
           user_id: user.id,
           avatar_url: avatarPath,
@@ -104,26 +90,20 @@ function HoSoQuanLi() {
           }
         });
 
-        console.log("Avatar update response:", updateRes);
-
         if (updateRes.success || updateRes.data?.success) {
-          // Update local state
           setAvatar(fullAvatarUrl);
 
-          // Update user context với avatar mới
           const updatedUser = {
             ...user,
-            avatar: avatarPath // Lưu relative path trong context
+            avatar: avatarPath
           };
 
-          // Sử dụng updateUser nếu có, nếu không thì dùng login
           if (updateUser) {
             updateUser(updatedUser);
           } else {
             login(user.id, role, username, updatedUser);
           }
 
-          // Lưu vào localStorage để persist qua sessions
           const currentUserData = JSON.parse(localStorage.getItem('userData') || '{}');
           const newUserData = {
             ...currentUserData,
@@ -139,7 +119,6 @@ function HoSoQuanLi() {
         throw new Error(uploadRes.message || "Lỗi khi upload ảnh lên server");
       }
     } catch (err) {
-      console.error("Avatar upload error:", err);
       setError(`Lỗi khi cập nhật avatar: ${err.response?.data?.message || err.message || "Không xác định"}`);
     } finally {
       setLoading(false);
@@ -162,7 +141,6 @@ function HoSoQuanLi() {
       });
 
       if (response.success || response.data?.success) {
-        // Update user context
         const updatedUser = { ...user, email: email };
         if (updateUser) {
           updateUser(updatedUser);
@@ -170,7 +148,6 @@ function HoSoQuanLi() {
           login(user.id, role, username, updatedUser);
         }
 
-        // Update localStorage
         const currentUserData = JSON.parse(localStorage.getItem('userData') || '{}');
         const newUserData = { ...currentUserData, email: email };
         localStorage.setItem('userData', JSON.stringify(newUserData));
@@ -180,7 +157,6 @@ function HoSoQuanLi() {
         throw new Error(response.message || "Lỗi khi cập nhật email");
       }
     } catch (err) {
-      console.error("Email update error:", err);
       setError(`Lỗi khi cập nhật email: ${err.response?.data?.message || err.message || "Không xác định"}`);
     } finally {
       setLoading(false);
@@ -220,7 +196,6 @@ function HoSoQuanLi() {
         throw new Error(response.message || "Lỗi khi cập nhật mật khẩu");
       }
     } catch (err) {
-      console.error("Password update error:", err);
       setError(`Lỗi khi cập nhật mật khẩu: ${err.response?.data?.message || err.message || "Không xác định"}`);
     } finally {
       setLoading(false);
@@ -245,7 +220,6 @@ function HoSoQuanLi() {
       });
 
       if (response.success || response.data?.success) {
-        // Update user context
         const updatedUser = { ...user, phone, bio, social };
         if (updateUser) {
           updateUser(updatedUser);
@@ -253,7 +227,6 @@ function HoSoQuanLi() {
           login(user.id, role, username, updatedUser);
         }
 
-        // Update localStorage
         const currentUserData = JSON.parse(localStorage.getItem('userData') || '{}');
         const newUserData = { ...currentUserData, phone, bio, social };
         localStorage.setItem('userData', JSON.stringify(newUserData));
@@ -263,7 +236,6 @@ function HoSoQuanLi() {
         throw new Error(response.message || "Lỗi khi cập nhật thông tin");
       }
     } catch (err) {
-      console.error("Profile update error:", err);
       setError(`Lỗi khi cập nhật thông tin cá nhân: ${err.response?.data?.message || err.message || "Không xác định"}`);
     } finally {
       setLoading(false);
@@ -281,81 +253,57 @@ function HoSoQuanLi() {
     switch (activeTab) {
       case 'profile':
         return (
-          <motion.div 
+          <motion.div
             className="space-y-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             {/* Avatar section */}
-            <motion.div 
-              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden"
+            <motion.div
+              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden hover:scale-[1.02] transition-all duration-300"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              whileHover={{ scale: 1.02 }}
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-2xl"></div>
-              <motion.h3 
+              <motion.h3
                 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <motion.div 
-                  className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
                   <FaCamera className="text-white text-lg" />
-                </motion.div>
+                </div>
                 Ảnh đại diện
               </motion.h3>
               <div className="flex items-center space-x-6 relative z-10">
-                <motion.div 
-                  className="relative"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="relative">
-                    <img
-                      src={avatar || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUI5QkEzIi8+CjxwYXRoIGQ9Ik0yMCA5MEM0MCA3MCA4MCA3MCAxMDAgOTBWMTIwSDIwVjkwWiIgZmlsbD0iIzlCOUJBMyIvPgo8L3N2Zz4K"}
-                      alt="Avatar"
-                      className="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-600 shadow-xl"
-                      onError={(e) => {
-                        console.error("Avatar image failed to load:", avatar);
-                        e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUI5QkEzIi8+CjxwYXRoIGQ9Ik0yMCA5MEM0MCA3MCA4MCA3MCAxMDAgOTBWMTIwSDIwVjkwWiIgZmlsbD0iIzlCOUJBMyIvPgo8L3N2Zz4K";
-                      }}
+                <div className="relative">
+                  <img
+                    src={avatar || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUI5QkEzIi8+CjxwYXRoIGQ9Ik0yMCA5MEM0MCA3MCA4MCA3MCAxMDAgOTBWMTIwSDIwVjkwWiIgZmlsbD0iIzlCOUJBMyIvPgo8L3N2Zz4K"}
+                    alt="Avatar"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-600 shadow-xl"
+                    onError={(e) => {
+                      e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUI5QkEzIi8+CjxwYXRoIGQ9Ik0yMCA5MEM0MCA3MCA4MCA3MCAxMDAgOTBWMTIwSDIwVjkwWiIgZmlsbD0iIzlCOUJBMyIvPgo8L3N2Zz4K";
+                    }}
+                  />
+                  <label className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-3 rounded-full cursor-pointer hover:from-blue-600 hover:to-cyan-600 hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg">
+                    <FaCamera className="text-sm" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                      disabled={loading}
                     />
-                    <motion.label 
-                      className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-3 rounded-full cursor-pointer hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 shadow-lg"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <FaCamera className="text-sm" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarChange}
-                        className="hidden"
-                        disabled={loading}
-                      />
-                    </motion.label>
-                  </div>
+                  </label>
                   {loading && (
-                    <motion.div 
-                      className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                    >
-                      <motion.div
-                        className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      />
-                    </motion.div>
+                    <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    </div>
                   )}
-                </motion.div>
+                </div>
                 <div>
                   <p className="text-slate-600 dark:text-slate-400 font-medium">
                     Cập nhật ảnh đại diện của bạn
@@ -373,27 +321,22 @@ function HoSoQuanLi() {
             </motion.div>
 
             {/* Profile info section */}
-            <motion.div 
-              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden"
+            <motion.div
+              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden hover:scale-[1.02] transition-all duration-300"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              whileHover={{ scale: 1.02 }}
             >
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl"></div>
-              <motion.h3 
+              <motion.h3
                 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <motion.div 
-                  className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
                   <FaEdit className="text-white text-lg" />
-                </motion.div>
+                </div>
                 Thông tin cá nhân
               </motion.h3>
               <form onSubmit={handleProfileInfoChange} className="space-y-6 relative z-10">
@@ -445,31 +388,19 @@ function HoSoQuanLi() {
                     placeholder="Link mạng xã hội (Facebook, LinkedIn...)"
                   />
                 </motion.div>
-                <motion.button
+                <button
                   type="submit"
                   disabled={loading}
-                  className="relative px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="relative px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 hover:scale-105 active:scale-95 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.7 }}
                 >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                    animate={{ x: [-100, 100] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
                   <div className="relative flex items-center gap-3">
-                    <motion.div
-                      animate={loading ? { rotate: 360 } : {}}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    >
-                      <FaSave className="text-lg" />
-                    </motion.div>
+                    <FaSave className="text-lg" />
                     {loading ? "Đang lưu..." : "Lưu thay đổi"}
                   </div>
-                </motion.button>
+                </button>
               </form>
             </motion.div>
           </motion.div>
@@ -477,34 +408,29 @@ function HoSoQuanLi() {
 
       case 'security':
         return (
-          <motion.div 
+          <motion.div
             className="space-y-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             {/* Theme toggle */}
-            <motion.div 
-              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden"
+            <motion.div
+              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden hover:scale-[1.02] transition-all duration-300"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              whileHover={{ scale: 1.02 }}
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl"></div>
-              <motion.h3 
+              <motion.h3
                 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <motion.div 
-                  className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
                   <FaShieldAlt className="text-white text-lg" />
-                </motion.div>
+                </div>
                 Giao diện
               </motion.h3>
               <div className="flex items-center justify-between relative z-10">
@@ -512,37 +438,27 @@ function HoSoQuanLi() {
                   <p className="text-lg font-semibold text-slate-700 dark:text-slate-300">Chế độ tối/sáng</p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Chuyển đổi giữa giao diện sáng và tối</p>
                 </div>
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ThemeToggle />
-                </motion.div>
+                <ThemeToggle />
               </div>
             </motion.div>
 
             {/* Email change */}
-            <motion.div 
-              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden"
+            <motion.div
+              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden hover:scale-[1.02] transition-all duration-300"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              whileHover={{ scale: 1.02 }}
             >
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-2xl"></div>
-              <motion.h3 
+              <motion.h3
                 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <motion.div 
-                  className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
                   <FaEnvelope className="text-white text-lg" />
-                </motion.div>
+                </div>
                 Thay đổi email
               </motion.h3>
               <form onSubmit={handleEmailChange} className="space-y-6 relative z-10">
@@ -562,56 +478,39 @@ function HoSoQuanLi() {
                     placeholder="Nhập email mới"
                   />
                 </motion.div>
-                <motion.button
+                <button
                   type="submit"
                   disabled={loading}
-                  className="relative px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="relative px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 hover:scale-105 active:scale-95 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                    animate={{ x: [-100, 100] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
                   <div className="relative flex items-center gap-3">
-                    <motion.div
-                      animate={loading ? { rotate: 360 } : {}}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    >
-                      <FaSave className="text-lg" />
-                    </motion.div>
+                    <FaSave className="text-lg" />
                     {loading ? "Đang lưu..." : "Cập nhật email"}
                   </div>
-                </motion.button>
+                </button>
               </form>
             </motion.div>
 
             {/* Password change */}
-            <motion.div 
-              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden"
+            <motion.div
+              className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden hover:scale-[1.02] transition-all duration-300"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              whileHover={{ scale: 1.02 }}
             >
               <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl"></div>
-              <motion.h3 
+              <motion.h3
                 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                <motion.div 
-                  className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
                   <FaKey className="text-white text-lg" />
-                </motion.div>
+                </div>
                 Thay đổi mật khẩu
               </motion.h3>
               <form onSubmit={handlePasswordChange} className="space-y-6 relative z-10">
@@ -631,15 +530,13 @@ function HoSoQuanLi() {
                       className="w-full px-4 py-4 pr-12 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                       placeholder="Nhập mật khẩu hiện tại"
                     />
-                    <motion.button
+                    <button
                       type="button"
                       onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:scale-110 active:scale-95 transition-all duration-200"
                     >
                       {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
-                    </motion.button>
+                    </button>
                   </div>
                 </motion.div>
                 <motion.div
@@ -658,15 +555,13 @@ function HoSoQuanLi() {
                       className="w-full px-4 py-4 pr-12 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                       placeholder="Nhập mật khẩu mới"
                     />
-                    <motion.button
+                    <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:scale-110 active:scale-95 transition-all duration-200"
                     >
                       {showNewPassword ? <FaEyeSlash /> : <FaEye />}
-                    </motion.button>
+                    </button>
                   </div>
                 </motion.div>
                 <motion.div
@@ -685,42 +580,28 @@ function HoSoQuanLi() {
                       className="w-full px-4 py-4 pr-12 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                       placeholder="Nhập lại mật khẩu mới"
                     />
-                    <motion.button
+                    <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:scale-110 active:scale-95 transition-all duration-200"
                     >
                       {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                    </motion.button>
+                    </button>
                   </div>
                 </motion.div>
-                <motion.button
+                <button
                   type="submit"
                   disabled={loading}
-                  className="relative px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="relative px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 hover:scale-105 active:scale-95 text-white font-bold rounded-2xl shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.8 }}
                 >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                    animate={{ x: [-100, 100] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
                   <div className="relative flex items-center gap-3">
-                    <motion.div
-                      animate={loading ? { rotate: 360 } : {}}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    >
-                      <FaSave className="text-lg" />
-                    </motion.div>
+                    <FaSave className="text-lg" />
                     {loading ? "Đang lưu..." : "Cập nhật mật khẩu"}
                   </div>
-                </motion.button>
+                </button>
               </form>
             </motion.div>
           </motion.div>
@@ -728,27 +609,22 @@ function HoSoQuanLi() {
 
       case 'devices':
         return (
-          <motion.div 
-            className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden"
+          <motion.div
+            className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden hover:scale-[1.01] transition-all duration-300"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            whileHover={{ scale: 1.01 }}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl"></div>
-            <motion.h3 
+            <motion.h3
               className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <motion.div 
-                className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
-              >
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
                 <FaDesktop className="text-white text-lg" />
-              </motion.div>
+              </div>
               Quản lý thiết bị
             </motion.h3>
             <div className="relative z-10">
@@ -759,27 +635,22 @@ function HoSoQuanLi() {
 
       case 'activity':
         return (
-          <motion.div 
-            className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden"
+          <motion.div
+            className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden hover:scale-[1.01] transition-all duration-300"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            whileHover={{ scale: 1.01 }}
           >
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full blur-2xl"></div>
-            <motion.h3 
+            <motion.h3
               className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <motion.div 
-                className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
-              >
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
                 <FaHistory className="text-white text-lg" />
-              </motion.div>
+              </div>
               Lịch sử hoạt động
             </motion.h3>
             <div className="relative z-10">
@@ -796,65 +667,20 @@ function HoSoQuanLi() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 dark:from-blue-600/10 dark:to-purple-800/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/20 dark:from-emerald-600/10 dark:to-cyan-800/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      </div>
-
-      {/* Floating Particles */}
-      <div className="absolute inset-0">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-blue-400/30 dark:bg-blue-600/20 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [-20, -100, -20],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 dark:from-blue-600/10 dark:to-purple-800/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/20 dark:from-emerald-600/10 dark:to-cyan-800/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <div className="relative z-10 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             className="mb-12"
             initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <motion.h1 
+            <motion.h1
               className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-4"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -862,7 +688,7 @@ function HoSoQuanLi() {
             >
               Chỉnh sửa hồ sơ
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="text-xl text-slate-600 dark:text-slate-300 font-medium"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -874,42 +700,32 @@ function HoSoQuanLi() {
 
           <AnimatePresence>
             {message && (
-              <motion.div 
+              <motion.div
                 className="mb-8 p-6 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 backdrop-blur-sm border border-green-300 dark:border-green-700 text-green-700 dark:text-green-300 rounded-2xl flex items-center gap-4 shadow-lg"
                 initial={{ opacity: 0, scale: 0.9, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: -20 }}
               >
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <FaSave className="text-green-500 dark:text-green-400 text-xl" />
-                </motion.div>
+                <FaSave className="text-green-500 dark:text-green-400 text-xl" />
                 <span className="font-semibold">{message}</span>
               </motion.div>
             )}
 
             {error && (
-              <motion.div 
+              <motion.div
                 className="mb-8 p-6 bg-gradient-to-r from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 backdrop-blur-sm border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 rounded-2xl flex items-center gap-4 shadow-lg"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
               >
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <FaTimes className="text-red-500 dark:text-red-400 text-xl" />
-                </motion.div>
+                <FaTimes className="text-red-500 dark:text-red-400 text-xl" />
                 <span className="font-semibold">{error}</span>
               </motion.div>
             )}
           </AnimatePresence>
 
           {/* Tab navigation */}
-          <motion.div 
+          <motion.div
             className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/50 mb-8 overflow-hidden"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -918,31 +734,27 @@ function HoSoQuanLi() {
             <div className="border-b border-slate-200/50 dark:border-slate-700/50">
               <nav className="flex flex-wrap justify-center lg:justify-start px-6">
                 {tabs.map((tab, index) => (
-                  <motion.button
+                  <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`relative py-6 px-6 font-semibold text-sm flex items-center gap-3 transition-all duration-300 ${
+                    className={`relative py-6 px-6 font-semibold text-sm flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95 ${
                       activeTab === tab.id
                         ? 'text-blue-600 dark:text-blue-400'
                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.8 + index * 0.1 }}
                   >
-                    <motion.div
+                    <div
                       className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 ${
                         activeTab === tab.id
                           ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
                           : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
                       }`}
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.5 }}
                     >
                       {tab.icon}
-                    </motion.div>
+                    </div>
                     {tab.label}
                     {activeTab === tab.id && (
                       <motion.div
@@ -953,7 +765,7 @@ function HoSoQuanLi() {
                         transition={{ duration: 0.3 }}
                       />
                     )}
-                  </motion.button>
+                  </button>
                 ))}
               </nav>
             </div>
@@ -977,4 +789,4 @@ function HoSoQuanLi() {
   );
 }
 
-export default HoSoQuanLi; 
+export default HoSoQuanLi;

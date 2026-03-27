@@ -10,8 +10,6 @@ import {
   FaQuestionCircle,
   FaSave,
   FaTimes,
-  FaCheckCircle,
-  FaExclamationTriangle,
 } from "react-icons/fa";
 
 const QuanLyFAQ = () => {
@@ -111,14 +109,12 @@ const QuanLyFAQ = () => {
 
   const handleSave = () => {
     if (editingFAQ) {
-      // Update existing FAQ
       setFaqs((prev) =>
         prev.map((faq) =>
           faq.id === editingFAQ.id ? { ...faq, ...formData } : faq
         )
       );
     } else {
-      // Add new FAQ
       const newFAQ = {
         id: Date.now(),
         ...formData,
@@ -168,25 +164,23 @@ const QuanLyFAQ = () => {
               Quản lý câu hỏi thường gặp trên website
             </p>
           </div>
-          <motion.button
+          <button
             onClick={handleAddNew}
-            className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
           >
             <FaPlus className="mr-2" />
             Thêm câu hỏi mới
-          </motion.button>
+          </button>
         </div>
       </motion.div>
 
       {/* Filters */}
-              <motion.div
-          className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl p-6 mb-8 border border-white/10"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
+      <motion.div
+        className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl p-6 mb-8 border border-white/10"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Search */}
           <div className="relative">
@@ -230,10 +224,7 @@ const QuanLyFAQ = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        <motion.div
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
-          whileHover={{ scale: 1.02 }}
-        >
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Tổng câu hỏi</p>
@@ -243,11 +234,8 @@ const QuanLyFAQ = () => {
               <FaQuestionCircle className="text-white text-xl" />
             </div>
           </div>
-        </motion.div>
-        <motion.div
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
-          whileHover={{ scale: 1.02 }}
-        >
+        </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Đang hiển thị</p>
@@ -259,11 +247,8 @@ const QuanLyFAQ = () => {
               <FaEye className="text-white text-xl" />
             </div>
           </div>
-        </motion.div>
-        <motion.div
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
-          whileHover={{ scale: 1.02 }}
-        >
+        </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Tổng lượt xem</p>
@@ -275,11 +260,8 @@ const QuanLyFAQ = () => {
               <FaEye className="text-white text-xl" />
             </div>
           </div>
-        </motion.div>
-        <motion.div
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
-          whileHover={{ scale: 1.02 }}
-        >
+        </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Chủ đề</p>
@@ -291,7 +273,7 @@ const QuanLyFAQ = () => {
               <FaFilter className="text-white text-xl" />
             </div>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* FAQ List */}
@@ -346,37 +328,31 @@ const QuanLyFAQ = () => {
                 </div>
 
                 <div className="flex space-x-2 ml-6">
-                  <motion.button
+                  <button
                     onClick={() => toggleActive(faq.id)}
-                    className={`p-3 rounded-xl transition-all duration-200 ${
+                    className={`p-3 rounded-xl transition-all duration-200 hover:scale-110 active:scale-90 ${
                       faq.isActive
                         ? "text-green-600 hover:bg-green-100"
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                     title={faq.isActive ? "Ẩn câu hỏi" : "Hiển thị câu hỏi"}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                   >
                     <FaEye />
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     onClick={() => handleEdit(faq)}
-                    className="p-3 text-blue-600 hover:bg-blue-100 rounded-xl transition-all duration-200"
+                    className="p-3 text-blue-600 hover:bg-blue-100 hover:scale-110 active:scale-90 rounded-xl transition-all duration-200"
                     title="Chỉnh sửa"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                   >
                     <FaEdit />
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     onClick={() => handleDelete(faq.id)}
-                    className="p-3 text-red-600 hover:bg-red-100 rounded-xl transition-all duration-200"
+                    className="p-3 text-red-600 hover:bg-red-100 hover:scale-110 active:scale-90 rounded-xl transition-all duration-200"
                     title="Xóa"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                   >
                     <FaTrash />
-                  </motion.button>
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -412,14 +388,12 @@ const QuanLyFAQ = () => {
                   <h3 className="text-2xl font-bold text-gray-900">
                     {editingFAQ ? "Chỉnh sửa câu hỏi" : "Thêm câu hỏi mới"}
                   </h3>
-                  <motion.button
+                  <button
                     onClick={() => setShowModal(false)}
-                    className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 hover:scale-110 active:scale-90 transition-all duration-200"
                   >
                     <FaTimes />
-                  </motion.button>
+                  </button>
                 </div>
 
                 <div className="space-y-6">
@@ -495,23 +469,19 @@ const QuanLyFAQ = () => {
                 </div>
 
                 <div className="flex justify-end space-x-4 pt-8">
-                  <motion.button
+                  <button
                     onClick={() => setShowModal(false)}
-                    className="px-6 py-3 text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition-all duration-200 font-semibold"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className="px-6 py-3 text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 hover:scale-105 active:scale-95 transition-all duration-200 font-semibold"
                   >
                     Hủy
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     onClick={handleSave}
-                    className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 hover:scale-105 active:scale-95 transition-all duration-200 font-semibold shadow-lg"
                   >
                     <FaSave className="mr-2" />
                     {editingFAQ ? "Cập nhật" : "Thêm mới"}
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             </div>

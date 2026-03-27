@@ -31,13 +31,53 @@ export default {
             },
             animation: {
                 'shimmer': 'shimmer 2s linear infinite',
+                'shimmer-cta': 'shimmerCta 2.5s ease-in-out infinite',
                 'spin-slow': 'spin 3s linear infinite',
                 'spin-slower': 'spin 8s linear infinite',
+                'float': 'float 6s ease-in-out infinite',
+                'particle-rise': 'particleRise 4s ease-out infinite',
+                'pulse-ring': 'pulseRing 2.5s ease-in-out infinite',
+                'star-pulse': 'starPulse 2.5s ease-in-out infinite',
+                'pulse-soft': 'pulseSoft 0.5s ease-in-out infinite',
+                'wiggle': 'wiggle 0.5s ease-in-out',
             },
             keyframes: {
                 shimmer: {
                     '0%': { transform: 'translateX(-100%)' },
                     '100%': { transform: 'translateX(100%)' },
+                },
+                shimmerCta: {
+                    '0%': { transform: 'translateX(-100%) skewX(-20deg)' },
+                    '50%': { transform: 'translateX(200%) skewX(-20deg)' },
+                    '100%': { transform: 'translateX(-100%) skewX(-20deg)' },
+                },
+                float: {
+                    '0%, 100%': { transform: 'translateY(0) translateX(0) rotate(0deg) scale(1)' },
+                    '33%': { transform: 'translateY(-40px) translateX(25px) rotate(120deg) scale(1.2)' },
+                    '66%': { transform: 'translateY(-20px) translateX(12px) rotate(240deg) scale(1.1)' },
+                },
+                particleRise: {
+                    '0%': { transform: 'translateY(0) rotate(0deg) scale(0.5)', opacity: '0' },
+                    '20%': { opacity: '1' },
+                    '80%': { opacity: '1' },
+                    '100%': { transform: 'translateY(-100px) rotate(360deg) scale(0.5)', opacity: '0' },
+                },
+                pulseRing: {
+                    '0%, 100%': { transform: 'scale(1)', opacity: '0.2' },
+                    '50%': { transform: 'scale(1.3)', opacity: '0.1' },
+                },
+                starPulse: {
+                    '0%, 100%': { transform: 'translateY(0) rotate(0deg) scale(0.8)' },
+                    '50%': { transform: 'translateY(-8px) rotate(180deg) scale(1.2)' },
+                },
+                pulseSoft: {
+                    '0%, 100%': { transform: 'scale(1)' },
+                    '50%': { transform: 'scale(1.2)' },
+                },
+                wiggle: {
+                    '0%, 100%': { transform: 'rotate(0deg)' },
+                    '25%': { transform: 'rotate(-10deg)' },
+                    '75%': { transform: 'rotate(10deg)' },
                 },
             },
             backgroundImage: {

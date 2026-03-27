@@ -3,8 +3,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FaUser, FaLock, FaCheckCircle, FaEnvelope, FaPhone, FaEye, FaEyeSlash, FaUserPlus, FaStar, FaShieldAlt } from "react-icons/fa";
-import { Button, Input, Card } from "../components/ui";
-import { useDarkMode } from "../contexts/DarkModeContext";
+import { Button, Input } from "../components/ui";
 
 function DangKyTaiKhoan() {
   const [form, setForm] = useState({
@@ -19,7 +18,6 @@ function DangKyTaiKhoan() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const { darkMode } = useDarkMode();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,7 +27,7 @@ function DangKyTaiKhoan() {
     setSuccess("");
     setError("");
     setLoading(true);
-    
+
     if (form.password !== form.confirm) {
       setError("Mật khẩu xác nhận không khớp!");
       setLoading(false);
@@ -40,7 +38,7 @@ function DangKyTaiKhoan() {
       setLoading(false);
       return;
     }
-    
+
     try {
       const res = await axios.post("http://localhost:3001/api/auth/register", {
         email: form.email,
@@ -72,11 +70,7 @@ function DangKyTaiKhoan() {
 
   return (
     <motion.div
-      className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
-        darkMode 
-          ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900' 
-          : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
-      }`}
+      className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-blue-900 dark:to-purple-900"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -84,30 +78,15 @@ function DangKyTaiKhoan() {
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(12)].map((_, i) => (
-          <motion.div
+          <div
             key={i}
-            className={`absolute rounded-full ${
-              darkMode 
-                ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10' 
-                : 'bg-gradient-to-r from-blue-400/20 to-purple-400/20'
-            }`}
+            className="absolute rounded-full animate-float bg-gradient-to-r from-blue-400/20 to-purple-400/20 dark:from-blue-500/10 dark:to-purple-500/10"
             style={{
               width: `${60 + i * 20}px`,
               height: `${60 + i * 20}px`,
               left: `${((i * 17 + 3) % 85) + 5}%`,
               top: `${((i * 13 + 7) % 80) + 5}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [0, 20, 0],
-              rotate: [0, 180, 360],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 8 + i * 0.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.2,
+              animationDelay: `${i * 0.2}s`,
             }}
           />
         ))}
@@ -116,24 +95,13 @@ function DangKyTaiKhoan() {
       {/* Floating particles */}
       <div className="absolute inset-0">
         {[...Array(8)].map((_, i) => (
-          <motion.div
+          <div
             key={i}
-            className={`absolute w-2 h-2 rounded-full ${
-              darkMode ? 'bg-blue-400/30' : 'bg-blue-500/40'
-            }`}
+            className="absolute w-2 h-2 rounded-full animate-particle-rise bg-blue-500/40 dark:bg-blue-400/30"
             style={{
               left: `${((i * 11 + 5) % 90) + 5}%`,
               top: `${((i * 7 + 13) % 85) + 5}%`,
-            }}
-            animate={{
-              y: [-20, -100],
-              opacity: [0, 1, 0],
-              scale: [0.5, 1, 0.5],
-            }}
-            transition={{
-              duration: 3 + (i % 4) * 0.5,
-              repeat: Infinity,
-              delay: i * 0.25,
+              animationDelay: `${i * 0.25}s`,
             }}
           />
         ))}
@@ -146,29 +114,10 @@ function DangKyTaiKhoan() {
         transition={{ duration: 0.8, delay: 0.2 }}
       >
         {/* Background decoration */}
-        <motion.div 
-          className={`absolute inset-0 rounded-3xl blur-xl opacity-30 ${
-            darkMode 
-              ? 'bg-gradient-to-r from-blue-600 to-purple-600' 
-              : 'bg-gradient-to-r from-blue-500 to-purple-500'
-          }`}
-          animate={{ 
-            scale: [1, 1.05, 1],
-            rotate: [0, 1, 0],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        
+        <div className="absolute inset-0 rounded-3xl blur-xl opacity-30 bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-600 dark:to-purple-600 animate-pulse-soft" />
+
         <motion.form
-          className={`relative backdrop-blur-xl p-8 rounded-3xl shadow-2xl border ${
-            darkMode 
-              ? 'bg-gray-900/80 border-gray-700/50' 
-              : 'bg-white/90 border-white/20'
-          }`}
+          className="relative backdrop-blur-xl p-8 rounded-3xl shadow-2xl border bg-white/90 border-white/20 dark:bg-gray-900/80 dark:border-gray-700/50"
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -181,40 +130,24 @@ function DangKyTaiKhoan() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <motion.div 
-              className="relative w-20 h-20 mx-auto mb-6"
-              whileHover={{ scale: 1.1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <motion.div
-                className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-xl"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
+            <div className="relative w-20 h-20 mx-auto mb-6">
+              <div className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-xl animate-spin-slow">
                 <FaUserPlus className="text-white text-2xl" />
-              </motion.div>
-              <motion.div
-                className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-20 blur"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-            </motion.div>
-            
-            <motion.h2 
-              className={`text-3xl font-bold mb-3 ${
-                darkMode ? 'text-white' : 'text-gray-800'
-              }`}
+              </div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-20 blur animate-pulse-ring" />
+            </div>
+
+            <motion.h2
+              className="text-3xl font-bold mb-3 text-gray-800 dark:text-white"
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
             >
               Đăng ký tài khoản
             </motion.h2>
-            
-            <motion.p 
-              className={`text-lg ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}
+
+            <motion.p
+              className="text-lg text-gray-600 dark:text-gray-300"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
@@ -225,22 +158,9 @@ function DangKyTaiKhoan() {
             {/* Decorative stars */}
             <div className="flex justify-center gap-2 mt-4">
               {[...Array(5)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 180, 360],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: i * 0.1,
-                  }}
-                >
-                  <FaStar className={`text-sm ${
-                    darkMode ? 'text-yellow-400' : 'text-yellow-500'
-                  }`} />
-                </motion.div>
+                <div key={i} className="animate-star-pulse" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <FaStar className="text-sm text-yellow-500 dark:text-yellow-400" />
+                </div>
               ))}
             </div>
           </motion.div>
@@ -249,46 +169,32 @@ function DangKyTaiKhoan() {
           <AnimatePresence>
             {success && (
               <motion.div
-                className={`mb-6 p-4 rounded-2xl border ${
-                  darkMode 
-                    ? 'bg-green-900/50 border-green-700 text-green-300' 
-                    : 'bg-green-100 border-green-400 text-green-700'
-                }`}
+                className="mb-6 p-4 rounded-2xl border bg-green-100 border-green-400 text-green-700 dark:bg-green-900/50 dark:border-green-700 dark:text-green-300"
                 initial={{ opacity: 0, scale: 0.9, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: -20 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <div className="flex items-center gap-3">
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <div className="animate-pulse-soft">
                     <FaCheckCircle />
-                  </motion.div>
+                  </div>
                   {success}
                 </div>
               </motion.div>
             )}
             {error && (
               <motion.div
-                className={`mb-6 p-4 rounded-2xl border ${
-                  darkMode 
-                    ? 'bg-red-900/50 border-red-700 text-red-300' 
-                    : 'bg-red-100 border-red-400 text-red-700'
-                }`}
+                className="mb-6 p-4 rounded-2xl border bg-red-100 border-red-400 text-red-700 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <div className="flex items-center gap-3">
-                  <motion.div
-                    animate={{ rotate: [0, -10, 10, 0] }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <div className="animate-wiggle">
                     <FaShieldAlt />
-                  </motion.div>
+                  </div>
                   {error}
                 </div>
               </motion.div>
@@ -302,9 +208,7 @@ function DangKyTaiKhoan() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.7 }}
             >
-              <label className={`block text-sm font-semibold mb-3 ${
-                darkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
+              <label className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-200">
                 Tên đăng nhập
               </label>
               <div className="relative group">
@@ -315,11 +219,7 @@ function DangKyTaiKhoan() {
                   placeholder="Nhập tên đăng nhập"
                   icon={FaUser}
                   required
-                  className={`w-full transition-all duration-300 ${
-                    darkMode 
-                      ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400' 
-                      : 'bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500'
-                  }`}
+                  className="w-full transition-all duration-300 bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500 dark:bg-gray-800/50 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 />
               </div>
             </motion.div>
@@ -329,9 +229,7 @@ function DangKyTaiKhoan() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <label className={`block text-sm font-semibold mb-3 ${
-                darkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
+              <label className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-200">
                 Email
               </label>
               <Input
@@ -342,11 +240,7 @@ function DangKyTaiKhoan() {
                 placeholder="Nhập email"
                 icon={FaEnvelope}
                 required
-                className={`w-full transition-all duration-300 ${
-                  darkMode 
-                    ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400' 
-                    : 'bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500'
-                }`}
+                className="w-full transition-all duration-300 bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500 dark:bg-gray-800/50 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
               />
             </motion.div>
 
@@ -355,9 +249,7 @@ function DangKyTaiKhoan() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.9 }}
             >
-              <label className={`block text-sm font-semibold mb-3 ${
-                darkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
+              <label className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-200">
                 Số điện thoại
               </label>
               <Input
@@ -368,11 +260,7 @@ function DangKyTaiKhoan() {
                 placeholder="Nhập số điện thoại"
                 icon={FaPhone}
                 required
-                className={`w-full transition-all duration-300 ${
-                  darkMode 
-                    ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400' 
-                    : 'bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500'
-                }`}
+                className="w-full transition-all duration-300 bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500 dark:bg-gray-800/50 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
               />
             </motion.div>
 
@@ -381,9 +269,7 @@ function DangKyTaiKhoan() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 1.0 }}
             >
-              <label className={`block text-sm font-semibold mb-3 ${
-                darkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
+              <label className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-200">
                 Mật khẩu
               </label>
               <div className="relative">
@@ -395,25 +281,15 @@ function DangKyTaiKhoan() {
                   placeholder="Nhập mật khẩu"
                   icon={FaLock}
                   required
-                  className={`w-full pr-12 transition-all duration-300 ${
-                    darkMode 
-                      ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400' 
-                      : 'bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500'
-                  }`}
+                  className="w-full pr-12 transition-all duration-300 bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500 dark:bg-gray-800/50 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 />
-                <motion.button
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors ${
-                    darkMode 
-                      ? 'text-gray-400 hover:text-gray-200' 
-                      : 'text-gray-400 hover:text-gray-600'
-                  }`}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                 >
                   {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
-                </motion.button>
+                </button>
               </div>
             </motion.div>
 
@@ -422,9 +298,7 @@ function DangKyTaiKhoan() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 1.1 }}
             >
-              <label className={`block text-sm font-semibold mb-3 ${
-                darkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
+              <label className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-200">
                 Xác nhận mật khẩu
               </label>
               <div className="relative">
@@ -436,25 +310,15 @@ function DangKyTaiKhoan() {
                   placeholder="Nhập lại mật khẩu"
                   icon={FaCheckCircle}
                   required
-                  className={`w-full pr-12 transition-all duration-300 ${
-                    darkMode 
-                      ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400' 
-                      : 'bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500'
-                  }`}
+                  className="w-full pr-12 transition-all duration-300 bg-white/70 border-gray-200 text-gray-800 placeholder-gray-500 dark:bg-gray-800/50 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 />
-                <motion.button
+                <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors ${
-                    darkMode 
-                      ? 'text-gray-400 hover:text-gray-200' 
-                      : 'text-gray-400 hover:text-gray-600'
-                  }`}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                 >
                   {showConfirm ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
-                </motion.button>
+                </button>
               </div>
             </motion.div>
           </div>
@@ -466,21 +330,16 @@ function DangKyTaiKhoan() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.2 }}
           >
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <Button
+              type="submit"
+              variant="gradient"
+              size="lg"
+              loading={loading}
+              disabled={loading}
+              className="w-full text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transition-all duration-300"
             >
-              <Button
-                type="submit"
-                variant="gradient"
-                size="lg"
-                loading={loading}
-                disabled={loading}
-                className="w-full text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transition-all duration-300"
-              >
-                {loading ? "Đang xử lý..." : "Đăng ký"}
-              </Button>
-            </motion.div>
+              {loading ? "Đang xử lý..." : "Đăng ký"}
+            </Button>
           </motion.div>
 
           {/* Links */}
@@ -490,17 +349,11 @@ function DangKyTaiKhoan() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.3 }}
           >
-            <p className={`text-sm ${
-              darkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Đã có tài khoản?{" "}
               <Link
                 to="/accounts/dang-nhap"
-                className={`font-semibold transition-colors hover:underline ${
-                  darkMode 
-                    ? 'text-blue-400 hover:text-blue-300' 
-                    : 'text-blue-600 hover:text-blue-800'
-                }`}
+                className="font-semibold transition-colors hover:underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 Đăng nhập ngay
               </Link>
@@ -512,4 +365,4 @@ function DangKyTaiKhoan() {
   );
 }
 
-export default DangKyTaiKhoan; 
+export default DangKyTaiKhoan;

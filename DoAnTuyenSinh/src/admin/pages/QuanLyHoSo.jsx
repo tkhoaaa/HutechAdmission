@@ -11,17 +11,13 @@ import {
   FaTimes,
   FaClock,
   FaDownload,
-  FaEdit,
-  FaTrash,
-  FaUser,
   FaEnvelope,
   FaPhone,
   FaGraduationCap,
   FaCalendar,
   FaIdCard,
   FaFileAlt,
-  FaCheckCircle,
-  FaExclamationTriangle
+  FaCheckCircle
 } from 'react-icons/fa';
 
 const QuanLyHoSo = () => {
@@ -38,24 +34,14 @@ const QuanLyHoSo = () => {
   const [error, setError] = useState('');
   const [majors, setMajors] = useState([]);
 
-  // Debug logging
-  console.log("QuanLyHoSo render - isDemoMode:", isDemoMode);
-  console.log("QuanLyHoSo render - applications length:", applications.length);
-  console.log("QuanLyHoSo render - DEMO_APPLICATIONS length:", DEMO_APPLICATIONS?.length);
-  console.log("QuanLyHoSo render - DEMO_APPLICATIONS sample:", DEMO_APPLICATIONS?.[0]);
-  console.log("QuanLyHoSo render - loading:", loading);
-  console.log("QuanLyHoSo render - error:", error);
-
   // Initial load
   useEffect(() => {
-    console.log("Initial useEffect - isDemoMode:", isDemoMode);
     fetchMajors();
     fetchApplications();
   }, []);
 
   // Reload when demo mode changes
   useEffect(() => {
-    console.log("Demo mode changed useEffect - isDemoMode:", isDemoMode);
     if (isDemoMode !== undefined) {
       fetchMajors();
       fetchApplications();
@@ -73,7 +59,6 @@ const QuanLyHoSo = () => {
 
   // Fetch applications when filters change
   useEffect(() => {
-    console.log("Filter change useEffect - isDemoMode:", isDemoMode);
     fetchApplications();
   }, [statusFilter, majorFilter, debouncedSearchTerm]);
 
@@ -86,30 +71,19 @@ const QuanLyHoSo = () => {
     try {
       setLoading(true);
       setError('');
-      
-      console.log("fetchApplications called with isDemoMode:", isDemoMode);
-      console.log("localStorage demoMode:", localStorage.getItem("demoMode"));
-      
-      // Check both isDemoMode from context and localStorage as fallback
+
       const isDemo = isDemoMode || localStorage.getItem("demoMode") === "true";
-      console.log("Using demo mode (combined check):", isDemo);
 
       if (isDemo) {
-        // Use demo data when in demo mode
-        console.log("Using demo data for applications", DEMO_APPLICATIONS?.length || 0, "items");
-        
         if (!DEMO_APPLICATIONS || DEMO_APPLICATIONS.length === 0) {
-          console.error("DEMO_APPLICATIONS is empty or undefined!");
           setError("Demo data không có sẵn. Vui lòng thử lại.");
           return;
         }
-        
-        // Add small delay to prevent race conditions
+
         await new Promise(resolve => setTimeout(resolve, 200));
-        
+
         let filteredData = [...DEMO_APPLICATIONS];
 
-        // Apply filters to demo data
         if (statusFilter !== 'all') {
           filteredData = filteredData.filter(app => app.status === statusFilter);
         }
@@ -120,14 +94,13 @@ const QuanLyHoSo = () => {
 
         if (debouncedSearchTerm) {
           const searchLower = debouncedSearchTerm.toLowerCase();
-          filteredData = filteredData.filter(app => 
+          filteredData = filteredData.filter(app =>
             app.ho_ten.toLowerCase().includes(searchLower) ||
             app.email.toLowerCase().includes(searchLower) ||
             app.application_code.toLowerCase().includes(searchLower)
           );
         }
 
-        console.log("Setting filtered demo data:", filteredData.length, "items");
         setApplications(filteredData);
         setError('');
         setLoading(false);
@@ -147,8 +120,7 @@ const QuanLyHoSo = () => {
       } else {
         setApplications([]);
       }
-    } catch (error) {
-      console.error('Error fetching applications:', error);
+    } catch {
       setError('Không thể tải danh sách hồ sơ. Vui lòng kiểm tra kết nối server.');
       setApplications([]);
     } finally {
@@ -158,17 +130,12 @@ const QuanLyHoSo = () => {
 
   const fetchMajors = async () => {
     try {
-      // Check both isDemoMode from context and localStorage as fallback
       const isDemo = isDemoMode || localStorage.getItem("demoMode") === "true";
-      console.log("fetchMajors - using demo mode:", isDemo);
-      
+
       if (isDemo) {
-        // Use demo data when in demo mode
-        console.log("Using demo data for majors", DEMO_MAJORS?.length || 0, "items");
         if (DEMO_MAJORS && DEMO_MAJORS.length > 0) {
           setMajors(DEMO_MAJORS.map(major => ({ name: major.ten_nganh })));
         } else {
-          console.error("DEMO_MAJORS is empty or undefined!");
           setMajors([
             { name: "Công nghệ Thông tin" },
             { name: "Quản trị Kinh doanh" },
@@ -183,9 +150,7 @@ const QuanLyHoSo = () => {
       if (response.data.success) {
         setMajors(response.data.data);
       }
-    } catch (error) {
-      console.error('Error fetching majors:', error);
-      // Set default majors if API fails
+    } catch {
       setMajors([
         { name: "Công nghệ Thông tin" },
         { name: "Quản trị Kinh doanh" },
@@ -198,16 +163,14 @@ const QuanLyHoSo = () => {
   const handleStatusChange = async (applicationId, newStatus) => {
     try {
       if (isDemoMode) {
-        // Update local state in demo mode
-        setApplications(prev => 
-          prev.map(app => 
-            app.id === applicationId 
+        setApplications(prev =>
+          prev.map(app =>
+            app.id === applicationId
               ? { ...app, status: newStatus }
               : app
           )
         );
-        
-        // Update selected application if it's the same one
+
         if (selectedApplication && selectedApplication.id === applicationId) {
           setSelectedApplication(prev => ({ ...prev, status: newStatus }));
         }
@@ -220,22 +183,19 @@ const QuanLyHoSo = () => {
       });
 
       if (response.data.success) {
-        // Update local state
-        setApplications(prev => 
-          prev.map(app => 
-            app.id === applicationId 
+        setApplications(prev =>
+          prev.map(app =>
+            app.id === applicationId
               ? { ...app, status: newStatus }
               : app
           )
         );
-        
-        // Update selected application if it's the same one
+
         if (selectedApplication && selectedApplication.id === applicationId) {
           setSelectedApplication(prev => ({ ...prev, status: newStatus }));
         }
       }
-    } catch (error) {
-      console.error('Error updating status:', error);
+    } catch {
       alert('Không thể cập nhật trạng thái hồ sơ');
     }
   };
@@ -294,10 +254,10 @@ const QuanLyHoSo = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <div className="text-red-500 text-6xl mb-4">!</div>
           <h2 className="text-2xl font-bold text-red-600 mb-2">Lỗi tải dữ liệu</h2>
           <p className="text-gray-600 mb-4">{error}</p>
-          <button 
+          <button
             onClick={() => {
               setError('');
               fetchApplications();
@@ -320,7 +280,7 @@ const QuanLyHoSo = () => {
       </div>
       <div className="relative z-10">
       {/* Header */}
-      <motion.div 
+      <motion.div
         className="mb-8"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -332,7 +292,7 @@ const QuanLyHoSo = () => {
             <p className="text-gray-300 text-lg">Quản lý hồ sơ xét tuyển của thí sinh</p>
           </div>
           <div className="flex items-center gap-4">
-            <motion.div 
+            <motion.div
               className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
@@ -345,12 +305,12 @@ const QuanLyHoSo = () => {
       </motion.div>
 
       {/* Filters */}
-              <motion.div 
-          className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl p-6 mb-8 border border-white/10"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
+      <motion.div
+        className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl p-6 mb-8 border border-white/10"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Search */}
           <div className="relative">
@@ -397,14 +357,12 @@ const QuanLyHoSo = () => {
       </motion.div>
 
       {/* Applications List */}
-      <motion.div 
+      <motion.div
         className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-
-        
         <div className="divide-y divide-gray-200">
           {filteredApplications.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
@@ -424,7 +382,7 @@ const QuanLyHoSo = () => {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center mb-3">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${getMajorColor(app.major_name || app.major)} rounded-xl flex items-center justify-center mr-4`}> 
+                    <div className={`w-12 h-12 bg-gradient-to-r ${getMajorColor(app.major_name || app.major)} rounded-xl flex items-center justify-center mr-4`}>
                       {app.avatar || (app.user && app.user.avatar) ? (
                         <img
                           src={app.avatar || (app.user && app.user.avatar)}
@@ -443,7 +401,7 @@ const QuanLyHoSo = () => {
                     </div>
                     {getStatusBadge(app.status)}
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <FaEnvelope className="text-blue-500" />
@@ -458,7 +416,7 @@ const QuanLyHoSo = () => {
                       {app.cccd || 'Chưa có'}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
@@ -466,51 +424,41 @@ const QuanLyHoSo = () => {
                         {formatDate(app.created_at || app.submittedAt)}
                       </span>
                       <span className="flex items-center gap-1">
-                        <FaUser className="text-blue-500" />
                         GPA: {app.gpa || 'N/A'}
                       </span>
                       <span className="flex items-center gap-1">
-                        <FaFileAlt className="text-green-500" />
                         {app.phuong_thuc_xet_tuyen || 'Chưa rõ'}
                       </span>
                     </div>
-                    
+
                     <div className="flex space-x-2">
-                      <motion.button
+                      <button
                         onClick={() => handleViewDetails(app)}
-                        className="p-3 text-blue-600 hover:bg-blue-100 rounded-xl transition-all duration-200"
+                        className="p-3 text-blue-600 hover:bg-blue-100 rounded-xl transition-all duration-200 hover:scale-110 active:scale-90"
                         title="Xem chi tiết"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
                       >
                         <FaEye />
-                      </motion.button>
-                      <motion.button
+                      </button>
+                      <button
                         onClick={() => handleStatusChange(app.id, "approved")}
-                        className="p-3 text-green-600 hover:bg-green-100 rounded-xl transition-all duration-200"
+                        className="p-3 text-green-600 hover:bg-green-100 rounded-xl transition-all duration-200 hover:scale-110 active:scale-90"
                         title="Duyệt hồ sơ"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
                       >
                         <FaCheck />
-                      </motion.button>
-                      <motion.button
+                      </button>
+                      <button
                         onClick={() => handleStatusChange(app.id, "rejected")}
-                        className="p-3 text-red-600 hover:bg-red-100 rounded-xl transition-all duration-200"
+                        className="p-3 text-red-600 hover:bg-red-100 rounded-xl transition-all duration-200 hover:scale-110 active:scale-90"
                         title="Từ chối"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
                       >
                         <FaTimes />
-                      </motion.button>
-                      <motion.button
-                        className="p-3 text-purple-600 hover:bg-purple-100 rounded-xl transition-all duration-200"
+                      </button>
+                      <button
+                        className="p-3 text-purple-600 hover:bg-purple-100 rounded-xl transition-all duration-200 hover:scale-110 active:scale-90"
                         title="Tải xuống"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
                       >
                         <FaDownload />
-                      </motion.button>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -524,21 +472,21 @@ const QuanLyHoSo = () => {
       {/* Detail Modal */}
       <AnimatePresence>
         {showDetailModal && selectedApplication && (
-          <motion.div 
+          <motion.div
             className="fixed inset-0 z-50 overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <div className="flex items-center justify-center min-h-screen px-4">
-              <motion.div 
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm" 
+              <motion.div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm"
                 onClick={() => setShowDetailModal(false)}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               ></motion.div>
-              <motion.div 
+              <motion.div
                 className="relative bg-white rounded-2xl max-w-4xl w-full p-8 shadow-2xl"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -549,21 +497,19 @@ const QuanLyHoSo = () => {
                   <h3 className="text-2xl font-bold text-gray-900">
                     Chi tiết hồ sơ - {selectedApplication.studentName}
                   </h3>
-                  <motion.button
+                  <button
                     onClick={() => setShowDetailModal(false)}
-                    className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 hover:scale-110 active:scale-90 transition-all duration-200"
                   >
                     <FaTimes />
-                  </motion.button>
+                  </button>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-6">
                     <div>
                       <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                        <FaUser className="text-blue-500" />
+                        <FaGraduationCap className="text-blue-500" />
                         Thông tin cá nhân
                       </h4>
                       <div className="space-y-3">
@@ -585,7 +531,7 @@ const QuanLyHoSo = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div>
                       <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                         <FaGraduationCap className="text-green-500" />
@@ -607,7 +553,7 @@ const QuanLyHoSo = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-6">
                     <div>
                       <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -633,7 +579,7 @@ const QuanLyHoSo = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     <div>
                       <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                         <FaClock className="text-orange-500" />
@@ -658,25 +604,21 @@ const QuanLyHoSo = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end space-x-4 pt-8 border-t border-gray-200">
-                  <motion.button
+                  <button
                     onClick={() => setShowDetailModal(false)}
-                    className="px-6 py-3 text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition-all duration-200 font-semibold"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className="px-6 py-3 text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 hover:scale-105 active:scale-95 transition-all duration-200 font-semibold"
                   >
                     Đóng
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     onClick={() => handleStatusChange(selectedApplication.id, "approved")}
-                    className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-semibold shadow-lg"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 hover:scale-105 active:scale-95 transition-all duration-200 font-semibold shadow-lg"
                   >
                     <FaCheck className="mr-2 inline" />
                     Duyệt hồ sơ
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             </div>
@@ -688,4 +630,4 @@ const QuanLyHoSo = () => {
   );
 };
 
-export default QuanLyHoSo; 
+export default QuanLyHoSo;

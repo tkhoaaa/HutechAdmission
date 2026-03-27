@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, Area, AreaChart
+  PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
-import { 
-  FaChartBar, FaChartPie, FaChartLine, FaFilter, FaDownload, 
+import {
+  FaChartBar, FaChartPie, FaChartLine, FaFilter, FaDownload,
   FaCalendarAlt, FaIndustry, FaCheckCircle, FaTimesCircle, FaClock
 } from 'react-icons/fa';
 import { useUser } from '../../accounts/UserContext';
@@ -19,7 +19,6 @@ const BaoCao = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  // Demo data cho charts
   const demoData = {
     industryStats: [
       { name: 'CNTT', applications: 345, percentage: 28 },
@@ -69,7 +68,6 @@ const BaoCao = () => {
       setReportData(demoData);
       setLoading(false);
     } else {
-      // TODO: Fetch real data from API
       fetchReportData();
     }
   }, [selectedYear, selectedMonth, selectedIndustry, selectedStatus, isDemoMode]);
@@ -77,15 +75,14 @@ const BaoCao = () => {
   const fetchReportData = async () => {
     try {
       setLoading(true);
-      
-      // Fetch all report data
+
       const params = new URLSearchParams({
         year: selectedYear,
         month: selectedMonth,
         industry: selectedIndustry,
         status: selectedStatus
       });
-      
+
       const [overviewRes, industryRes, statusRes, timeSeriesRes, schoolsRes, methodsRes] = await Promise.all([
         fetch(`${buildApiUrl('/api/admin/reports/overview')}?${params}`),
         fetch(`${buildApiUrl('/api/admin/reports/industry-stats')}?${params}`),
@@ -94,7 +91,7 @@ const BaoCao = () => {
         fetch(`${buildApiUrl('/api/admin/reports/top-schools')}?${params}`),
         fetch(`${buildApiUrl('/api/admin/reports/admission-methods')}?${params}`)
       ]);
-      
+
       const [overviewData, industryData, statusData, timeSeriesData, schoolsData, methodsData] = await Promise.all([
         overviewRes.json(),
         industryRes.json(),
@@ -103,8 +100,8 @@ const BaoCao = () => {
         schoolsRes.json(),
         methodsRes.json()
       ]);
-      
-      if (overviewData.success && industryData.success && statusData.success && 
+
+      if (overviewData.success && industryData.success && statusData.success &&
           timeSeriesData.success && schoolsData.success && methodsData.success) {
         setReportData({
           overview: overviewData.data,
@@ -117,9 +114,7 @@ const BaoCao = () => {
       } else {
         throw new Error('Một số API trả về lỗi');
       }
-    } catch (error) {
-      console.error('Error fetching report data:', error);
-      // Fallback to demo data
+    } catch {
       setReportData(demoData);
     } finally {
       setLoading(false);
@@ -129,8 +124,6 @@ const BaoCao = () => {
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
   const exportReport = (format = 'pdf') => {
-    // TODO: Implement export functionality
-    console.log(`Exporting report in ${format} format`);
   };
 
   if (loading) {
@@ -164,7 +157,7 @@ const BaoCao = () => {
       </div>
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
@@ -172,7 +165,7 @@ const BaoCao = () => {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
-                📊 Báo cáo thống kê
+                Báo cáo thống kê
               </h1>
               <p className="text-gray-300">
                 Thống kê chi tiết về hồ sơ tuyển sinh và hiệu suất hệ thống
@@ -181,14 +174,14 @@ const BaoCao = () => {
             <div className="flex gap-3 mt-4 lg:mt-0">
               <button
                 onClick={() => exportReport('pdf')}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 <FaDownload />
                 Xuất PDF
               </button>
               <button
                 onClick={() => exportReport('excel')}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 <FaDownload />
                 Xuất Excel
@@ -198,21 +191,21 @@ const BaoCao = () => {
         </motion.div>
 
         {/* Filters */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl p-6 mb-8 border border-white/10"
         >
-                      <div className="flex items-center gap-2 mb-4">
-              <FaFilter className="text-purple-400" />
-              <h3 className="text-lg font-semibold text-white">Bộ lọc</h3>
-            </div>
+          <div className="flex items-center gap-2 mb-4">
+            <FaFilter className="text-purple-400" />
+            <h3 className="text-lg font-semibold text-white">Bộ lọc</h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <FaCalendarAlt className="inline mr-2" />
-                Năm
+                Nam
               </label>
               <select
                 value={selectedYear}
@@ -227,7 +220,7 @@ const BaoCao = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <FaCalendarAlt className="inline mr-2" />
-                Tháng
+                Thang
               </label>
               <select
                 value={selectedMonth}
@@ -243,7 +236,7 @@ const BaoCao = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <FaIndustry className="inline mr-2" />
-                Ngành học
+                Nganh học
               </label>
               <select
                 value={selectedIndustry}
@@ -259,7 +252,7 @@ const BaoCao = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <FaCheckCircle className="inline mr-2" />
-                Trạng thái
+                Trang thai
               </label>
               <select
                 value={selectedStatus}
@@ -276,7 +269,7 @@ const BaoCao = () => {
         </motion.div>
 
         {/* Overview Cards */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -364,7 +357,7 @@ const BaoCao = () => {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Industry Statistics - Bar Chart */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
@@ -387,7 +380,7 @@ const BaoCao = () => {
           </motion.div>
 
           {/* Status Distribution - Pie Chart */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
@@ -420,7 +413,7 @@ const BaoCao = () => {
         </div>
 
         {/* Time Series Chart */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -447,7 +440,7 @@ const BaoCao = () => {
         {/* Additional Statistics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Top Schools */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -476,7 +469,7 @@ const BaoCao = () => {
           </motion.div>
 
           {/* Admission Methods */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
@@ -484,14 +477,14 @@ const BaoCao = () => {
           >
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Phương thức xét tuyển</h3>
             <div className="space-y-4">
-              {reportData.admissionMethods.map((method, index) => (
+              {reportData.admissionMethods.map((method) => (
                 <div key={method.method} className="p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-gray-900">{method.method}</span>
                     <span className="text-lg font-bold text-blue-600">{method.count}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${method.percentage}%` }}
                     ></div>
@@ -508,4 +501,3 @@ const BaoCao = () => {
 };
 
 export default BaoCao;
- 
