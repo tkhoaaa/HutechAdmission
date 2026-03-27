@@ -1,7 +1,7 @@
 # STATE.md — UI/UX Redesign DoAnTuyenSinh
 
 **Project:** DoAnTuyenSinh - Website Tuyển Sinh HUTECH
-**Last Updated:** 2026-03-28
+**Last Updated:** 2026-03-28 (after Phase 5)
 
 ## Project Reference
 
@@ -23,10 +23,10 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 | 2 | Shared Component Library | ✅ Complete | 100% |
 | 3 | Layout & Navigation | ✅ Complete | 100% |
 | 4 | Public Pages | ✅ Complete | 100% |
-| 5 | Admin Pages | ○ Pending | 0% |
+| 5 | Admin Pages | ✅ Complete | 100% |
 | 6 | Polish & Performance | ○ Pending | 0% |
 
-**Active Phase:** None — Phase 4 just completed
+**Active Phase:** None — Phase 5 just completed
 
 ## Phase Status
 
@@ -64,6 +64,31 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 - [x] TraCuuKetQua.jsx: JSX nesting fixed in Card.Header section
 - [x] tailwind.css: CSS @apply directives fixed (hover:, focus:)
 - [x] `npm run build` passes (3226 modules, 7.93s)
+
+### Phase 5 — Admin & Account Pages ✅
+
+| Plan | Description | Status | Notes |
+|------|-------------|--------|-------|
+| 5.1 | TongQuan redesign | ✅ Complete | Removed useDarkMode, 8 console statements, whileHover simplified |
+| 5.2 | QuanLyHoSo redesign | ✅ Complete | Removed 15+ console.log, whileHover on 6 icon buttons |
+| 5.3 | QuanLyFAQ redesign | ✅ Complete | whileHover on 8 icon buttons simplified |
+| 5.4 | BaoCao redesign | ✅ Complete | Removed console.error, whileHover on export buttons |
+| 5.5 | CaiDat redesign | ✅ Complete | Removed local darkMode state, 4 console.error |
+| 5.6 | HoSoQuanLi redesign | ✅ Complete | Removed 10+ console.log, 2 infinite loops, whileHover |
+| 5.7 | DangNhap redesign | ✅ Complete | Removed 6 console, 15 infinite loops, useDarkMode |
+| 5.8 | DangKyTaiKhoan redesign | ✅ Complete | Removed 20 infinite loops, useDarkMode |
+| 5.9 | QuenMatKhau redesign | ✅ Complete | Removed 21 infinite loops, useDarkMode, whileHover |
+
+## Phase 5 Acceptance Criteria — All Verified
+
+- [x] All 10 files: removed `useDarkMode` hook, replaced with `dark:` Tailwind prefix
+- [x] All 10 files: removed all `console.log` and `console.error` statements
+- [x] All 10 files: removed `repeat: Infinity` loops, replaced with CSS animation classes
+- [x] All 10 files: `whileHover`/`whileTap` on icon buttons simplified to CSS hover classes
+- [x] tailwind.config.js: added 8 new keyframes (float, particleRise, pulseRing, starPulse, pulseSoft, wiggle, shimmerCta, spin-slower)
+- [x] All business logic preserved (forms, API calls, state management, data fetching)
+- [x] `npm run build` passes (3226 modules, 7.77s)
+- [x] Net change: -1809 / +719 lines across 10 files
 
 ### Phase 3 — Layout & Navigation ✅
 
@@ -125,6 +150,12 @@ See: .planning/PROJECT.md (updated 2026-03-28)
   - Removed all infinite framer-motion loops, replaced with CSS animation classes
   - Removed console.log statements from layout components
   - Added 7 new CSS keyframes + spin-slower animation
+- ✅ Phase 5 complete — commit `699c9f97`
+  - Redesigned 6 admin pages + 3 account pages (-1809 / +719 lines net)
+  - Removed all console.log/console.error debug statements
+  - Removed all infinite framer-motion loops, replaced with CSS
+  - Removed useDarkMode hook, replaced with dark: Tailwind prefix
+  - Added 8 new keyframes to tailwind.config.js
 
 ## Open Issues
 
@@ -138,8 +169,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 ### Upcoming
 
-- Phase 5: Admin Pages (6 pages redesign)
-- Phase 6: Polish & Performance
+- Phase 6: Polish & Performance (toast migration, code splitting, etc.)
 
 ## Notes
 
