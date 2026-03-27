@@ -21,12 +21,12 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 |---|-------|--------|----------|
 | 1 | Foundation & Design System | ✅ Complete | 100% |
 | 2 | Shared Component Library | ✅ Complete | 100% |
-| 3 | Layout & Navigation | ○ Pending | 0% |
+| 3 | Layout & Navigation | ✅ Complete | 100% |
 | 4 | Public Pages | ○ Pending | 0% |
 | 5 | Admin Pages | ○ Pending | 0% |
 | 6 | Polish & Performance | ○ Pending | 0% |
 
-**Active Phase:** None — Phase 2 just completed
+**Active Phase:** None — Phase 3 just completed
 
 ## Phase Status
 
@@ -37,6 +37,25 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 | 1.1 | Tailwind Config Cleanup | ✅ Complete | Reduced from ~285 to 57 lines |
 | 1.2 | Dark Mode Consolidation | ✅ Complete | Deleted ThemeContext, cleaned main.jsx |
 | 1.3 | Animation System | ✅ Complete | Standardized variants, fixed Math.random() |
+
+### Phase 3 — Layout & Navigation ✅
+
+| Plan | Description | Status | Notes |
+|------|-------------|--------|-------|
+| 3.1 | ThanhHeader cleanup | ✅ Complete | Removed console.log, WebkitTextFillColor, complex animations; CSS vars throughout |
+| 3.2 | ChanTrang cleanup | ✅ Complete | Replaced infinite framer-motion loops with CSS animation classes |
+| 3.3 | AdminLayout cleanup | ✅ Complete | Removed 4 console.log, replaced infinite loops with CSS classes |
+| 3.4 | PageTransition audit | ✅ Complete | Clean, no changes needed |
+
+## Phase 3 Acceptance Criteria — All Verified
+
+- [x] ThanhHeader: no console.log, no WebkitTextFillColor, CSS vars for dark mode
+- [x] ChanTrang: all infinite framer-motion replaced with CSS classes (.animate-star-pulse, .animate-spin-slow, etc.)
+- [x] AdminLayout: no console.log in onError, infinite loops replaced with CSS (.animate-crown-glow, .animate-shimmer-slide)
+- [x] tailwind.css: 7 new keyframes + animation utility classes
+- [x] tailwind.config.js: spin-slower animation added
+- [x] PageTransition: audit confirmed clean
+- [x] `npm run build` passes (3226 modules, 7.75s)
 
 ### Phase 2 — Shared Component Library ✅
 
@@ -68,6 +87,11 @@ See: .planning/PROJECT.md (updated 2026-03-28)
   - Refactored Alert, Modal, FormField for dark mode
   - Deleted orphaned `Card.modern.jsx`
   - Cleaned Hero background pattern
+- ✅ Phase 3 complete — commit `ac81c990`
+  - Rewrote ThanhHeader, ChanTrang, AdminLayout (1470 lines removed, 420 added)
+  - Removed all infinite framer-motion loops, replaced with CSS animation classes
+  - Removed console.log statements from layout components
+  - Added 7 new CSS keyframes + spin-slower animation
 
 ## Open Issues
 
@@ -81,7 +105,6 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 ### Upcoming
 
-- Phase 3: Layout & Navigation (Header, Footer, Auth Layout, Admin Layout)
 - Phase 4: Public Pages (9 pages redesign)
 - Phase 5: Admin Pages (6 pages redesign)
 - Phase 6: Polish & Performance
