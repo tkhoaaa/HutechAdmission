@@ -5989,3 +5989,113 @@ fix error
 
 ---
 
+_**Assistant**_
+
+Tôi thấy lỗi 401 (Unauthorized) khi gọi API `/api/auth/login`. Đây là lỗi xác thực - có thể do:
+
+1. **Backend không chạy** hoặc không có endpoint này
+2. **CORS issues** 
+3. **Request format không đúng**
+
+Hãy kiểm tra và sửa lỗi:
+
+---
+
+<details>
+                <summary>Searched codebase "Where is the login API endpoint defined in the backend?" • **14** results</summary>
+            
+| File | Lines |
+|------|-------|
+| `DoAnTuyenSinh/backend/index.js` | L85-159 |
+| `DoAnTuyenSinh/backend/index.js` | L2439-2509 |
+| `DoAnTuyenSinh/backend/index.js` | L94-221 |
+| `DoAnTuyenSinh/backend/index.js` | L73-159 |
+| `DoAnTuyenSinh/backend/config/env.example` | Lundefined-69 |
+| `DoAnTuyenSinh/backend/index.js` | Lundefined-54 |
+| `DoAnTuyenSinh/backend/index.js` | L162-343 |
+| `DoAnTuyenSinh/backend/index.js` | L522-710 |
+| `DoAnTuyenSinh/backend/index.js` | L67-82 |
+| `DoAnTuyenSinh/backend/middleware/auth.js` | Lundefined-44 |
+| `DoAnTuyenSinh/backend/index.js` | L2417-2503 |
+| `DoAnTuyenSinh/backend/index.js` | L31-66 |
+| `DoAnTuyenSinh/backend/index.js` | L162-274 |
+| `DoAnTuyenSinh/backend/index.js` | L2408-2473 |
+
+</details>
+
+---
+
+Backend có endpoint login đúng. Hãy kiểm tra xem backend có đang chạy không:
+
+---
+
+```bash
+cd DoAnTuyenSinh/backend && npm start
+```
+
+---
+
+Tôi thấy vấn đề! Từ console log, có lỗi 401 (Unauthorized) khi gọi API login. Có một số nguyên nhân có thể:
+
+## 🔍 **Phân tích lỗi:**
+
+### **1. 🚫 Backend không chạy:**
+- API endpoint `/api/auth/login` trả về 401
+- Có thể backend server chưa được khởi động
+
+### **2. 🔧 Các bước khắc phục:**
+
+#### **Bước 1: Khởi động Backend**
+```bash
+cd DoAnTuyenSinh/backend
+npm start
+```
+
+#### **Bước 2: Kiểm tra Database**
+Đảm bảo MySQL đang chạy và có database `hutech_admission`
+
+#### **Bước 3: Kiểm tra CORS**
+Backend có cấu hình CORS cho `localhost:5173`
+
+#### **Bước 4: Test API trực tiếp**
+Có thể test API bằng Postman hoặc curl:
+```bash
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"identifier":"admin@hutech.edu.vn","password":"123456"}'
+```
+
+## 🎯 **Hành động cần thiết:**
+
+1. **Khởi động backend server** (quan trọng nhất)
+2. **Kiểm tra database connection**
+3. **Verify user credentials** trong database
+
+Bạn có muốn tôi:
+1. **Khởi động backend server** cho bạn?
+2. **Kiểm tra cấu hình database**?
+3. **Tạo user test** để đăng nhập?
+
+Hoặc bạn có thể tự khởi động backend bằng lệnh:
+```bash
+cd DoAnTuyenSinh/backend
+npm start
+```
+
+Sau đó refresh lại trang web để thử đăng nhập!
+
+
+---
+
+_**User**_
+
+Nếu làm mobile app thì sử dụng công nghệ gì
+
+---
+
+_**Assistant**_
+
+
+
+---
+

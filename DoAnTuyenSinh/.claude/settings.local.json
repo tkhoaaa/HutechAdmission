@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\\\\src\" -type f -name \"*.jsx\" -o -name \"*.js\" -o -name \"*.tsx\" -o -name \"*.ts\" 2>/dev/null | head -120)",
+      "Bash(find \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\\\\backend\" -maxdepth 2 -type f \\\\\\( -name \"*.js\" -o -name \"*.json\" \\\\\\) 2>/dev/null | grep -v node_modules | head -40)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npx vite build 2>&1 | tail -30)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npx vite build 2>&1 | tail -20)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npx eslint --no-eslintrc --parser-options=ecmaVersion:2020,sourceType:module,ecmaFeatures:{jsx:true} src/admin/pages/QuanLyHoSo.jsx 2>&1 | head -40)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && node -e \"const fs=require\\('fs'\\); const c=fs.readFileSync\\('src/admin/pages/QuanLyHoSo.jsx','utf8'\\); const lines=c.split\\('\\\\n'\\); console.log\\(lines.map\\(\\(l,i\\)=>i+1+': |'+l+'|'\\).slice\\(428,437\\).join\\('\\\\n'\\)\\);\")",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && node -e \"\nconst fs = require\\('fs'\\);\nconst content = fs.readFileSync\\('src/admin/pages/QuanLyHoSo.jsx', 'utf8'\\);\n\n// Count opening and closing tags\nconst openDivs = \\(content.match\\(/<div/g\\) || []\\).length;\nconst closeDivs = \\(content.match\\(/<\\\\/div>/g\\) || []\\).length;\nconst openAnimate = \\(content.match\\(/<AnimatePresence/g\\) || []\\).length;\nconst closeAnimate = \\(content.match\\(/<\\\\/AnimatePresence>/g\\) || []\\).length;\nconst openFrag = \\(content.match\\(/<>/g\\) || []\\).length;\nconst closeFrag = \\(content.match\\(/<\\\\//g\\) || []\\).length;\n\nconsole.log\\('Open divs:', openDivs\\);\nconsole.log\\('Close divs:', closeDivs\\);\nconsole.log\\('Open AnimatePresence:', openAnimate\\);\nconsole.log\\('Close AnimatePresence:', closeAnimate\\);\n\n// Find lines 430-440\nconst lines = content.split\\('\\\\n'\\);\nconsole.log\\('\\\\nLines 428-438:'\\);\nlines.slice\\(427, 438\\).forEach\\(\\(l, i\\) => console.log\\(\\(428+i\\) + ': ' + JSON.stringify\\(l\\)\\)\\);\n\n// Check for suspicious patterns\nconst suspicious = content.match\\(/\\\\/\\\\s*\\\\//g\\);\nconsole.log\\('\\\\nSuspicious patterns \\(//\\):', suspicious ? suspicious.length : 0\\);\n\n// Check for unbalanced braces in JS\nlet braces = 0, brackets = 0, parens = 0;\nfor \\(let i = 0; i < content.length; i++\\) {\n  const c = content[i];\n  if \\(c === '{'\\) braces++;\n  else if \\(c === '}'\\) braces--;\n  else if \\(c === '['\\) brackets++;\n  else if \\(c === ']'\\) brackets--;\n  else if \\(c === '\\('\\) parens++;\n  else if \\(c === '\\)'\\) parens--;\n}\nconsole.log\\('\\\\nBraces balance:', braces\\);\nconsole.log\\('Brackets balance:', brackets\\);\nconsole.log\\('Parens balance:', parens\\);\n\")",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && timeout 10 npx vite --port 5174 2>&1 || true)",
+      "Bash(node_modules/.bin/vite build:*)",
+      "Bash(xxd /c/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh/src/admin/pages/QuanLyHoSo.jsx | grep -A2 \"00000580\" | head -5)",
+      "Bash(node -e \"\nconst fs = require\\('fs'\\);\nconst content = fs.readFileSync\\('src/admin/pages/QuanLyHoSo.jsx', 'utf8'\\);\nconst lines = content.split\\('\\\\n'\\);\n\n// Count all <div and </div> in the return block \\(lines 309-573\\)\nlet opens = 0;\nlet closes = 0;\nfor \\(let i = 308; i < lines.length; i++\\) {\n  const l = lines[i];\n  opens += \\(l.match\\(/<div/g\\) || []\\).length;\n  closes += \\(l.match\\(/<\\\\/div>/g\\) || []\\).length;\n  if \\(i >= 568 && i <= 572\\) {\n    console.log\\('L' + \\(i+1\\) + ': opens=' + \\(l.match\\(/<div/g\\) || []\\).length + ' closes=' + \\(l.match\\(/<\\\\/div>/g\\) || []\\).length + ' | ' + l\\);\n  }\n}\nconsole.log\\('Total opens:', opens, 'Total closes:', closes, 'Net:', opens - closes\\);\n\")",
+      "Bash(for f:*)",
+      "Bash(ls /c/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh/src/index.css 2>/dev/null; ls /c/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh/src/*.css 2>/dev/null)",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && npm run build 2>&1 | tail -30)",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && npm run build 2>&1 | tail -20)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npm run build 2>&1 | tail -20)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npm run build 2>&1 | tail -15)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git checkout:*)"
+    ]
+  }
+}
