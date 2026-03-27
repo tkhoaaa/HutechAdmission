@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "../accounts/UserContext";
-import { 
-  FaUser, 
-  FaEnvelope, 
-  FaLock, 
-  FaCamera, 
-  FaSave, 
-  FaTimes, 
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaCamera,
+  FaSave,
+  FaTimes,
   FaPhone,
   FaGlobe,
   FaDesktop,
@@ -18,7 +18,7 @@ import {
   FaEyeSlash,
   FaShieldAlt
 } from "react-icons/fa";
-import { HiSparkles, HiLightningBolt } from "react-icons/hi";
+import { HiSparkles } from "react-icons/hi";
 import apiClient from "../utils/apiClient";
 import ThemeToggle from "../components/ThemeToggle";
 import DeviceManager from "../components/DeviceManager";
@@ -37,9 +37,8 @@ function HoSoNguoiDung() {
     new: false,
     confirm: false
   });
-  
-  // Fallback để hiển thị tên người dùng
-  const displayName = username || user?.username || user?.name || user?.email || "Người dùng";
+
+  const displayName = username || user?.username || user?.name || user?.email || "Nguoi dung";
   const [avatar, setAvatar] = useState("");
   const [email, setEmail] = useState(user?.email || "");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -55,7 +54,6 @@ function HoSoNguoiDung() {
 
   useEffect(() => {
     if (user) {
-      // Xử lý URL avatar đúng cách
       let avatarUrl = "";
       if (user.avatar) {
         if (user.avatar.startsWith('http')) {
@@ -74,22 +72,17 @@ function HoSoNguoiDung() {
     }
   }, [user]);
 
-  // Debug: log để kiểm tra giá trị
-  console.log("HoSoNguoiDung - User context:", { user, username, role, displayName });
-
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
-      setError("Vui lòng chọn file ảnh hợp lệ");
+      setError("Vui long chon file anh hop le");
       return;
     }
 
-    // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setError("Kích thước file không được vượt quá 5MB");
+      setError("Kich thuoc file khong duoc vuot qua 5MB");
       return;
     }
 
@@ -102,30 +95,19 @@ function HoSoNguoiDung() {
       formData.append("avatar", file);
       formData.append("user_id", user.id);
 
-      console.log("Uploading avatar for user:", user.id);
-
-      // Upload file
       const uploadRes = await apiClient.post("/user/upload-avatar", formData, {
-        headers: { 
+        headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
       });
 
-      console.log("Upload response:", uploadRes);
-
       if (uploadRes.success || uploadRes.data?.success) {
         const avatarPath = uploadRes.url || uploadRes.data?.url;
-        const fullAvatarUrl = avatarPath.startsWith('http') 
-          ? avatarPath 
+        const fullAvatarUrl = avatarPath.startsWith('http')
+          ? avatarPath
           : `http://localhost:3001${avatarPath}`;
 
-        console.log("Avatar uploaded successfully:", {
-          path: avatarPath,
-          fullUrl: fullAvatarUrl
-        });
-
-        // Update avatar URL in database
         const updateRes = await apiClient.put("/user/update-avatar", {
           user_id: user.id,
           avatar_url: avatarPath,
@@ -135,26 +117,19 @@ function HoSoNguoiDung() {
           }
         });
 
-        console.log("Avatar update response:", updateRes);
-
         if (updateRes.success || updateRes.data?.success) {
-          // Update local state
           setAvatar(fullAvatarUrl);
-
-          // Update user context với avatar mới
           const updatedUser = {
             ...user,
-            avatar: avatarPath // Lưu relative path trong context
+            avatar: avatarPath
           };
 
-          // Sử dụng updateUser nếu có, nếu không thì dùng login
           if (updateUser) {
             updateUser(updatedUser);
           } else {
             login(user.id, role, username, updatedUser);
           }
 
-          // Lưu vào localStorage để persist qua sessions
           const currentUserData = JSON.parse(localStorage.getItem('userData') || '{}');
           const newUserData = {
             ...currentUserData,
@@ -162,16 +137,15 @@ function HoSoNguoiDung() {
           };
           localStorage.setItem('userData', JSON.stringify(newUserData));
 
-          setMessage("Cập nhật avatar thành công!");
+          setMessage("Cap nhat avatar thanh cong!");
         } else {
-          throw new Error(updateRes.message || "Lỗi khi cập nhật avatar trong database");
+          throw new Error(updateRes.message || "Loi khi cap nhat avatar trong database");
         }
       } else {
-        throw new Error(uploadRes.message || "Lỗi khi upload ảnh lên server");
+        throw new Error(uploadRes.message || "Loi khi upload anh len server");
       }
     } catch (err) {
-      console.error("Avatar upload error:", err);
-      setError(`Lỗi khi cập nhật avatar: ${err.response?.data?.message || err.message || "Không xác định"}`);
+      setError(`Loi khi cap nhat avatar: ${err.response?.data?.message || err.message || "Khong xac dinh"}`);
     } finally {
       setLoading(false);
     }
@@ -193,7 +167,6 @@ function HoSoNguoiDung() {
       });
 
       if (response.success || response.data?.success) {
-        // Update user context
         const updatedUser = { ...user, email: email };
         if (updateUser) {
           updateUser(updatedUser);
@@ -201,18 +174,16 @@ function HoSoNguoiDung() {
           login(user.id, role, username, updatedUser);
         }
 
-        // Update localStorage
         const currentUserData = JSON.parse(localStorage.getItem('userData') || '{}');
         const newUserData = { ...currentUserData, email: email };
         localStorage.setItem('userData', JSON.stringify(newUserData));
 
-        setMessage("Cập nhật email thành công!");
+        setMessage("Cap nhat email thanh cong!");
       } else {
-        throw new Error(response.message || "Lỗi khi cập nhật email");
+        throw new Error(response.message || "Loi khi cap nhat email");
       }
     } catch (err) {
-      console.error("Email update error:", err);
-      setError(`Lỗi khi cập nhật email: ${err.response?.data?.message || err.message || "Không xác định"}`);
+      setError(`Loi khi cap nhat email: ${err.response?.data?.message || err.message || "Khong xac dinh"}`);
     } finally {
       setLoading(false);
     }
@@ -221,11 +192,11 @@ function HoSoNguoiDung() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp");
+      setError("Mat khau xac nhan khong khop");
       return;
     }
     if (newPassword.length < 6) {
-      setError("Mật khẩu mới phải có ít nhất 6 ký tự");
+      setError("Mat khau moi phai co it nhat 6 ky tu");
       return;
     }
     setLoading(true);
@@ -243,16 +214,15 @@ function HoSoNguoiDung() {
       });
 
       if (response.success || response.data?.success) {
-        setMessage("Cập nhật mật khẩu thành công!");
+        setMessage("Cap nhat mat khau thanh cong!");
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
       } else {
-        throw new Error(response.message || "Lỗi khi cập nhật mật khẩu");
+        throw new Error(response.message || "Loi khi cap nhat mat khau");
       }
     } catch (err) {
-      console.error("Password update error:", err);
-      setError(`Lỗi khi cập nhật mật khẩu: ${err.response?.data?.message || err.message || "Không xác định"}`);
+      setError(`Loi khi cap nhat mat khau: ${err.response?.data?.message || err.message || "Khong xac dinh"}`);
     } finally {
       setLoading(false);
     }
@@ -276,7 +246,6 @@ function HoSoNguoiDung() {
       });
 
       if (response.success || response.data?.success) {
-        // Update user context
         const updatedUser = { ...user, phone, bio, social };
         if (updateUser) {
           updateUser(updatedUser);
@@ -284,52 +253,50 @@ function HoSoNguoiDung() {
           login(user.id, role, username, updatedUser);
         }
 
-        // Update localStorage
         const currentUserData = JSON.parse(localStorage.getItem('userData') || '{}');
         const newUserData = { ...currentUserData, phone, bio, social };
         localStorage.setItem('userData', JSON.stringify(newUserData));
 
-        setMessage("Lưu thay đổi thành công!");
+        setMessage("Luu thay doi thanh cong!");
         setIsEditing(false);
       } else {
-        throw new Error(response.message || "Lỗi khi cập nhật thông tin");
+        throw new Error(response.message || "Loi khi cap nhat thong tin");
       }
     } catch (err) {
-      console.error("Profile update error:", err);
-      setError(`Lỗi khi cập nhật thông tin cá nhân: ${err.response?.data?.message || err.message || "Không xác định"}`);
+      setError(`Loi khi cap nhat thong tin ca nhan: ${err.response?.data?.message || err.message || "Khong xac dinh"}`);
     } finally {
       setLoading(false);
     }
   };
 
   const tabs = [
-    { 
-      id: 'profile', 
-      label: 'Hồ sơ cá nhân', 
+    {
+      id: 'profile',
+      label: 'Ho so ca nhan',
       icon: <FaUser />,
       gradient: 'from-blue-500 to-purple-600',
-      description: 'Quản lý thông tin cá nhân'
+      description: 'Quan ly thong tin ca nhan'
     },
-    { 
-      id: 'security', 
-      label: 'Bảo mật', 
+    {
+      id: 'security',
+      label: 'Bao mat',
       icon: <FaShieldAlt />,
       gradient: 'from-green-500 to-teal-600',
-      description: 'Cài đặt bảo mật tài khoản'
+      description: 'Cai dat bao mat tai khoan'
     },
-    { 
-      id: 'devices', 
-      label: 'Thiết bị', 
+    {
+      id: 'devices',
+      label: 'Thiet bi',
       icon: <FaDesktop />,
       gradient: 'from-orange-500 to-red-600',
-      description: 'Quản lý thiết bị đăng nhập'
+      description: 'Quan ly thiet bi dang nhap'
     },
-    { 
-      id: 'activity', 
-      label: 'Hoạt động', 
+    {
+      id: 'activity',
+      label: 'Hoat dong',
       icon: <FaHistory />,
       gradient: 'from-purple-500 to-pink-600',
-      description: 'Lịch sử hoạt động'
+      description: 'Lich su hoat dong'
     }
   ];
 
@@ -380,46 +347,43 @@ function HoSoNguoiDung() {
             exit="exit"
             className="space-y-8"
           >
-            {/* Avatar section with enhanced design */}
-            <motion.div 
+            {/* Avatar section */}
+            <motion.div
               variants={itemVariants}
               className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-purple-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 dark:from-blue-500/10 dark:to-purple-500/10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 dark:from-blue-500/10 dark:to-purple-500/10" />
               <div className="relative">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      Ảnh đại diện
+                      Anh dai dien
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      Cập nhật hình ảnh đại diện của bạn
+                      Cap nhat hinh anh dai dien cua ban
                     </p>
                   </div>
                   <HiSparkles className="text-3xl text-yellow-500 animate-pulse" />
                 </div>
-                
+
                 <div className="flex items-center space-x-6">
-                  <motion.div 
+                  <motion.div
                     className="relative group"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300" />
                     <div className="relative">
                       <img
                         src={avatar || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUI5QkEzIi8+CjxwYXRoIGQ9Ik0yMCA5MEM0MCA3MCA4MCA3MCAxMDAgOTBWMTIwSDIwVjkwWiIgZmlsbD0iIzlCOUJBMyIvPgo8L3N2Zz4K"}
                         alt="Avatar"
                         className="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg"
                         onError={(e) => {
-                          console.error("Avatar image failed to load:", avatar);
                           e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUI5QkEzIi8+CjxwYXRoIGQ9Ik0yMCA5MEM0MCA3MCA4MCA3MCAxMDAgOTBWMTIwSDIwVjkwWiIgZmlsbD0iIzlCOUJBMyIvPgo8L3N2Zz4K";
                         }}
                       />
-                      <motion.label 
-                        className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 group"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                      <motion.label
+                        className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-110 active:scale-90"
                       >
                         <FaCamera className="text-sm" />
                         <input
@@ -433,76 +397,70 @@ function HoSoNguoiDung() {
                       </motion.label>
                     </div>
                     {loading && (
-                      <motion.div 
+                      <motion.div
                         className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                       >
                         <motion.div
-                          className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"
                         />
                       </motion.div>
                     )}
                   </motion.div>
-                  
+
                   <div className="flex-1">
                     <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                       {displayName}
                     </h4>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Chọn ảnh có kích thước tối thiểu 200x200px để có chất lượng tốt nhất
+                      Chon anh co kich thuoc toi thieu 200x200px de co chat luong tot nhat
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-500 mb-4">
-                      Chấp nhận: JPG, PNG (tối đa 5MB)
+                      Chap nhan: JPG, PNG (toi da 5MB)
                     </p>
                     {user && (
                       <p className="text-xs text-gray-400 dark:text-gray-600 mb-4">
                         ID: {user.id} | Role: {role}
                       </p>
                     )}
-                    <motion.button
+                    <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={loading}
-                      className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 disabled:opacity-50"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 disabled:opacity-50 hover:scale-105 active:scale-95"
                     >
                       <FaCamera />
-                      {loading ? "Đang tải..." : "Thay đổi ảnh"}
-                    </motion.button>
+                      {loading ? "Dang tai..." : "Thay doi anh"}
+                    </button>
                   </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Profile info section with enhanced design */}
-            <motion.div 
+            {/* Profile info section */}
+            <motion.div
               variants={itemVariants}
               className="relative overflow-hidden bg-gradient-to-br from-white via-green-50 to-blue-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-blue-500/5 dark:from-green-500/10 dark:to-blue-500/10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-blue-500/5 dark:from-green-500/10 dark:to-blue-500/10" />
               <div className="relative">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h3 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                      Thông tin cá nhân
+                      Thong tin ca nhan
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      Cập nhật thông tin liên hệ và giới thiệu
+                      Cap nhat thong tin lien he va gioi thieu
                     </p>
                   </div>
-                  <motion.button
+                  <button
                     onClick={() => setIsEditing(!isEditing)}
-                    className="p-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-full hover:from-green-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    className="p-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-full hover:from-green-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 active:scale-90"
                   >
                     {isEditing ? <FaCheck /> : <FaEdit />}
-                  </motion.button>
+                  </button>
                 </div>
-                
+
                 <form onSubmit={handleProfileInfoChange} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <motion.div
@@ -511,7 +469,7 @@ function HoSoNguoiDung() {
                     >
                       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                         <FaUser className="text-blue-500" />
-                        Tên người dùng
+                        Ten nguoi dung
                       </label>
                       <div className="relative">
                         <input
@@ -519,12 +477,12 @@ function HoSoNguoiDung() {
                           value={displayName}
                           disabled
                           className="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                          placeholder="Tên người dùng"
+                          placeholder="Ten nguoi dung"
                         />
                         <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Tên người dùng không thể thay đổi
+                        Ten nguoi dung khong the thay doi
                       </p>
                     </motion.div>
 
@@ -534,7 +492,7 @@ function HoSoNguoiDung() {
                     >
                       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                         <FaPhone className="text-green-500" />
-                        Số điện thoại
+                        So dien thoai
                       </label>
                       <div className="relative">
                         <input
@@ -542,7 +500,7 @@ function HoSoNguoiDung() {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           className="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          placeholder="Nhập số điện thoại"
+                          placeholder="Nhap so dien thoai"
                         />
                         <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       </div>
@@ -555,7 +513,7 @@ function HoSoNguoiDung() {
                   >
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <FaGlobe className="text-purple-500" />
-                      Mạng xã hội
+                      Mang xa hoi
                     </label>
                     <div className="relative">
                       <input
@@ -563,7 +521,7 @@ function HoSoNguoiDung() {
                         value={social}
                         onChange={(e) => setSocial(e.target.value)}
                         className="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        placeholder="Link mạng xã hội (Facebook, LinkedIn...)"
+                        placeholder="Link mang xa hoi (Facebook, LinkedIn...)"
                       />
                       <FaGlobe className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     </div>
@@ -575,14 +533,14 @@ function HoSoNguoiDung() {
                   >
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <HiSparkles className="text-yellow-500" />
-                      Giới thiệu
+                      Gioi thieu
                     </label>
                     <textarea
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                       rows={4}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300 resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      placeholder="Giới thiệu về bản thân..."
+                      placeholder="Gioi thieu ve ban than..."
                     />
                   </motion.div>
 
@@ -592,36 +550,29 @@ function HoSoNguoiDung() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 }}
                   >
-                    <motion.button
+                    <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl hover:from-green-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl hover:from-green-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
                     >
                       {loading ? (
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
                       ) : (
                         <>
                           <FaSave />
-                          Lưu thay đổi
+                          Luu thay doi
                         </>
                       )}
-                    </motion.button>
+                    </button>
                     {isEditing && (
-                      <motion.button
+                      <button
                         type="button"
                         onClick={() => setIsEditing(false)}
-                        className="px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
+                        className="px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         <FaTimes />
-                        Hủy
-                      </motion.button>
+                        Huy
+                      </button>
                     )}
                   </motion.div>
                 </form>
@@ -640,24 +591,24 @@ function HoSoNguoiDung() {
             exit="exit"
             className="space-y-8"
           >
-            {/* Theme toggle with enhanced design */}
-            <motion.div 
+            {/* Theme toggle */}
+            <motion.div
               variants={itemVariants}
               className="relative overflow-hidden bg-gradient-to-br from-white via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 dark:from-purple-500/10 dark:to-pink-500/10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 dark:from-purple-500/10 dark:to-pink-500/10" />
               <div className="relative">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full">
-                      <HiLightningBolt className="text-white text-xl" />
+                      <FaShieldAlt className="text-white text-xl" />
                     </div>
                     <div>
                       <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                        Giao diện
+                        Giao dien
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">
-                        Chuyển đổi giữa giao diện sáng và tối
+                        Chuyen doi giua giao dien sang va toi
                       </p>
                     </div>
                   </div>
@@ -666,12 +617,12 @@ function HoSoNguoiDung() {
               </div>
             </motion.div>
 
-            {/* Email change with enhanced design */}
-            <motion.div 
+            {/* Email change */}
+            <motion.div
               variants={itemVariants}
               className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-cyan-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 dark:from-blue-500/10 dark:to-cyan-500/10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 dark:from-blue-500/10 dark:to-cyan-500/10" />
               <div className="relative">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="p-3 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full">
@@ -679,19 +630,19 @@ function HoSoNguoiDung() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                      Thay đổi email
+                      Thay doi email
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                      Cập nhật địa chỉ email của bạn
+                      Cap nhat dia chi email cua ban
                     </p>
                   </div>
                 </div>
-                
+
                 <form onSubmit={handleEmailChange} className="space-y-6">
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <FaEnvelope className="text-blue-500" />
-                      Email mới
+                      Email moi
                     </label>
                     <div className="relative">
                       <input
@@ -699,37 +650,35 @@ function HoSoNguoiDung() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
-                        placeholder="Nhập email mới"
+                        placeholder="Nhap email moi"
                       />
                       <FaEnvelope className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     </div>
                   </div>
-                  <motion.button
+                  <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {loading ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
                     ) : (
                       <>
                         <FaSave />
-                        Cập nhật email
+                        Cap nhat email
                       </>
                     )}
-                  </motion.button>
+                  </button>
                 </form>
               </div>
             </motion.div>
 
-            {/* Password change with enhanced design */}
-            <motion.div 
+            {/* Password change */}
+            <motion.div
               variants={itemVariants}
               className="relative overflow-hidden bg-gradient-to-br from-white via-red-50 to-orange-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-orange-500/5 dark:from-red-500/10 dark:to-orange-500/10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-orange-500/5 dark:from-red-500/10 dark:to-orange-500/10" />
               <div className="relative">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="p-3 bg-gradient-to-r from-red-500 to-orange-600 rounded-full">
@@ -737,19 +686,19 @@ function HoSoNguoiDung() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                      Thay đổi mật khẩu
+                      Thay doi mat khau
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                      Cập nhật mật khẩu để bảo mật tài khoản
+                      Cap nhat mat khau de bao mat tai khoan
                     </p>
                   </div>
                 </div>
-                
+
                 <form onSubmit={handlePasswordChange} className="space-y-6">
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <FaLock className="text-red-500" />
-                      Mật khẩu hiện tại
+                      Mat khau hien tai
                     </label>
                     <div className="relative">
                       <input
@@ -757,7 +706,7 @@ function HoSoNguoiDung() {
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
                         className="w-full px-4 py-3 pl-12 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
-                        placeholder="Nhập mật khẩu hiện tại"
+                        placeholder="Nhap mat khau hien tai"
                       />
                       <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <button
@@ -769,11 +718,11 @@ function HoSoNguoiDung() {
                       </button>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <FaLock className="text-orange-500" />
-                      Mật khẩu mới
+                      Mat khau moi
                     </label>
                     <div className="relative">
                       <input
@@ -781,7 +730,7 @@ function HoSoNguoiDung() {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         className="w-full px-4 py-3 pl-12 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
-                        placeholder="Nhập mật khẩu mới"
+                        placeholder="Nhap mat khau moi"
                       />
                       <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <button
@@ -793,11 +742,11 @@ function HoSoNguoiDung() {
                       </button>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <FaLock className="text-yellow-500" />
-                      Xác nhận mật khẩu mới
+                      Xac nhan mat khau moi
                     </label>
                     <div className="relative">
                       <input
@@ -805,7 +754,7 @@ function HoSoNguoiDung() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         className="w-full px-4 py-3 pl-12 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
-                        placeholder="Nhập lại mật khẩu mới"
+                        placeholder="Nhap lai mat khau moi"
                       />
                       <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <button
@@ -817,23 +766,21 @@ function HoSoNguoiDung() {
                       </button>
                     </div>
                   </div>
-                  
-                  <motion.button
+
+                  <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-xl hover:from-red-600 hover:to-orange-700 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-xl hover:from-red-600 hover:to-orange-700 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {loading ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
                     ) : (
                       <>
                         <FaSave />
-                        Cập nhật mật khẩu
+                        Cap nhat mat khau
                       </>
                     )}
-                  </motion.button>
+                  </button>
                 </form>
               </div>
             </motion.div>
@@ -850,7 +797,7 @@ function HoSoNguoiDung() {
             exit="exit"
             className="relative overflow-hidden bg-gradient-to-br from-white via-orange-50 to-red-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 dark:from-orange-500/10 dark:to-red-500/10"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 dark:from-orange-500/10 dark:to-red-500/10" />
             <div className="relative">
               <DeviceManager />
             </div>
@@ -867,7 +814,7 @@ function HoSoNguoiDung() {
             exit="exit"
             className="relative overflow-hidden bg-gradient-to-br from-white via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 dark:from-purple-500/10 dark:to-pink-500/10"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 dark:from-purple-500/10 dark:to-pink-500/10" />
             <div className="relative">
               <ActivityLog />
             </div>
@@ -880,37 +827,37 @@ function HoSoNguoiDung() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 py-8"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header with enhanced design */}
-        <motion.div 
+        {/* Header */}
+        <motion.div
           variants={itemVariants}
           className="mb-12 text-center"
         >
-          <motion.h1 
+          <motion.h1
             className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Chỉnh sửa hồ sơ
+            Chinh sua ho so
           </motion.h1>
-          <motion.p 
+          <motion.p
             className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Quản lý thông tin cá nhân và cài đặt tài khoản của bạn với giao diện hiện đại
+            Quan ly thong tin ca nhan va cai dat tai khoan cua ban voi giao dien hien dai
           </motion.p>
         </motion.div>
 
-        {/* Messages with enhanced design */}
+        {/* Messages */}
         <AnimatePresence>
           {message && (
             <motion.div
@@ -941,25 +888,23 @@ function HoSoNguoiDung() {
           )}
         </AnimatePresence>
 
-        {/* Tab navigation with enhanced design */}
-        <motion.div 
+        {/* Tab navigation */}
+        <motion.div
           variants={itemVariants}
           className="relative overflow-hidden bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 mb-8 backdrop-blur-sm"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-500/10 dark:via-purple-500/10 dark:to-pink-500/10"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-500/10 dark:via-purple-500/10 dark:to-pink-500/10" />
           <div className="relative border-b border-gray-200/50 dark:border-gray-700/50">
             <nav className="flex overflow-x-auto">
               {tabs.map((tab, index) => (
-                <motion.button
+                <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex-1 min-w-0 py-6 px-6 font-semibold text-sm flex flex-col items-center gap-3 transition-all duration-300 ${
+                  className={`relative flex-1 min-w-0 py-6 px-6 font-semibold text-sm flex flex-col items-center gap-3 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${
                     activeTab === tab.id
                       ? 'text-white'
                       : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -979,21 +924,21 @@ function HoSoNguoiDung() {
                     <div className="text-center">
                       <div className="font-semibold">{tab.label}</div>
                       <div className={`text-xs mt-1 ${
-                        activeTab === tab.id 
-                          ? 'text-white/80' 
+                        activeTab === tab.id
+                          ? 'text-white/80'
                           : 'text-gray-400 dark:text-gray-500'
                       }`}>
                         {tab.description}
                       </div>
                     </div>
                   </div>
-                </motion.button>
+                </button>
               ))}
             </nav>
           </div>
         </motion.div>
 
-        {/* Tab content with enhanced animations */}
+        {/* Tab content */}
         <AnimatePresence mode="wait">
           {renderTabContent()}
         </AnimatePresence>
@@ -1002,4 +947,4 @@ function HoSoNguoiDung() {
   );
 }
 
-export default HoSoNguoiDung; 
+export default HoSoNguoiDung;

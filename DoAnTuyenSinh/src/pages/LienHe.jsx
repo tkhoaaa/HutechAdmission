@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaMapMarkerAlt,
@@ -18,19 +18,16 @@ import {
   FaGlobe,
   FaHeadset,
   FaCheckCircle,
-  FaMoon,
-  FaSun,
   FaBuilding,
   FaUsers,
-  FaAward
+  FaAward,
+  FaSpinner,
 } from "react-icons/fa";
-import { useDarkMode } from "../contexts/DarkModeContext";
 import SEO from "../components/SEO";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
-import { Card } from "../components/ui/Card";
 
-// Enhanced animation variants
+// Entrance animation variants (no infinite loops)
 const ANIMATION_VARIANTS = {
   container: {
     hidden: { opacity: 0 },
@@ -55,112 +52,40 @@ const ANIMATION_VARIANTS = {
         duration: 0.6
       }
     }
-  },
-  float: {
-    y: [0, -15, 0],
-    transition: {
-      duration: 4,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  },
-  pulse: {
-    scale: [1, 1.05, 1],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  },
-  shimmer: {
-    x: ["-100%", "100%"],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "linear"
-    }
-  },
-  glow: {
-    boxShadow: [
-      "0 0 20px rgba(59, 130, 246, 0.3)",
-      "0 0 40px rgba(59, 130, 246, 0.5)",
-      "0 0 20px rgba(59, 130, 246, 0.3)"
-    ],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
   }
 };
 
-// Floating particle component
-const FloatingParticle = ({ delay = 0, size = "small", index = 0 }) => {
-  const { darkMode } = useDarkMode();
-
-  const sizeClasses = {
-    small: "w-1 h-1",
-    medium: "w-2 h-2",
-    large: "w-3 h-3"
-  };
-
-  const xPos = ((index * 7 + 5) % 90) + 5;
-  const yPos = ((index * 11 + 13) % 80) + 10;
-  const duration = 3 + (index * 0.3) % 3;
-
-  return (
-    <motion.div
-      className={`absolute rounded-full ${sizeClasses[size]} ${
-        darkMode ? 'bg-blue-400/20' : 'bg-blue-500/10'
-      }`}
-      initial={{
-        x: xPos,
-        y: yPos + 10,
-        opacity: 0
-      }}
-      animate={{
-        y: -10,
-        opacity: [0, 1, 0],
-        scale: [0, 1, 0]
-      }}
-      transition={{
-        duration: duration,
-        delay: delay,
-        repeat: Infinity,
-        ease: "linear"
-      }}
-    />
-  );
-};
+// Static particle data (deterministic, no Math.random)
+const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
+  id: i,
+  delay: ((i * 17 + 3) % 50) / 10,
+  size: ["small", "medium", "large"][i % 3]
+}));
 
 const contactInfo = [
   {
     icon: FaMapMarkerAlt,
     title: "Địa chỉ",
     content: "475A Điện Biên Phủ, P.25, Q.Bình Thạnh, TP.HCM",
-    color: "from-red-500 to-pink-500",
-    darkColor: "from-red-600 to-pink-600"
+    color: "from-red-500 to-pink-500"
   },
   {
     icon: FaPhone,
     title: "Điện thoại",
     content: "028.5445.7777",
-    color: "from-green-500 to-emerald-500",
-    darkColor: "from-green-600 to-emerald-600"
+    color: "from-green-500 to-emerald-500"
   },
   {
     icon: FaEnvelope,
     title: "Email",
     content: "tuyensinh@hutech.edu.vn",
-    color: "from-blue-500 to-indigo-500",
-    darkColor: "from-blue-600 to-indigo-600"
+    color: "from-blue-500 to-indigo-500"
   },
   {
     icon: FaClock,
     title: "Giờ làm việc",
     content: "Thứ 2 - Thứ 6: 7:30 - 17:00",
-    color: "from-purple-500 to-pink-500",
-    darkColor: "from-purple-600 to-pink-600"
+    color: "from-purple-500 to-pink-500"
   },
 ];
 
@@ -192,7 +117,6 @@ const socialLinks = [
 ];
 
 function LienHe() {
-  const { darkMode, toggleDarkMode } = useDarkMode();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -203,17 +127,6 @@ function LienHe() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [particles, setParticles] = useState([]);
-
-  // Generate floating particles
-  useEffect(() => {
-    const newParticles = Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      delay: Math.random() * 5,
-      size: ["small", "medium", "large"][Math.floor(Math.random() * 3)]
-    }));
-    setParticles(newParticles);
-  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -225,7 +138,6 @@ function LienHe() {
     setSuccess("");
     setError("");
 
-    // Simulate form submission
     setTimeout(() => {
       setSuccess(
         "Tin nhắn của bạn đã được gửi thành công! Chúng tôi sẽ phản hồi trong thời gian sớm nhất."
@@ -244,52 +156,32 @@ function LienHe() {
         canonical="/lien-he"
       />
 
-      <div className={`min-h-screen relative overflow-hidden transition-all duration-500 ${
-        darkMode 
-          ? 'bg-gradient-to-br from-gray-900 via-blue-900/10 to-purple-900/10' 
-          : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'
-      }`}>
-        {/* Animated background particles */}
+      <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 transition-all duration-500">
+        {/* Animated background particles - CSS-driven */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {particles.map((particle, i) => (
-            <FloatingParticle
+          {PARTICLES.map((particle) => (
+            <div
               key={particle.id}
-              delay={particle.delay}
-              size={particle.size}
-              index={i}
+              className={`absolute rounded-full animate-particle-rise ${
+                particle.size === "small" ? "w-1 h-1" : particle.size === "medium" ? "w-2 h-2" : "w-3 h-3"
+              } bg-blue-500/10 dark:bg-blue-400/20`}
+              style={{
+                left: `${((particle.id * 7 + 5) % 90) + 5}%`,
+                animationDelay: `${particle.delay}s`,
+                animationDuration: `${3 + (particle.id * 0.3) % 3}s`,
+              }}
             />
           ))}
         </div>
 
-        {/* Floating geometric shapes */}
+        {/* Floating geometric shapes - CSS-driven */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className={`absolute top-20 left-10 w-40 h-40 rounded-full ${
-              darkMode ? 'bg-blue-500/5' : 'bg-blue-200/20'
-            }`}
-            animate={ANIMATION_VARIANTS.float}
-          />
-          <motion.div
-            className={`absolute top-60 right-20 w-32 h-32 rounded-full ${
-              darkMode ? 'bg-purple-500/5' : 'bg-purple-200/20'
-            }`}
-            animate={{
-              ...ANIMATION_VARIANTS.float,
-              transition: { ...ANIMATION_VARIANTS.float.transition, delay: 1.5 }
-            }}
-          />
-          <motion.div
-            className={`absolute bottom-40 left-1/3 w-24 h-24 rounded-full ${
-              darkMode ? 'bg-emerald-500/5' : 'bg-emerald-200/20'
-            }`}
-            animate={{
-              ...ANIMATION_VARIANTS.float,
-              transition: { ...ANIMATION_VARIANTS.float.transition, delay: 3 }
-            }}
-          />
+          <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-blue-200/20 dark:bg-blue-500/5 animate-float" />
+          <div className="absolute top-60 right-20 w-32 h-32 rounded-full bg-purple-200/20 dark:bg-purple-500/5 animate-float" style={{ animationDelay: "1.5s" }} />
+          <div className="absolute bottom-40 left-1/3 w-24 h-24 rounded-full bg-emerald-200/20 dark:bg-emerald-500/5 animate-float" style={{ animationDelay: "3s" }} />
         </div>
 
-        {/* Enhanced Hero Section */}
+        {/* Hero Section */}
         <motion.section
           initial="hidden"
           animate="visible"
@@ -299,44 +191,28 @@ function LienHe() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div variants={ANIMATION_VARIANTS.item} className="text-center">
               {/* Animated icon */}
-              <motion.div 
-                className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 relative ${
-                  darkMode 
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600' 
-                    : 'bg-gradient-to-r from-blue-500 to-purple-500'
-                } shadow-2xl`}
-                animate={ANIMATION_VARIANTS.pulse}
-              >
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 relative bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-600 dark:to-purple-600 shadow-2xl animate-float-slow">
                 <FaEnvelope className="text-4xl text-white" />
-                <motion.div
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30"
-                  animate={ANIMATION_VARIANTS.pulse}
-                />
-              </motion.div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30 animate-pulse" />
+              </div>
 
               {/* Support badge */}
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.3, type: "spring", stiffness: 150 }}
-                className={`inline-flex items-center gap-2 px-6 py-3 rounded-full mb-8 ${
-                  darkMode 
-                    ? 'bg-emerald-900/30 text-emerald-300 border border-emerald-700' 
-                    : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                } shadow-lg`}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full mb-8 bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700 shadow-lg"
               >
-                <motion.div animate={ANIMATION_VARIANTS.pulse}>
+                <div className="animate-pulse">
                   <FaHeadset className="text-emerald-500" />
-                </motion.div>
+                </div>
                 <span className="font-semibold">Hỗ trợ 24/7</span>
                 <FaStar className="text-yellow-500" />
               </motion.div>
 
               {/* Main title */}
-              <motion.h1 
-                className={`text-5xl md:text-7xl font-bold mb-6 ${
-                  darkMode ? 'text-white' : 'text-gray-900'
-                }`}
+              <motion.h1
+                className="text-5xl md:text-7xl font-bold mb-6 text-gray-900 dark:text-white"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
@@ -347,10 +223,8 @@ function LienHe() {
               </motion.h1>
 
               {/* Subtitle */}
-              <motion.p 
-                className={`text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed mb-8 ${
-                  darkMode ? 'text-gray-100' : 'text-gray-600'
-                }`}
+              <motion.p
+                className="text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed mb-8 text-gray-600 dark:text-gray-100"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7, duration: 0.8 }}
@@ -372,51 +246,28 @@ function LienHe() {
                 ].map((stat, index) => (
                   <motion.div
                     key={index}
-                    className={`flex items-center gap-3 px-6 py-3 rounded-xl ${
-                      darkMode 
-                        ? 'bg-gray-800/50 border border-gray-700' 
-                        : 'bg-white/80 border border-gray-200'
-                    } backdrop-blur-sm shadow-lg`}
+                    className="flex items-center gap-3 px-6 py-3 rounded-xl bg-white/80 border border-gray-200 dark:bg-gray-800/50 dark:border-gray-700 backdrop-blur-sm shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-200"
                     whileHover={{ scale: 1.05, y: -2 }}
-                    animate={index === 1 ? ANIMATION_VARIANTS.pulse : {}}
+                    animate={index === 1 ? { scale: [1, 1.05, 1] } : {}}
+                    transition={index === 1 ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
                   >
                     <stat.icon className="text-blue-500 text-xl" />
                     <div>
-                      <div className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      <div className="font-bold text-lg text-gray-900 dark:text-white">
                         {stat.number}
                       </div>
-                      <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         {stat.label}
                       </div>
                     </div>
                   </motion.div>
                 ))}
               </motion.div>
-
-              {/* Dark mode toggle */}
-              <motion.button
-                onClick={toggleDarkMode}
-                className={`p-4 rounded-full transition-all duration-300 ${
-                  darkMode 
-                    ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' 
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                } shadow-lg hover:shadow-xl`}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                title={darkMode ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-              >
-                <motion.div
-                  animate={{ rotate: darkMode ? 180 : 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {darkMode ? <FaSun className="text-2xl" /> : <FaMoon className="text-2xl" />}
-                </motion.div>
-              </motion.button>
             </motion.div>
           </div>
         </motion.section>
 
-        {/* Enhanced Contact Info */}
+        {/* Contact Info */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -430,14 +281,10 @@ function LienHe() {
               transition={{ delay: 0.4 }}
               className="text-center mb-12"
             >
-              <h2 className={`text-4xl font-bold mb-4 ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
                 Thông tin liên hệ
               </h2>
-              <p className={`text-xl max-w-3xl mx-auto ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
+              <p className="text-xl max-w-3xl mx-auto text-gray-600 dark:text-gray-300">
                 Hãy liên hệ với chúng tôi qua các kênh sau để được hỗ trợ tốt nhất
               </p>
             </motion.div>
@@ -454,58 +301,37 @@ function LienHe() {
                   variants={ANIMATION_VARIANTS.item}
                   className="group"
                 >
-                  <Card 
-                    variant="glass" 
-                    className="h-full backdrop-blur-xl border-white/20 dark:border-gray-700/30 shadow-2xl overflow-hidden"
-                    hover={true}
-                    shimmer={true}
-                  >
-                    <Card.Content className="p-8 text-center relative">
+                  <div className="h-full rounded-xl bg-white/10 dark:bg-gray-800/30 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div className="p-8 text-center relative">
                       {/* Gradient background */}
-                      <motion.div
-                        className={`absolute inset-0 bg-gradient-to-r ${
-                          darkMode ? info.darkColor : info.color
-                        } opacity-10 rounded-lg`}
-                        animate={ANIMATION_VARIANTS.glow}
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-r ${info.color} opacity-10 rounded-lg animate-pulse-glow`}
                       />
-                      
-                      <motion.div
-                        className={`relative z-10 w-16 h-16 mx-auto mb-6 rounded-xl flex items-center justify-center bg-gradient-to-r ${
-                          darkMode ? info.darkColor : info.color
-                        } shadow-lg`}
-                        animate={ANIMATION_VARIANTS.pulse}
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <info.icon className="text-2xl text-white" />
-                      </motion.div>
 
-                      <h3 className={`text-xl font-bold mb-3 ${
-                        darkMode ? 'text-white' : 'text-gray-900'
-                      }`}>
+                      <div className="relative z-10 w-16 h-16 mx-auto mb-6 rounded-xl flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 shadow-lg animate-float-slow">
+                        <info.icon className="text-2xl text-white" />
+                      </div>
+
+                      <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                         {info.title}
                       </h3>
-                      <p className={`leading-relaxed ${
-                        darkMode ? 'text-gray-300' : 'text-gray-600'
-                      }`}>
+                      <p className="leading-relaxed text-gray-600 dark:text-gray-300">
                         {info.content}
                       </p>
-                    </Card.Content>
-                  </Card>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
 
-            {/* Enhanced Social Media */}
+            {/* Social Media */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5 }}
               className="text-center mb-16"
             >
-              <h3 className={`text-3xl font-bold mb-8 ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h3 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
                 Theo dõi chúng tôi
               </h3>
               <div className="flex justify-center gap-6">
@@ -515,19 +341,14 @@ function LienHe() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`relative w-16 h-16 rounded-full flex items-center justify-center text-white shadow-xl overflow-hidden group`}
-                    whileHover={{ scale: 1.1, y: -5 }}
-                    whileTap={{ scale: 0.9 }}
+                    className="relative w-16 h-16 rounded-full flex items-center justify-center text-white shadow-xl overflow-hidden group hover:scale-110 hover:-translate-y-1 transition-all duration-200"
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.6 + index * 0.1 }}
                   >
                     <div className={`absolute inset-0 bg-gradient-to-r ${social.color}`} />
-                    <motion.div
-                      className="absolute inset-0 bg-white/20"
-                      initial={{ scale: 0 }}
-                      whileHover={{ scale: 1 }}
-                      transition={{ duration: 0.3 }}
+                    <div
+                      className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-300"
                     />
                     <social.icon className="text-2xl relative z-10" />
                   </motion.a>
@@ -537,7 +358,7 @@ function LienHe() {
           </div>
         </motion.section>
 
-        {/* Enhanced Contact Form */}
+        {/* Contact Form */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -551,14 +372,10 @@ function LienHe() {
               transition={{ delay: 0.7 }}
               className="text-center mb-12"
             >
-              <h2 className={`text-4xl font-bold mb-4 ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
                 Gửi tin nhắn cho chúng tôi
               </h2>
-              <p className={`text-xl ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
+              <p className="text-xl text-gray-600 dark:text-gray-300">
                 Hãy để lại thông tin và tin nhắn của bạn, chúng tôi sẽ phản hồi trong thời gian sớm nhất
               </p>
             </motion.div>
@@ -568,21 +385,12 @@ function LienHe() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              <Card 
-                variant="glass" 
-                className="backdrop-blur-xl border-white/20 dark:border-gray-700/30 shadow-2xl"
-                hover={true}
-                shimmer={true}
-              >
-                <Card.Content className="p-12">
+              <div className="rounded-xl bg-white/10 dark:bg-gray-800/30 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-2xl">
+                <div className="p-12">
                   <AnimatePresence>
                     {success && (
                       <motion.div
-                        className={`mb-8 p-6 rounded-xl border ${
-                          darkMode 
-                            ? 'bg-emerald-900/30 border-emerald-700 text-emerald-300' 
-                            : 'bg-emerald-100 border-emerald-400 text-emerald-700'
-                        } flex items-center gap-3`}
+                        className="mb-8 p-6 rounded-xl border flex items-center gap-3 bg-emerald-100 border-emerald-400 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-300"
                         initial={{ opacity: 0, scale: 0.9, y: -20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: -20 }}
@@ -593,11 +401,7 @@ function LienHe() {
                     )}
                     {error && (
                       <motion.div
-                        className={`mb-8 p-6 rounded-xl border ${
-                          darkMode 
-                            ? 'bg-red-900/30 border-red-700 text-red-300' 
-                            : 'bg-red-100 border-red-400 text-red-700'
-                        }`}
+                        className="mb-8 p-6 rounded-xl border bg-red-100 border-red-400 text-red-700 dark:bg-red-900/30 dark:border-red-700 dark:text-red-300"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 20 }}
@@ -690,9 +494,7 @@ function LienHe() {
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 1.3 }}
                     >
-                      <label className={`block text-lg font-semibold mb-3 ${
-                        darkMode ? 'text-white' : 'text-gray-900'
-                      }`}>
+                      <label className="block text-lg font-semibold mb-3 text-gray-900 dark:text-white">
                         Tin nhắn
                       </label>
                       <textarea
@@ -702,11 +504,7 @@ function LienHe() {
                         placeholder="Nhập nội dung tin nhắn..."
                         required
                         rows="6"
-                        className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-300 text-lg ${
-                          darkMode 
-                            ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400' 
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                        }`}
+                        className={`w-full px-6 py-4 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-300 text-lg bg-white border-gray-300 text-gray-900 placeholder-gray-500 dark:bg-gray-800/50 dark:border-gray-600 dark:text-white dark:placeholder-gray-400`}
                       />
                     </motion.div>
 
@@ -716,31 +514,32 @@ function LienHe() {
                       transition={{ delay: 1.4 }}
                       className="text-center"
                     >
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-xl px-12 py-4 shadow-xl hover:shadow-2xl transition-all duration-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-xl hover:scale-105 active:scale-95"
                       >
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          size="lg"
-                          loading={loading}
-                          disabled={loading}
-                          leftIcon={loading ? <FaRocket className="animate-spin" /> : <FaPaperPlane />}
-                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-xl px-12 py-4 shadow-xl hover:shadow-2xl"
-                        >
-                          {loading ? "Đang gửi..." : "Gửi tin nhắn"}
-                        </Button>
-                      </motion.div>
+                        {loading ? (
+                          <>
+                            <FaSpinner className="text-xl animate-spin" />
+                            Đang gửi...
+                          </>
+                        ) : (
+                          <>
+                            <FaPaperPlane className="text-xl" />
+                            Gửi tin nhắn
+                          </>
+                        )}
+                      </button>
                     </motion.div>
                   </form>
-                </Card.Content>
-              </Card>
+                </div>
+              </div>
             </motion.div>
           </div>
         </motion.section>
 
-        {/* Enhanced Map Section */}
+        {/* Map Section */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -754,14 +553,10 @@ function LienHe() {
               transition={{ delay: 0.8 }}
               className="text-center mb-12"
             >
-              <h2 className={`text-4xl font-bold mb-4 ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
                 Vị trí của chúng tôi
               </h2>
-              <p className={`text-xl ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
+              <p className="text-xl text-gray-600 dark:text-gray-300">
                 Ghé thăm cơ sở chính của HUTECH tại TP.HCM
               </p>
             </motion.div>
@@ -771,12 +566,8 @@ function LienHe() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.9 }}
             >
-              <Card 
-                variant="glass" 
-                className="backdrop-blur-xl border-white/20 dark:border-gray-700/30 shadow-2xl overflow-hidden"
-                hover={true}
-              >
-                <Card.Content className="p-0">
+              <div className="rounded-xl bg-white/10 dark:bg-gray-800/30 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div className="p-0">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.484123456789!2d106.709123456789!3d10.80123456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e640d01%3A0xf89fba644b4c0b8!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBIdXRlY2g!5e0!3m2!1svi!2s!4v1234567890"
                     width="100%"
@@ -787,13 +578,13 @@ function LienHe() {
                     referrerPolicy="no-referrer-when-downgrade"
                     className="w-full rounded-lg"
                   ></iframe>
-                </Card.Content>
-              </Card>
+                </div>
+              </div>
             </motion.div>
           </div>
         </motion.section>
 
-        {/* Enhanced CTA Section */}
+        {/* CTA Section */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -801,24 +592,12 @@ function LienHe() {
           className="py-20"
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Card 
-              variant="gradient" 
-              className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 text-white shadow-2xl overflow-hidden"
-            >
-              <Card.Content className="relative p-12 text-center">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 text-white shadow-2xl rounded-xl overflow-hidden">
+              <div className="relative p-12 text-center">
                 {/* Floating elements */}
                 <div className="absolute inset-0 overflow-hidden">
-                  <motion.div
-                    className="absolute top-4 left-4 w-20 h-20 bg-white/10 rounded-full"
-                    animate={ANIMATION_VARIANTS.float}
-                  />
-                  <motion.div
-                    className="absolute bottom-4 right-4 w-16 h-16 bg-white/10 rounded-full"
-                    animate={{
-                      ...ANIMATION_VARIANTS.float,
-                      transition: { ...ANIMATION_VARIANTS.float.transition, delay: 1 }
-                    }}
-                  />
+                  <div className="absolute top-4 left-4 w-20 h-20 bg-white/10 rounded-full animate-float" />
+                  <div className="absolute bottom-4 right-4 w-16 h-16 bg-white/10 rounded-full animate-float" style={{ animationDelay: "1s" }} />
                 </div>
 
                 <motion.div
@@ -827,12 +606,9 @@ function LienHe() {
                   transition={{ delay: 0.9, type: "spring", stiffness: 150 }}
                   className="relative z-10"
                 >
-                  <motion.div
-                    animate={ANIMATION_VARIANTS.pulse}
-                    className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-8"
-                  >
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-8 animate-float-slow">
                     <FaHeart className="text-4xl text-red-300" />
-                  </motion.div>
+                  </div>
 
                   <h2 className="text-4xl font-bold mb-4">
                     Sẵn sàng bắt đầu hành trình?
@@ -842,46 +618,31 @@ function LienHe() {
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                    <motion.div
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                    <a
+                      href="tel:02854457777"
+                      className="inline-flex items-center justify-center gap-2 bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl rounded-lg px-8 py-4 transition-all duration-200 hover:scale-105 active:scale-95"
                     >
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        leftIcon={<FaPhone />}
-                        className="bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl"
-                      >
-                        Gọi ngay: 028.5445.7777
-                      </Button>
-                    </motion.div>
-
-                    <motion.div
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      <FaPhone />
+                      Gọi ngay: 028.5445.7777
+                    </a>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="inline-flex items-center justify-center gap-2 bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl text-lg px-8 py-4 dark:border-white/30 dark:bg-white/20 dark:text-white"
                     >
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        leftIcon={<FaGlobe />}
-                        className="bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl"
-                      >
-                        Tham quan cơ sở
-                      </Button>
-                    </motion.div>
+                      <FaGlobe />
+                      Tham quan cơ sở
+                    </Button>
                   </div>
 
-                  <motion.div
-                    className="mt-8 flex items-center justify-center gap-2 text-white/80"
-                    animate={ANIMATION_VARIANTS.pulse}
-                  >
+                  <div className="mt-8 flex items-center justify-center gap-2 text-white/80 animate-pulse">
                     <FaStar className="text-yellow-300" />
                     <span>Tư vấn miễn phí - Hỗ trợ tận tâm</span>
                     <FaStar className="text-yellow-300" />
-                  </motion.div>
+                  </div>
                 </motion.div>
-              </Card.Content>
-            </Card>
+              </div>
+            </div>
           </div>
         </motion.section>
       </div>

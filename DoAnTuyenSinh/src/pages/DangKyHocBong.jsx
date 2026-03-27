@@ -7,7 +7,6 @@ import {
   FaPhone,
   FaGraduationCap,
   FaCalendar,
-  FaVenusMars,
   FaIdCard,
   FaMapMarkerAlt,
   FaStar,
@@ -88,7 +87,7 @@ function DangKyHocBong() {
         }
       );
 
-      setSuccess("Nộp đơn học bổng thành công!");
+      setSuccess("Nop don hoc bong thanh cong!");
       setForm({
         ho_ten: "",
         ngay_sinh: "",
@@ -114,7 +113,7 @@ function DangKyHocBong() {
       if (Array.isArray(errors) && errors.length > 0) {
         setError(errors.map((e) => e.msg).join(" | "));
       } else {
-        setError(err.response?.data?.message || "Nộp đơn thất bại!");
+        setError(err.response?.data?.message || "Nop don that bai!");
       }
     }
     setLoading(false);
@@ -122,7 +121,7 @@ function DangKyHocBong() {
 
   const loadApplications = async () => {
     if (!user?.email) {
-      setError("Vui lòng đăng nhập để xem danh sách đơn");
+      setError("Vui long dang nhap de xem danh sach don");
       return;
     }
 
@@ -134,7 +133,7 @@ function DangKyHocBong() {
       setApplications(res.data.data || []);
     } catch (err) {
       setError(
-        "Không thể tải danh sách đơn: " +
+        "Khong the tai danh sach don: " +
           (err.response?.data?.message || err.message)
       );
     }
@@ -148,76 +147,35 @@ function DangKyHocBong() {
   return (
     <>
       <SEO
-        title="Đăng ký học bổng - HUTECH"
-        description="Đăng ký học bổng HUTECH 2025 - Học bổng khuyến khích học tập, tài năng, hỗ trợ sinh viên nghèo. Nộp đơn trực tuyến đơn giản."
-        keywords="đăng ký học bổng, học bổng HUTECH, học bổng tài năng, học bổng khuyến khích"
+        title="Dang ky hoc bong - HUTECH"
+        description="Dang ky hoc bong HUTECH 2025 - Hoc bong khuyen khich hoc tap, tai nang, ho tro sinh vien ngheo. Nop don truc tuyen don gian."
+        keywords="dang ky hoc bong, hoc bong HUTECH, hoc bong tai nang, hoc bong khuyen khich"
         canonical="/dang-ky-hoc-bong"
       />
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
-        {/* Animated Background Elements */}
+        {/* Animated Background Elements - CSS based */}
         <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 dark:from-blue-600/10 dark:to-purple-800/10 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 180, 360],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-          <motion.div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/20 dark:from-emerald-600/10 dark:to-cyan-800/10 rounded-full blur-3xl"
-            animate={{
-              scale: [1.2, 1, 1.2],
-              rotate: [360, 180, 0],
-            }}
-            transition={{
-              duration: 25,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-          <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-pink-400/10 to-orange-600/10 dark:from-pink-600/5 dark:to-orange-800/5 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 dark:from-blue-600/10 dark:to-purple-800/10 rounded-full blur-3xl animate-spin-slow-reverse" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/20 dark:from-emerald-600/10 dark:to-cyan-800/10 rounded-full blur-3xl animate-spin-slow" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-pink-400/10 to-orange-600/10 dark:from-pink-600/5 dark:to-orange-800/5 rounded-full blur-3xl animate-pulse-soft" />
         </div>
 
-        {/* Floating Particles */}
+        {/* Floating Particles - CSS based */}
         <div className="absolute inset-0">
           {[...Array(20)].map((_, i) => {
             const leftPos = ((i * 7 + 5) % 90) + 5;
             const topPos = ((i * 11 + 13) % 80) + 10;
-            const duration = 3 + (i * 0.25) % 2.5;
-            const delay = i * 0.15;
+            const delay = (i * 0.5) % 5;
             return (
-              <motion.div
+              <div
                 key={i}
-                className="absolute w-2 h-2 bg-blue-400/30 dark:bg-blue-600/20 rounded-full"
+                className="absolute w-2 h-2 bg-blue-400/30 dark:bg-blue-600/20 rounded-full animate-particle-rise"
                 style={{
                   left: `${leftPos}%`,
                   top: `${topPos}%`,
-                }}
-                animate={{
-                  y: [-20, -100, -20],
-                  opacity: [0, 1, 0],
-                }}
-                transition={{
-                  duration: duration,
-                  repeat: Infinity,
-                  delay: delay,
+                  animationDelay: `${delay}s`,
+                  animationDuration: `${3 + (i * 0.25) % 2.5}s`,
                 }}
               />
             );
@@ -243,7 +201,7 @@ function DangKyHocBong() {
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
                 className="relative w-24 h-24 mx-auto mb-8"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full animate-pulse-soft" />
                 <div className="absolute inset-2 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center">
                   <FaTrophy className="text-yellow-500 text-3xl" />
                 </div>
@@ -255,13 +213,10 @@ function DangKyHocBong() {
                 transition={{ delay: 0.5, duration: 0.6 }}
                 className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/50 text-blue-700 dark:text-blue-300 px-6 py-3 rounded-full text-sm font-semibold mb-8 shadow-lg"
               >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                >
+                <div className="animate-spin-slow">
                   <FaStar className="text-yellow-500" />
-                </motion.div>
-                Học bổng lên đến 100% học phí
+                </div>
+                Hoc bong len den 100% hoc phi
               </motion.div>
 
               <motion.h1
@@ -270,19 +225,19 @@ function DangKyHocBong() {
                 transition={{ delay: 0.7, duration: 0.8 }}
                 className="text-6xl md:text-7xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6 leading-tight"
               >
-                Đăng Ký Học Bổng
+                Dang Ky Hoc Bong
               </motion.h1>
-              
+
               <motion.p
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.9, duration: 0.8 }}
                 className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium"
               >
-                Mở ra cơ hội học tập với học bổng giá trị từ HUTECH
+                Mo ra co hoi hoc tap voi hoc bong gia tri tu HUTECH
                 <br />
                 <span className="text-blue-600 dark:text-blue-400 font-semibold">
-                  Hỗ trợ tài chính cho sinh viên xuất sắc và có hoàn cảnh khó khăn
+                  Ho tro tai chinh cho sinh vien xuat sac va co hoan canh kho khan
                 </span>
               </motion.p>
             </motion.div>
@@ -318,10 +273,10 @@ function DangKyHocBong() {
                     className="text-center mb-8"
                   >
                     <h2 className="text-4xl font-bold text-white mb-3">
-                      Hệ Thống Học Bổng HUTECH
+                      He Thong Hoc Bong HUTECH
                     </h2>
                     <p className="text-white/90 text-lg">
-                      Chọn dịch vụ bạn muốn sử dụng
+                      Chon dich vu ban muon su dung
                     </p>
                   </motion.div>
 
@@ -333,22 +288,16 @@ function DangKyHocBong() {
                   >
                     <motion.button
                       onClick={() => setActiveTab("register")}
-                      className={`relative px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
+                      className={`relative px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
                         activeTab === "register"
                           ? "bg-white text-blue-600 shadow-xl scale-105"
                           : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                       }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                     >
-                      <motion.div
-                        className="flex items-center gap-3"
-                        animate={activeTab === "register" ? { x: [0, 5, 0] } : {}}
-                        transition={{ duration: 0.5 }}
-                      >
+                      <div className="flex items-center gap-3">
                         <FaPlus className="text-xl" />
-                        Nộp đơn mới
-                      </motion.div>
+                        Nop don moi
+                      </div>
                       {activeTab === "register" && (
                         <motion.div
                           className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-2xl"
@@ -358,28 +307,22 @@ function DangKyHocBong() {
                         />
                       )}
                     </motion.button>
-                    
+
                     <motion.button
                       onClick={() => {
                         setActiveTab("list");
                         loadApplications();
                       }}
-                      className={`relative px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
+                      className={`relative px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
                         activeTab === "list"
                           ? "bg-white text-blue-600 shadow-xl scale-105"
                           : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                       }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                     >
-                      <motion.div
-                        className="flex items-center gap-3"
-                        animate={activeTab === "list" ? { x: [0, 5, 0] } : {}}
-                        transition={{ duration: 0.5 }}
-                      >
+                      <div className="flex items-center gap-3">
                         <FaList className="text-xl" />
-                        Danh sách đơn đã gửi
-                      </motion.div>
+                        Danh sach don da gui
+                      </div>
                       {activeTab === "list" && (
                         <motion.div
                           className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-2xl"
@@ -396,7 +339,6 @@ function DangKyHocBong() {
                 <div className="p-8">
                   <AnimatePresence mode="wait">
                     {activeTab === "register" ? (
-                      // Form đăng ký học bổng
                       <motion.form
                         key="register"
                         onSubmit={handleSubmit}
@@ -406,36 +348,31 @@ function DangKyHocBong() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.5 }}
                       >
-                        {/* Thông tin cá nhân */}
+                        {/* Thong tin ca nhan */}
                         <motion.div
-                          className="relative bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20 backdrop-blur-sm p-8 rounded-3xl border border-blue-200/50 dark:border-blue-700/30 shadow-lg overflow-hidden"
+                          className="relative bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20 backdrop-blur-sm p-8 rounded-3xl border border-blue-200/50 dark:border-blue-700/30 shadow-lg overflow-hidden hover:scale-[1.01] transition-transform duration-300"
                           initial={{ y: 30, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.1 }}
-                          whileHover={{ scale: 1.01 }}
                         >
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-2xl"></div>
-                          <motion.h3 
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-2xl" />
+                          <motion.h3
                             className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-4"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.2 }}
                           >
-                            <motion.div 
-                              className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg"
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.5 }}
-                            >
+                            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg hover:rotate-360 transition-transform duration-500">
                               <FaUser className="text-white text-xl" />
-                            </motion.div>
-                            Thông tin cá nhân
+                            </div>
+                            Thong tin ca nhan
                           </motion.h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                             <Input
                               name="ho_ten"
                               value={form.ho_ten}
                               onChange={handleChange}
-                              placeholder="Họ và tên"
+                              placeholder="Ho va ten"
                               icon={FaUser}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
@@ -445,14 +382,14 @@ function DangKyHocBong() {
                               type="date"
                               value={form.ngay_sinh}
                               onChange={handleChange}
-                              placeholder="Ngày sinh"
+                              placeholder="Ngay sinh"
                               icon={FaCalendar}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
                             />
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Giới tính *
+                                Gioi tinh *
                               </label>
                               <select
                                 name="gioi_tinh"
@@ -461,9 +398,9 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-blue-200 dark:border-blue-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chọn giới tính</option>
+                                <option value="">Chon gioi tinh</option>
                                 <option value="Nam">Nam</option>
-                                <option value="Nữ">Nữ</option>
+                                <option value="Nu">Nu</option>
                               </select>
                             </div>
                             <Input
@@ -480,7 +417,7 @@ function DangKyHocBong() {
                               type="tel"
                               value={form.phone}
                               onChange={handleChange}
-                              placeholder="Số điện thoại"
+                              placeholder="So dien thoai"
                               icon={FaPhone}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
@@ -500,7 +437,7 @@ function DangKyHocBong() {
                                 name="dia_chi"
                                 value={form.dia_chi}
                                 onChange={handleChange}
-                                placeholder="Địa chỉ"
+                                placeholder="Dia chi"
                                 icon={FaMapMarkerAlt}
                                 required
                                 className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
@@ -509,36 +446,31 @@ function DangKyHocBong() {
                           </div>
                         </motion.div>
 
-                        {/* Thông tin học tập */}
+                        {/* Thong tin hoc tap */}
                         <motion.div
-                          className="relative bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-900/20 dark:to-teal-900/20 backdrop-blur-sm p-8 rounded-3xl border border-emerald-200/50 dark:border-emerald-700/30 shadow-lg overflow-hidden"
+                          className="relative bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-900/20 dark:to-teal-900/20 backdrop-blur-sm p-8 rounded-3xl border border-emerald-200/50 dark:border-emerald-700/30 shadow-lg overflow-hidden hover:scale-[1.01] transition-transform duration-300"
                           initial={{ y: 30, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.2 }}
-                          whileHover={{ scale: 1.01 }}
                         >
-                          <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl"></div>
-                          <motion.h3 
+                          <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl" />
+                          <motion.h3
                             className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-4"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.3 }}
                           >
-                            <motion.div 
-                              className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg"
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.5 }}
-                            >
+                            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg hover:rotate-360 transition-transform duration-500">
                               <FaGraduationCap className="text-white text-xl" />
-                            </motion.div>
-                            Thông tin học tập
+                            </div>
+                            Thong tin hoc tap
                           </motion.h3>
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
                             <Input
                               name="nganh"
                               value={form.nganh}
                               onChange={handleChange}
-                              placeholder="Ngành học"
+                              placeholder="Nganh hoc"
                               icon={FaGraduationCap}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
@@ -547,7 +479,7 @@ function DangKyHocBong() {
                               name="lop"
                               value={form.lop}
                               onChange={handleChange}
-                              placeholder="Lớp"
+                              placeholder="Lop"
                               icon={FaGraduationCap}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
@@ -556,7 +488,7 @@ function DangKyHocBong() {
                               name="khoa"
                               value={form.khoa}
                               onChange={handleChange}
-                              placeholder="Khóa"
+                              placeholder="Khoa"
                               icon={FaGraduationCap}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
@@ -569,14 +501,14 @@ function DangKyHocBong() {
                               max="10"
                               value={form.diem_tb}
                               onChange={handleChange}
-                              placeholder="Điểm trung bình"
+                              placeholder="Diem trung binh"
                               icon={FaStar}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
                             />
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Loại học bổng mong muốn *
+                                Loai hoc bong mong muon *
                               </label>
                               <select
                                 name="hoc_bong"
@@ -585,21 +517,21 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-emerald-200 dark:border-emerald-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chọn loại học bổng</option>
-                                <option value="Học bổng khuyến khích học tập">
-                                  Học bổng khuyến khích học tập
+                                <option value="">Chon loai hoc bong</option>
+                                <option value="Hoc bong khuyen khich hoc tap">
+                                  Hoc bong khuyen khich hoc tap
                                 </option>
-                                <option value="Học bổng tài năng">
-                                  Học bổng tài năng
+                                <option value="Hoc bong tai nang">
+                                  Hoc bong tai nang
                                 </option>
-                                <option value="Học bổng hỗ trợ sinh viên nghèo">
-                                  Học bổng hỗ trợ sinh viên nghèo
+                                <option value="Hoc bong ho tro sinh vien ngheo">
+                                  Hoc bong ho tro sinh vien ngheo
                                 </option>
                               </select>
                             </div>
                             <div className="md:col-span-3">
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Thành tích học tập
+                                Thanh tich hoc tap
                               </label>
                               <textarea
                                 name="thanh_tich"
@@ -607,40 +539,35 @@ function DangKyHocBong() {
                                 onChange={handleChange}
                                 rows="4"
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-emerald-200 dark:border-emerald-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent transition-all duration-300 resize-none text-slate-700 dark:text-slate-300"
-                                placeholder="Mô tả thành tích học tập, giải thưởng..."
+                                placeholder="Mo ta thanh tich hoc tap, giai thuong..."
                               />
                             </div>
                           </div>
                         </motion.div>
 
-                        {/* Hoàn cảnh gia đình */}
+                        {/* Hoan canh gia dinh */}
                         <motion.div
-                          className="relative bg-gradient-to-br from-purple-50/80 to-pink-50/80 dark:from-purple-900/20 dark:to-pink-900/20 backdrop-blur-sm p-8 rounded-3xl border border-purple-200/50 dark:border-purple-700/30 shadow-lg overflow-hidden"
+                          className="relative bg-gradient-to-br from-purple-50/80 to-pink-50/80 dark:from-purple-900/20 dark:to-pink-900/20 backdrop-blur-sm p-8 rounded-3xl border border-purple-200/50 dark:border-purple-700/30 shadow-lg overflow-hidden hover:scale-[1.01] transition-transform duration-300"
                           initial={{ y: 30, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.3 }}
-                          whileHover={{ scale: 1.01 }}
                         >
-                          <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl"></div>
-                          <motion.h3 
+                          <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl" />
+                          <motion.h3
                             className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-4"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.4 }}
                           >
-                            <motion.div 
-                              className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.5 }}
-                            >
+                            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg hover:rotate-360 transition-transform duration-500">
                               <FaUsers className="text-white text-xl" />
-                            </motion.div>
-                            Hoàn cảnh gia đình
+                            </div>
+                            Hoan canh gia dinh
                           </motion.h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Hoàn cảnh kinh tế *
+                                Hoan canh kinh te *
                               </label>
                               <select
                                 name="kinh_te"
@@ -649,10 +576,10 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-purple-200 dark:border-purple-700 rounded-2xl focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chọn hoàn cảnh</option>
-                                <option value="Khó khăn">Khó khăn</option>
-                                <option value="Trung bình">Trung bình</option>
-                                <option value="Khá giả">Khá giả</option>
+                                <option value="">Chon hoan canh</option>
+                                <option value="Kho khan">Kho khan</option>
+                                <option value="Trung binh">Trung binh</option>
+                                <option value="Kha giang">Kha giang</option>
                               </select>
                             </div>
                             <Input
@@ -661,7 +588,7 @@ function DangKyHocBong() {
                               min="1"
                               value={form.so_thanh_vien}
                               onChange={handleChange}
-                              placeholder="Số thành viên trong gia đình"
+                              placeholder="So thanh vien trong gia dinh"
                               icon={FaUsers}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-purple-200 dark:border-purple-700 focus:border-purple-500 dark:focus:border-purple-400"
@@ -669,34 +596,29 @@ function DangKyHocBong() {
                           </div>
                         </motion.div>
 
-                        {/* Lý do và nguồn thông tin */}
+                        {/* Ly do va nguon thong tin */}
                         <motion.div
-                          className="relative bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-900/20 dark:to-red-900/20 backdrop-blur-sm p-8 rounded-3xl border border-orange-200/50 dark:border-orange-700/30 shadow-lg overflow-hidden"
+                          className="relative bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-900/20 dark:to-red-900/20 backdrop-blur-sm p-8 rounded-3xl border border-orange-200/50 dark:border-orange-700/30 shadow-lg overflow-hidden hover:scale-[1.01] transition-transform duration-300"
                           initial={{ y: 30, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.4 }}
-                          whileHover={{ scale: 1.01 }}
                         >
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full blur-2xl"></div>
-                          <motion.h3 
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full blur-2xl" />
+                          <motion.h3
                             className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-4"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.5 }}
                           >
-                            <motion.div 
-                              className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.5 }}
-                            >
+                            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg hover:rotate-360 transition-transform duration-500">
                               <FaTrophy className="text-white text-xl" />
-                            </motion.div>
-                            Thông tin bổ sung
+                            </div>
+                            Thong tin bo sung
                           </motion.h3>
                           <div className="space-y-6 relative z-10">
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Lý do xin học bổng *
+                                Ly do xin hoc bong *
                               </label>
                               <textarea
                                 name="ly_do"
@@ -705,12 +627,12 @@ function DangKyHocBong() {
                                 required
                                 rows="4"
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-orange-200 dark:border-orange-700 rounded-2xl focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-all duration-300 resize-none text-slate-700 dark:text-slate-300"
-                                placeholder="Trình bày lý do xin học bổng..."
+                                placeholder="Trinh bay ly do xin hoc bong..."
                               />
                             </div>
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Nguồn thông tin *
+                                Nguon thong tin *
                               </label>
                               <select
                                 name="nguon_thong_tin"
@@ -719,51 +641,43 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-orange-200 dark:border-orange-700 rounded-2xl focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chọn nguồn thông tin</option>
-                                <option value="Website trường">
-                                  Website trường
+                                <option value="">Chon nguon thong tin</option>
+                                <option value="Website truong">
+                                  Website truong
                                 </option>
-                                <option value="Mạng xã hội">Mạng xã hội</option>
-                                <option value="Bạn bè">Bạn bè</option>
-                                <option value="Thầy cô">Thầy cô</option>
-                                <option value="Khác">Khác</option>
+                                <option value="Mang xa hoi">Mang xa hoi</option>
+                                <option value="Ban be">Ban be</option>
+                                <option value="Thay co">Thay co</option>
+                                <option value="Khac">Khac</option>
                               </select>
                             </div>
                           </div>
                         </motion.div>
 
-                        {/* Upload file minh chứng */}
+                        {/* Upload file minh chung */}
                         <motion.div
-                          className="relative bg-gradient-to-br from-cyan-50/80 to-teal-50/80 dark:from-cyan-900/20 dark:to-teal-900/20 backdrop-blur-sm p-8 rounded-3xl border border-cyan-200/50 dark:border-cyan-700/30 shadow-lg overflow-hidden"
+                          className="relative bg-gradient-to-br from-cyan-50/80 to-teal-50/80 dark:from-cyan-900/20 dark:to-teal-900/20 backdrop-blur-sm p-8 rounded-3xl border border-cyan-200/50 dark:border-cyan-700/30 shadow-lg overflow-hidden hover:scale-[1.01] transition-transform duration-300"
                           initial={{ y: 30, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.5 }}
-                          whileHover={{ scale: 1.01 }}
                         >
-                          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-full blur-2xl"></div>
-                          <motion.h3 
+                          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-full blur-2xl" />
+                          <motion.h3
                             className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-4"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.6 }}
                           >
-                            <motion.div 
-                              className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg"
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.5 }}
-                            >
+                            <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg hover:rotate-360 transition-transform duration-500">
                               <FaFileUpload className="text-white text-xl" />
-                            </motion.div>
-                            File minh chứng (tùy chọn)
+                            </div>
+                            File minh chung (tuy chon)
                           </motion.h3>
                           <div className="relative z-10">
                             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-                              Tải lên file minh chứng (tối đa 5 file)
+                              Tai len file minh chung (toi da 5 file)
                             </label>
-                            <motion.div 
-                              className="border-2 border-dashed border-cyan-300 dark:border-cyan-600 rounded-2xl p-8 text-center hover:border-cyan-400 dark:hover:border-cyan-500 transition-all duration-300 bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm"
-                              whileHover={{ scale: 1.02 }}
-                            >
+                            <div className="border-2 border-dashed border-cyan-300 dark:border-cyan-600 rounded-2xl p-8 text-center hover:border-cyan-400 dark:hover:border-cyan-500 transition-all duration-300 bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm hover:scale-[1.02] transition-transform">
                               <input
                                 type="file"
                                 multiple
@@ -776,21 +690,18 @@ function DangKyHocBong() {
                                 htmlFor="file-upload"
                                 className="cursor-pointer"
                               >
-                                <motion.div
-                                  animate={{ y: [0, -10, 0] }}
-                                  transition={{ duration: 2, repeat: Infinity }}
-                                >
+                                <div className="animate-float">
                                   <FaFileUpload className="text-5xl text-cyan-500 dark:text-cyan-400 mx-auto mb-4" />
-                                </motion.div>
+                                </div>
                                 <p className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                  Chọn file hoặc kéo thả vào đây
+                                  Chon file hoac keo tha vao day
                                 </p>
                                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                                  Chấp nhận: PDF, DOC, DOCX, JPG, PNG (mỗi file
-                                  tối đa 5MB)
+                                  Chap nhan: PDF, DOC, DOCX, JPG, PNG (moi file
+                                  toi da 5MB)
                                 </p>
                               </label>
-                            </motion.div>
+                            </div>
                             {attachments.length > 0 && (
                               <motion.div
                                 className="mt-6"
@@ -798,7 +709,7 @@ function DangKyHocBong() {
                                 animate={{ opacity: 1, y: 0 }}
                               >
                                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                  Files đã chọn:
+                                  Files da chon:
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                   {attachments.map((file, index) => (
@@ -831,23 +742,14 @@ function DangKyHocBong() {
                           <motion.button
                             type="submit"
                             disabled={loading}
-                            className="relative px-12 py-5 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white font-bold text-xl rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden"
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
+                            className="relative px-12 py-5 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white font-bold text-xl rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden hover:scale-105 active:scale-95"
                           >
-                            <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20"
-                              animate={{ x: [-100, 100] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 animate-shimmer-cta" />
                             <div className="relative flex items-center gap-3">
-                              <motion.div
-                                animate={loading ? { rotate: 360 } : {}}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                              >
+                              <div className={loading ? "animate-spin" : ""}>
                                 <FaTrophy className="text-2xl" />
-                              </motion.div>
-                              {loading ? "Đang xử lý..." : "Nộp đơn học bổng"}
+                              </div>
+                              {loading ? "Dang xu ly..." : "Nop don hoc bong"}
                             </div>
                           </motion.button>
                         </motion.div>
@@ -889,7 +791,6 @@ function DangKyHocBong() {
                         </AnimatePresence>
                       </motion.form>
                     ) : (
-                      // Danh sách đơn đã gửi
                       <motion.div
                         key="list"
                         initial={{ opacity: 0, x: 20 }}
@@ -898,30 +799,24 @@ function DangKyHocBong() {
                         transition={{ duration: 0.5 }}
                       >
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                          <motion.h3 
+                          <motion.h3
                             className="text-3xl font-bold text-slate-800 dark:text-slate-100"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                           >
-                            Danh sách đơn học bổng đã gửi
+                            Danh sach don hoc bong da gui
                           </motion.h3>
                           <motion.button
                             onClick={loadApplications}
                             disabled={loadingList}
-                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transition-all duration-300"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
                             initial={{ x: 20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                           >
                             {loadingList ? (
-                              <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                              />
+                              <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
                             ) : (
-                              "Làm mới"
+                              "Lam moi"
                             )}
                           </motion.button>
                         </div>
@@ -932,12 +827,8 @@ function DangKyHocBong() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                           >
-                            <motion.div
-                              className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6"
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                            <p className="text-slate-600 dark:text-slate-400 text-lg">Đang tải danh sách...</p>
+                            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6 animate-spin" />
+                            <p className="text-slate-600 dark:text-slate-400 text-lg">Dang tai danh sach...</p>
                           </motion.div>
                         ) : applications.length === 0 ? (
                           <motion.div
@@ -945,14 +836,11 @@ function DangKyHocBong() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                           >
-                            <motion.div
-                              animate={{ y: [0, -10, 0] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                            >
+                            <div className="animate-float">
                               <FaList className="text-8xl text-slate-400 dark:text-slate-600 mx-auto mb-6" />
-                            </motion.div>
+                            </div>
                             <p className="text-slate-600 dark:text-slate-400 text-xl font-medium">
-                              Chưa có đơn học bổng nào được gửi
+                              Chua co don hoc bong nao duoc gui
                             </p>
                           </motion.div>
                         ) : (
@@ -977,21 +865,20 @@ function DangKyHocBong() {
                                   hidden: { opacity: 0, y: 30 },
                                   visible: { opacity: 1, y: 0 },
                                 }}
-                                className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl border border-white/20 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
-                                whileHover={{ scale: 1.02, y: -5 }}
+                                className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-8 rounded-3xl border border-white/20 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden hover:scale-[1.02] hover:-translate-y-1"
                               >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
-                                
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl" />
+
                                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 relative z-10">
-                                  <motion.h4 
+                                  <motion.h4
                                     className="text-2xl font-bold text-slate-800 dark:text-slate-100"
                                     initial={{ x: -20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: index * 0.1 }}
                                   >
-                                    Đơn #{app.id} - {app.ho_ten}
+                                    Don #{app.id} - {app.ho_ten}
                                   </motion.h4>
-                                  <motion.span 
+                                  <motion.span
                                     className="px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-semibold backdrop-blur-sm"
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
@@ -1002,80 +889,75 @@ function DangKyHocBong() {
                                 </div>
 
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-sm relative z-10">
-                                  <motion.div 
+                                  <motion.div
                                     className="space-y-3"
                                     initial={{ x: -20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: index * 0.1 + 0.3 }}
                                   >
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Ngành:</strong> 
+                                      <strong className="text-slate-700 dark:text-slate-300">Nganh:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.nganh}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Lớp:</strong> 
+                                      <strong className="text-slate-700 dark:text-slate-300">Lop:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.lop}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Khóa:</strong> 
+                                      <strong className="text-slate-700 dark:text-slate-300">Khoa:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.khoa}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Điểm TB:</strong> 
+                                      <strong className="text-slate-700 dark:text-slate-300">Diem TB:</strong>
                                       <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-lg font-semibold">{app.diem_tb}</span>
                                     </p>
                                   </motion.div>
-                                  <motion.div 
+                                  <motion.div
                                     className="space-y-3"
                                     initial={{ x: 20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: index * 0.1 + 0.4 }}
                                   >
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Loại học bổng:</strong> 
+                                      <strong className="text-slate-700 dark:text-slate-300">Loai hoc bong:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.hoc_bong}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Hoàn cảnh:</strong> 
+                                      <strong className="text-slate-700 dark:text-slate-300">Hoan canh:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.kinh_te}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Thành viên:</strong> 
-                                      <span className="text-slate-600 dark:text-slate-400">{app.so_thanh_vien} người</span>
+                                      <strong className="text-slate-700 dark:text-slate-300">Thanh vien:</strong>
+                                      <span className="text-slate-600 dark:text-slate-400">{app.so_thanh_vien} nguoi</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Trạng thái:</strong>
-                                      <motion.span 
-                                        className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 rounded-full text-xs font-bold shadow-lg"
-                                        animate={{ scale: [1, 1.05, 1] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                      >
-                                        Đang xử lý
-                                      </motion.span>
+                                      <strong className="text-slate-700 dark:text-slate-300">Trang thai:</strong>
+                                      <span className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 rounded-full text-xs font-bold shadow-lg animate-pulse-soft">
+                                        Dang xu ly
+                                      </span>
                                     </p>
                                   </motion.div>
                                 </div>
 
                                 {app.attachments && (
-                                  <motion.div 
+                                  <motion.div
                                     className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 relative z-10"
                                     initial={{ y: 20, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: index * 0.1 + 0.5 }}
                                   >
                                     <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                      File đính kèm:
+                                      File dinh kem:
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                       {JSON.parse(app.attachments).map(
                                         (file, fileIndex) => (
                                           <motion.span
                                             key={fileIndex}
-                                            className="px-3 py-1 bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 text-cyan-700 dark:text-cyan-300 rounded-full text-xs font-medium backdrop-blur-sm"
+                                            className="px-3 py-1 bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 text-cyan-700 dark:text-cyan-300 rounded-full text-xs font-medium backdrop-blur-sm hover:scale-110 transition-transform"
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
                                             transition={{ delay: fileIndex * 0.1 }}
-                                            whileHover={{ scale: 1.1 }}
                                           >
                                             {file}
                                           </motion.span>
