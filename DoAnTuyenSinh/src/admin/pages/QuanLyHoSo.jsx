@@ -288,8 +288,8 @@ const QuanLyHoSo = () => {
       >
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">Quản Lý Hồ Sơ</h1>
-            <p className="text-gray-300 text-lg">Quản lý hồ sơ xét tuyển của thí sinh</p>
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">Quản Lý Hồ Sơ</h1>
+            <p className="text-gray-300 text-base md:text-lg">Quản lý hồ sơ xét tuyển của thí sinh</p>
           </div>
           <div className="flex items-center gap-4">
             <motion.div

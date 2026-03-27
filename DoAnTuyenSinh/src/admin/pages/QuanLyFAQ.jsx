@@ -157,10 +157,10 @@ const QuanLyFAQ = () => {
       >
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
               Quản Lý FAQ
             </h1>
-            <p className="text-gray-300 text-lg">
+            <p className="text-gray-300 text-base md:text-lg">
               Quản lý câu hỏi thường gặp trên website
             </p>
           </div>

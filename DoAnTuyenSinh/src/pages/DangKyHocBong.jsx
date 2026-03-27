@@ -223,7 +223,7 @@ function DangKyHocBong() {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.7, duration: 0.8 }}
-                className="text-6xl md:text-7xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6 leading-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-4 md:mb-6 leading-tight"
               >
                 Dang Ky Hoc Bong
               </motion.h1>
@@ -272,7 +272,7 @@ function DangKyHocBong() {
                     transition={{ delay: 1 }}
                     className="text-center mb-8"
                   >
-                    <h2 className="text-4xl font-bold text-white mb-3">
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3">
                       He Thong Hoc Bong HUTECH
                     </h2>
                     <p className="text-white/90 text-lg">
@@ -691,7 +691,7 @@ function DangKyHocBong() {
                                 className="cursor-pointer"
                               >
                                 <div className="animate-float">
-                                  <FaFileUpload className="text-5xl text-cyan-500 dark:text-cyan-400 mx-auto mb-4" />
+                                  <FaFileUpload className="text-4xl md:text-5xl text-cyan-500 dark:text-cyan-400 mx-auto mb-4" />
                                 </div>
                                 <p className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                   Chon file hoac keo tha vao day

@@ -141,7 +141,7 @@ function QuenMatKhau() {
           </div>
 
           <motion.h1
-            className="text-3xl font-black mb-3 bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent"
+            className="text-2xl md:text-3xl font-black mb-3 bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
@@ -150,7 +150,7 @@ function QuenMatKhau() {
           </motion.h1>
 
           <motion.p
-            className="text-lg text-gray-600 dark:text-gray-300"
+            className="text-base md:text-lg text-gray-600 dark:text-gray-300"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
@@ -305,8 +305,9 @@ function QuenMatKhau() {
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
+                        aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
                       >
-                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        {showPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                       </button>
                     </div>
                   </motion.div>
@@ -335,8 +336,9 @@ function QuenMatKhau() {
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
+                        aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
                       >
-                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        {showPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                       </button>
                     </div>
                   </motion.div>

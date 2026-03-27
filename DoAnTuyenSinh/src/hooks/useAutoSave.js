@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { showToast } from '../components/ui/Toast';
+import { toast } from 'sonner';
 
 export const useAutoSave = (data, key, delay = 2000) => {
     const timeoutRef = useRef(null);
@@ -24,7 +24,7 @@ export const useAutoSave = (data, key, delay = 2000) => {
                 lastSavedRef.current = currentData;
 
                 // Show subtle save notification
-                showToast.info('Đã tự động lưu bản nháp', 'Lưu tự động');
+                toast.info('Đã tự động lưu bản nháp', { description: 'Lưu tự động' });
             } catch (error) {
                 console.error('Auto-save failed:', error);
             }
@@ -48,10 +48,10 @@ export const useAutoSave = (data, key, delay = 2000) => {
             const currentData = JSON.stringify(data);
             localStorage.setItem(key, currentData);
             lastSavedRef.current = currentData;
-            showToast.success('Đã lưu bản nháp thành công');
+            toast.success('Đã lưu bản nháp thành công');
         } catch (error) {
             console.error('Manual save failed:', error);
-            showToast.error('Không thể lưu bản nháp');
+            toast.error('Không thể lưu bản nháp');
         }
     };
 
@@ -73,7 +73,7 @@ export const useAutoSave = (data, key, delay = 2000) => {
         try {
             localStorage.removeItem(key);
             lastSavedRef.current = null;
-            showToast.info('Đã xóa bản nháp');
+            toast.info('Đã xóa bản nháp');
         } catch (error) {
             console.error('Clear saved data failed:', error);
         }

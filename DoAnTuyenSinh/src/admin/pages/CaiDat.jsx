@@ -231,7 +231,7 @@ const CaiDat = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -272,10 +272,10 @@ const CaiDat = () => {
                     <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-2xl blur opacity-30"></div>
                   </div>
                   <div>
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                       Cài đặt hệ thống
                     </h1>
-                    <p className="text-gray-300 mt-2 text-lg">
+                    <p className="text-gray-300 mt-2 text-base md:text-lg">
                       Quản lý cấu hình hệ thống với giao diện hiện đại
                     </p>
                   </div>

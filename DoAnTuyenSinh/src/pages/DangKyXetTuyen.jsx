@@ -28,7 +28,7 @@ import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
 import { useAutoSave } from "../hooks/useAutoSave";
-import { showToast } from "../components/ui/Toast";
+import { toast } from "sonner";
 import PageTransition, { SectionTransition, StaggerContainer, StaggerItem } from "../components/ui/PageTransition";
 
 function DangKyXetTuyen() {
@@ -162,7 +162,7 @@ function DangKyXetTuyen() {
       setSelectedKhoiThi(savedData.selectedKhoiThi || selectedKhoiThi);
       setDiemThiTHPT(savedData.diemThiTHPT || diemThiTHPT);
       setDiemDanhGiaNangLuc(savedData.diemDanhGiaNangLuc || diemDanhGiaNangLuc);
-      showToast.info('Đã khôi phục bản nháp đã lưu');
+      toast.info('Đã khôi phục bản nháp đã lưu');
     }
 
     axios
@@ -252,7 +252,7 @@ function DangKyXetTuyen() {
     e.preventDefault();
 
     if (!validateForm()) {
-      showToast.error('Vui lòng kiểm tra lại thông tin đã nhập');
+      toast.error('Vui lòng kiểm tra lại thông tin đã nhập');
       return;
     }
 
@@ -260,7 +260,7 @@ function DangKyXetTuyen() {
     setSuccess("");
     setError("");
 
-    const loadingToast = showToast.loading('Đang xử lý đăng ký...');
+    const loadingToast = toast.loading('Đang xử lý đăng ký...');
 
     try {
       const applicationData = {
@@ -289,10 +289,10 @@ function DangKyXetTuyen() {
         }
       );
 
-      showToast.dismiss(loadingToast);
+      toast.dismiss(loadingToast);
 
       if (response.data.success) {
-        showToast.success('Đăng ký xét tuyển thành công! Mã hồ sơ: ' + response.data.data.application_code, 'Thành công');
+        toast.success('Đăng ký xét tuyển thành công! Mã hồ sơ: ' + response.data.data.application_code, { description: 'Thành công' });
         setSuccess(
           "Đăng ký thành công! Mã hồ sơ: " + response.data.data.application_code
         );
@@ -321,13 +321,13 @@ function DangKyXetTuyen() {
         setErrors({});
         setTouched({});
       } else {
-        showToast.error(response.data.message || "Đăng ký thất bại!");
+        toast.error(response.data.message || "Đăng ký thất bại!");
         setError(response.data.message || "Đăng ký thất bại!");
       }
     } catch (err) {
-      showToast.dismiss(loadingToast);
+      toast.dismiss(loadingToast);
       const errorMessage = err.response?.data?.message || "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin!";
-      showToast.error(errorMessage);
+      toast.error(errorMessage);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -395,7 +395,7 @@ function DangKyXetTuyen() {
 
               <StaggerItem>
                 <motion.h1
-                  className="text-6xl md:text-7xl font-black text-white mb-6 leading-tight"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 md:mb-6 leading-tight"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
@@ -405,7 +405,7 @@ function DangKyXetTuyen() {
                   </span>
                 </motion.h1>
                 <motion.div
-                  className="text-4xl md:text-5xl font-bold text-white/90 mt-4 flex items-center justify-center gap-3"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white/90 mt-4 flex items-center justify-center gap-2 md:gap-3"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 }}
@@ -491,7 +491,7 @@ function DangKyXetTuyen() {
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
                         ĐĂNG KÝ THÔNG TIN XÉT TUYỂN 2025
                       </h2>
                       <div className="w-32 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full mb-4" />

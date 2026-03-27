@@ -268,7 +268,7 @@ function HoSoQuanLi() {
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-2xl"></div>
               <motion.h3
-                className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
+                className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -329,7 +329,7 @@ function HoSoQuanLi() {
             >
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl"></div>
               <motion.h3
-                className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
+                className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
@@ -423,7 +423,7 @@ function HoSoQuanLi() {
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl"></div>
               <motion.h3
-                className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
+                className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -451,7 +451,7 @@ function HoSoQuanLi() {
             >
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-2xl"></div>
               <motion.h3
-                className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
+                className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
@@ -503,7 +503,7 @@ function HoSoQuanLi() {
             >
               <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl"></div>
               <motion.h3
-                className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
+                className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-slate-800 dark:text-slate-100 flex items-center gap-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
@@ -681,7 +681,7 @@ function HoSoQuanLi() {
             transition={{ duration: 0.8 }}
           >
             <motion.h1
-              className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-2 md:mb-4"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.8 }}
@@ -689,7 +689,7 @@ function HoSoQuanLi() {
               Chỉnh sửa hồ sơ
             </motion.h1>
             <motion.p
-              className="text-xl text-slate-600 dark:text-slate-300 font-medium"
+              className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 font-medium"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.8 }}
@@ -737,7 +737,7 @@ function HoSoQuanLi() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`relative py-6 px-6 font-semibold text-sm flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95 ${
+                    className={`relative py-4 px-3 sm:py-5 sm:px-4 md:py-6 md:px-6 font-semibold text-xs sm:text-sm flex items-center gap-2 sm:gap-3 transition-all duration-300 hover:scale-105 active:scale-95 ${
                       activeTab === tab.id
                         ? 'text-blue-600 dark:text-blue-400'
                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'

@@ -226,8 +226,9 @@ function ChanTrang() {
                       className="text-gray-300 dark:text-gray-400 hover:text-blue-400 dark:hover:text-blue-300 transition-colors p-2.5 rounded-xl hover:bg-white/10 dark:hover:bg-gray-800/50 hover:shadow-lg border border-transparent hover:border-blue-400/30"
                       whileHover={{ scale: 1.15, y: -3 }}
                       whileTap={{ scale: 0.9 }}
+                      aria-label={`Theo dõi HUTECH trên ${social.url.includes('facebook') ? 'Facebook' : social.url.includes('youtube') ? 'YouTube' : social.url.includes('instagram') ? 'Instagram' : 'LinkedIn'}`}
                     >
-                      <social.icon className="text-lg" />
+                      <social.icon className="text-lg" aria-hidden="true" />
                     </motion.a>
                   ))}
                 </div>
@@ -286,8 +287,9 @@ function ChanTrang() {
           transition={{ delay: 1.2, duration: 0.6, type: "spring", stiffness: 200, damping: 15 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          aria-label="Cuộn lên đầu trang"
         >
-          <FaArrowUp className="text-base text-white" />
+          <FaArrowUp className="text-base text-white" aria-hidden="true" />
         </motion.button>
       </div>
     </motion.footer>

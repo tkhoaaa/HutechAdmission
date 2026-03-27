@@ -108,7 +108,7 @@ function DangKyTaiKhoan() {
       </div>
 
       <motion.div
-        className="relative z-10 w-full max-w-lg mx-4"
+        className="relative z-10 w-full max-w-sm sm:max-w-md md:max-w-lg mx-4"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
@@ -138,7 +138,7 @@ function DangKyTaiKhoan() {
             </div>
 
             <motion.h2
-              className="text-3xl font-bold mb-3 text-gray-800 dark:text-white"
+              className="text-2xl md:text-3xl font-bold mb-3 text-gray-800 dark:text-white"
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
@@ -147,7 +147,7 @@ function DangKyTaiKhoan() {
             </motion.h2>
 
             <motion.p
-              className="text-lg text-gray-600 dark:text-gray-300"
+              className="text-base md:text-lg text-gray-600 dark:text-gray-300"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
@@ -287,8 +287,9 @@ function DangKyTaiKhoan() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                  aria-label={showPassword ? "An mat khau" : "Hien mat khau"}
                 >
-                  {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                  {showPassword ? <FaEyeSlash className="h-4 w-4" aria-hidden="true" /> : <FaEye className="h-4 w-4" aria-hidden="true" />}
                 </button>
               </div>
             </motion.div>
@@ -316,8 +317,9 @@ function DangKyTaiKhoan() {
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                  aria-label={showConfirm ? "An mat khau" : "Hien mat khau"}
                 >
-                  {showConfirm ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                  {showConfirm ? <FaEyeSlash className="h-4 w-4" aria-hidden="true" /> : <FaEye className="h-4 w-4" aria-hidden="true" />}
                 </button>
               </div>
             </motion.div>

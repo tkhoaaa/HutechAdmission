@@ -217,7 +217,7 @@ function DangKyTuVan() {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="text-6xl font-black mb-6 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-cyan-200 dark:to-blue-200 bg-clip-text text-transparent"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-cyan-200 dark:to-blue-200 bg-clip-text text-transparent"
               >
                 Đăng Ký Tư Vấn
               </motion.h1>
@@ -227,7 +227,7 @@ function DangKyTuVan() {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="text-xl max-w-3xl mx-auto leading-relaxed text-gray-600 dark:text-gray-300"
+                className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed text-gray-600 dark:text-gray-300"
               >
                 Đội ngũ tư vấn chuyên nghiệp sẵn sàng hỗ trợ bạn mọi thắc mắc về
                 tuyển sinh, ngành học và cơ hội nghề nghiệp
@@ -293,7 +293,7 @@ function DangKyTuVan() {
                   >
                     <div className="flex items-center justify-center gap-3 mb-4">
                       <FaRocket className="text-white text-2xl animate-bounce" />
-                      <h2 className="text-4xl font-black text-white">
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white">
                         Dịch Vụ Tư Vấn HUTECH
                       </h2>
                       <FaMagic className="text-white text-2xl animate-pulse" />
@@ -310,13 +310,13 @@ function DangKyTuVan() {
                   >
                     <motion.button
                       onClick={() => setActiveTab("register")}
-                      className={`group relative px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
+                      className={`group relative px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-2xl font-bold text-sm sm:text-base md:text-lg transition-all duration-300 ${
                         activeTab === "register"
                           ? 'bg-white text-blue-600 shadow-2xl scale-105'
                           : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm border border-white/30 hover:scale-105'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         <FaPlus className={`transition-transform duration-300 ${
                           activeTab === "register" ? 'rotate-90' : ''
                         }`} />
@@ -329,13 +329,13 @@ function DangKyTuVan() {
                         setActiveTab("list");
                         loadConsultations();
                       }}
-                      className={`group relative px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
+                      className={`group relative px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-2xl font-bold text-sm sm:text-base md:text-lg transition-all duration-300 ${
                         activeTab === "list"
                           ? 'bg-white text-blue-600 shadow-2xl scale-105'
                           : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm border border-white/30 hover:scale-105'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         <FaList />
                         Danh sách yêu cầu đã gửi
                       </div>
@@ -369,7 +369,7 @@ function DangKyTuVan() {
 
                         <div className="relative z-10">
                           <motion.h3
-                            className="text-3xl font-black mb-8 flex items-center gap-4 text-gray-800 dark:text-white"
+                            className="text-xl md:text-2xl lg:text-3xl font-black mb-6 md:mb-8 flex items-center gap-3 md:gap-4 text-gray-800 dark:text-white"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.2 }}
@@ -485,7 +485,7 @@ function DangKyTuVan() {
 
                         <div className="relative z-10">
                           <motion.h3
-                            className="text-3xl font-black mb-8 flex items-center gap-4 text-gray-800 dark:text-white"
+                            className="text-xl md:text-2xl lg:text-3xl font-black mb-6 md:mb-8 flex items-center gap-3 md:gap-4 text-gray-800 dark:text-white"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.3 }}
@@ -540,7 +540,7 @@ function DangKyTuVan() {
 
                         <div className="relative z-10">
                           <motion.h3
-                            className="text-3xl font-black mb-8 flex items-center gap-4 text-gray-800 dark:text-white"
+                            className="text-xl md:text-2xl lg:text-3xl font-black mb-6 md:mb-8 flex items-center gap-3 md:gap-4 text-gray-800 dark:text-white"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.4 }}
@@ -692,7 +692,7 @@ function DangKyTuVan() {
                     >
                       <div className="flex justify-between items-center mb-8">
                         <motion.h3
-                          className="text-3xl font-black flex items-center gap-4 text-gray-800 dark:text-white"
+                          className="text-xl md:text-2xl lg:text-3xl font-black flex items-center gap-3 md:gap-4 text-gray-800 dark:text-white"
                           initial={{ x: -20, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
                         >

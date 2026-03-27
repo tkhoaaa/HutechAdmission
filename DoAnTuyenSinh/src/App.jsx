@@ -20,7 +20,7 @@ import { DarkModeProvider } from "./contexts/DarkModeContext";
 import DangKyHocBong from "./pages/DangKyHocBong";
 import DangKyTuVan from "./pages/DangKyTuVan";
 import HoSoNguoiDung from "./pages/HoSoNguoiDung";
-import { ToastProvider } from "./components/ui/Toast";
+import { Toaster } from "./components/ui/sonner";
 import PageTransition from "./components/ui/PageTransition";
 
 
@@ -72,7 +72,7 @@ function App() {
         <UserContextProvider>
         <BrowserRouter>
           <ScrollToTop />
-          <ToastProvider />
+          <Toaster position="top-right" richColors closeButton expand={false} />
           <Routes>
             {/* Admin Routes */}
             <Route path="/admin" element={

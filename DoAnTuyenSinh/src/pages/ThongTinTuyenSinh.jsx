@@ -312,7 +312,7 @@ function ThongTinTuyenSinh() {
 
               {/* Main title */}
               <motion.h1
-                className={`text-5xl md:text-7xl font-bold mb-6 ${
+                className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 ${
                   darkMode ? 'text-white' : 'text-gray-900'
                 }`}
                 initial={{ opacity: 0, y: 30 }}
@@ -326,7 +326,7 @@ function ThongTinTuyenSinh() {
 
               {/* Subtitle */}
               <motion.p
-                className={`text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed mb-8 ${
+                className={`text-lg md:text-2xl max-w-4xl mx-auto leading-relaxed mb-6 md:mb-8 ${
                   darkMode ? 'text-gray-100' : 'text-gray-600'
                 }`}
                 initial={{ opacity: 0, y: 20 }}
@@ -405,13 +405,14 @@ function ThongTinTuyenSinh() {
                     ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
                     : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                 } shadow-lg hover:shadow-xl`}
+                aria-label={darkMode ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
                 title={darkMode ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
               >
                 <motion.div
                   animate={{ rotate: darkMode ? 180 : 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  {darkMode ? <FaSun className="text-2xl" /> : <FaMoon className="text-2xl" />}
+                  {darkMode ? <FaSun className="text-2xl" aria-hidden="true" /> : <FaMoon className="text-2xl" aria-hidden="true" />}
                 </motion.div>
               </motion.button>
             </div>
@@ -432,7 +433,7 @@ function ThongTinTuyenSinh() {
               transition={{ delay: 0.4 }}
               className="text-center mb-16"
             >
-              <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${
+              <h2 className={`text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${
                 darkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 Phương thức xét tuyển
@@ -518,7 +519,7 @@ function ThongTinTuyenSinh() {
               transition={{ delay: 0.5 }}
               className="text-center mb-16"
             >
-              <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${
+              <h2 className={`text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${
                 darkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 Lịch trình tuyển sinh
@@ -533,7 +534,7 @@ function ThongTinTuyenSinh() {
             <div className="max-w-4xl mx-auto">
               <div className="relative">
                 {/* Timeline line */}
-                <div className={`absolute left-1/2 transform -translate-x-1/2 h-full w-1 ${
+                <div className={`absolute left-4 md:left-1/2 transform md:-translate-x-1/2 h-full w-1 ${
                   darkMode ? 'bg-gray-700' : 'bg-gray-200'
                 }`} />
 
@@ -548,7 +549,7 @@ function ThongTinTuyenSinh() {
                       index % 2 === 0 ? 'justify-start' : 'justify-end'
                     }`}
                   >
-                    <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
+                    <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'text-right md:pr-8 pr-4' : 'text-left md:pl-8 pl-4'}`}>
                       <div
                         className={`backdrop-blur-xl ${
                           item.status === 'active'
@@ -575,7 +576,7 @@ function ThongTinTuyenSinh() {
 
                     {/* Timeline dot */}
                     <div
-                      className={`absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 ${
+                      className={`absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-6 h-6 rounded-full border-4 ${
                         darkMode ? 'border-gray-800' : 'border-white'
                       } ${
                         item.status === 'active'
@@ -604,7 +605,7 @@ function ThongTinTuyenSinh() {
               transition={{ delay: 0.6 }}
               className="text-center mb-16"
             >
-              <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${
+              <h2 className={`text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${
                 darkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 Ngành đào tạo
@@ -636,6 +637,7 @@ function ThongTinTuyenSinh() {
                           placeholder="Tìm kiếm ngành học..."
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
+                          aria-label="Tìm kiếm ngành học"
                           className={`w-full pl-12 pr-4 py-3 text-lg rounded-lg border transition-all duration-200 ${
                             darkMode
                               ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -834,7 +836,7 @@ function ThongTinTuyenSinh() {
               transition={{ delay: 0.7 }}
               className="text-center mb-16"
             >
-              <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${
+              <h2 className={`text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${
                 darkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 Câu hỏi thường gặp
@@ -867,7 +869,7 @@ function ThongTinTuyenSinh() {
                         }`}
                         onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)}
                       >
-                        <span className={`font-bold text-lg pr-4 ${
+                        <span className={`font-bold text-base md:text-lg pr-4 ${
                           darkMode ? 'text-white' : 'text-gray-900'
                         }`}>
                           {faq.question}
@@ -888,6 +890,7 @@ function ThongTinTuyenSinh() {
                       <AnimatePresence>
                         {expandedFAQ === index && (
                           <motion.div
+                            id={"faq-answer-" + index}
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
@@ -948,7 +951,7 @@ function ThongTinTuyenSinh() {
                     <FaHandshake className="text-4xl text-white" />
                   </div>
 
-                  <h2 className="text-4xl font-bold mb-6">
+                  <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">
                     Cần tư vấn thêm?
                   </h2>
                   <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">

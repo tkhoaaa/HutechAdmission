@@ -244,7 +244,7 @@ function CauHoiThuongGap() {
 
               {/* Main title */}
               <motion.h1
-                className="text-5xl md:text-7xl font-bold mb-6 text-gray-900 dark:text-white"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
@@ -447,7 +447,7 @@ function CauHoiThuongGap() {
                               <IconComponent className="text-2xl text-white" />
                             </div>
                             <div>
-                              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                                 {category.category}
                               </h2>
                               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -478,19 +478,22 @@ function CauHoiThuongGap() {
                                 >
                                   <button
                                     onClick={() => toggleItem(itemIndex)}
+                                    aria-expanded={isExpanded}
+                                    aria-controls={`faq-answer-${itemIndex}`}
                                     className={`w-full px-6 py-5 text-left transition-all duration-300 flex items-center justify-between ${
                                       isExpanded
                                         ? 'bg-gray-100 dark:bg-gray-800/50'
                                         : 'bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-700/50'
                                     }`}
                                   >
-                                    <span className="font-semibold text-lg pr-4 text-gray-900 dark:text-white">
+                                    <span className="font-semibold text-base md:text-lg pr-4 text-gray-900 dark:text-white truncate">
                                       {item.question}
                                     </span>
                                     <motion.div
                                       animate={{ rotate: isExpanded ? 180 : 0 }}
                                       transition={{ duration: 0.3 }}
                                       className="p-2 rounded-full bg-white dark:bg-gray-700 shadow-lg flex-shrink-0"
+                                      aria-hidden="true"
                                     >
                                       <FaChevronDown className="text-gray-600 dark:text-gray-300" />
                                     </motion.div>
@@ -499,6 +502,7 @@ function CauHoiThuongGap() {
                                   <AnimatePresence>
                                     {isExpanded && (
                                       <motion.div
+                                        id={`faq-answer-${itemIndex}`}
                                         initial={{ height: 0, opacity: 0 }}
                                         animate={{ height: "auto", opacity: 1 }}
                                         exit={{ height: 0, opacity: 0 }}

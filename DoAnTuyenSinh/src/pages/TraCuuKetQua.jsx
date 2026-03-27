@@ -192,7 +192,7 @@ function TraCuuKetQua() {
               </div>
 
               <motion.h1
-                className="text-5xl md:text-7xl font-bold mb-6 text-gray-900 dark:text-white"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
@@ -203,7 +203,7 @@ function TraCuuKetQua() {
               </motion.h1>
 
               <motion.p
-                className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed text-gray-600 dark:text-gray-100"
+                className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed text-gray-600 dark:text-gray-100"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7, duration: 0.8 }}
@@ -335,10 +335,10 @@ function TraCuuKetQua() {
                   <Card.Header className="relative overflow-hidden">
                     {/* Animated background gradient */}
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-emerald-500/5 -z-10 animate-gradient-shift" />
-                    <div className="flex items-center justify-between relative z-10">
-                      <div className="flex items-center gap-3 text-2xl">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-3">
+                      <div className="flex items-center gap-3 text-lg sm:text-2xl">
                         <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                          <FaFileAlt className="text-blue-500 text-xl" />
+                          <FaFileAlt className="text-blue-500 text-lg sm:text-xl" />
                         </div>
                         <span className="text-gray-900 dark:text-white">
                         Thông tin hồ sơ

@@ -212,7 +212,7 @@ function LienHe() {
 
               {/* Main title */}
               <motion.h1
-                className="text-5xl md:text-7xl font-bold mb-6 text-gray-900 dark:text-white"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 text-gray-900 dark:text-white"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
@@ -224,7 +224,7 @@ function LienHe() {
 
               {/* Subtitle */}
               <motion.p
-                className="text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed mb-8 text-gray-600 dark:text-gray-100"
+                className="text-lg md:text-2xl max-w-4xl mx-auto leading-relaxed mb-6 md:mb-8 text-gray-600 dark:text-gray-100"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7, duration: 0.8 }}
@@ -281,10 +281,10 @@ function LienHe() {
               transition={{ delay: 0.4 }}
               className="text-center mb-12"
             >
-              <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
                 Thông tin liên hệ
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-gray-600 dark:text-gray-300">
+              <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto text-gray-600 dark:text-gray-300">
                 Hãy liên hệ với chúng tôi qua các kênh sau để được hỗ trợ tốt nhất
               </p>
             </motion.div>
@@ -334,7 +334,7 @@ function LienHe() {
               <h3 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
                 Theo dõi chúng tôi
               </h3>
-              <div className="flex justify-center gap-6">
+              <div className="flex justify-center gap-4 md:gap-6">
                 {socialLinks.map((social, index) => (
                   <motion.a
                     key={index}
@@ -345,12 +345,13 @@ function LienHe() {
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.6 + index * 0.1 }}
+                    aria-label={`Theo dõi HUTECH trên ${social.name}`}
                   >
                     <div className={`absolute inset-0 bg-gradient-to-r ${social.color}`} />
                     <div
                       className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-300"
                     />
-                    <social.icon className="text-2xl relative z-10" />
+                    <social.icon className="text-2xl relative z-10" aria-hidden="true" />
                   </motion.a>
                 ))}
               </div>
@@ -372,10 +373,10 @@ function LienHe() {
               transition={{ delay: 0.7 }}
               className="text-center mb-12"
             >
-              <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
                 Gửi tin nhắn cho chúng tôi
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300">
+              <p className="text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300">
                 Hãy để lại thông tin và tin nhắn của bạn, chúng tôi sẽ phản hồi trong thời gian sớm nhất
               </p>
             </motion.div>
@@ -553,7 +554,7 @@ function LienHe() {
               transition={{ delay: 0.8 }}
               className="text-center mb-12"
             >
-              <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
                 Vị trí của chúng tôi
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">
@@ -570,8 +571,9 @@ function LienHe() {
                 <div className="p-0">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.484123456789!2d106.709123456789!3d10.80123456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e640d01%3A0xf89fba644b4c0b8!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBIdXRlY2g!5e0!3m2!1svi!2s!4v1234567890"
+                    title="Bản đồ vị trí HUTECH"
                     width="100%"
-                    height="500"
+                    height="350"
                     style={{ border: 0 }}
                     allowFullScreen=""
                     loading="lazy"
@@ -610,7 +612,7 @@ function LienHe() {
                     <FaHeart className="text-4xl text-red-300" />
                   </div>
 
-                  <h2 className="text-4xl font-bold mb-4">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
                     Sẵn sàng bắt đầu hành trình?
                   </h2>
                   <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">

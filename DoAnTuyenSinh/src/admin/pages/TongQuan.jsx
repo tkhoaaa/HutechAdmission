@@ -276,10 +276,10 @@ const TongQuan = () => {
                   <FaRocket className="text-white text-2xl" />
                 </div>
                 <div>
-                  <h1 className="text-5xl font-black mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                     Trang Tổng Quan
                   </h1>
-                  <p className="text-xl flex items-center gap-3 text-gray-600">
+                  <p className="text-base sm:text-lg md:text-xl flex items-center gap-2 md:gap-3 text-gray-600">
                     <FaRocket className="text-cyan-500" />
                     Hệ thống quản lý tuyển sinh HUTECH 2025
                   </p>

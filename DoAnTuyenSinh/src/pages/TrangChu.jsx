@@ -120,7 +120,7 @@ function TrangChu() {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.7 }}
-                className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-8 leading-tight"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 md:mb-8 leading-tight"
               >
                 Khởi đầu{" "}
                 <span className="bg-gradient-to-r from-blue-600 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
@@ -182,7 +182,7 @@ function TrangChu() {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 1.3 }}
-                className="grid grid-cols-3 gap-6 max-w-md"
+                className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 max-w-md"
               >
                 <div className="text-center">
                   <div className="text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400">
@@ -515,13 +515,14 @@ function TrangChu() {
                         {/* Share button */}
                         <button
                           className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300"
+                          aria-label="Chia sẻ bài viết"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigator.share?.({ title: item.title, url: item.link }) ||
                             navigator.clipboard.writeText(item.link);
                           }}
                         >
-                          <FaHandshake className="w-4 h-4" />
+                          <FaHandshake className="w-4 h-4" aria-hidden="true" />
                         </button>
                       </div>
                     </div>

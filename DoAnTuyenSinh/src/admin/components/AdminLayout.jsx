@@ -193,8 +193,9 @@ const AdminLayout = ({ children }) => {
                 <button
                   onClick={() => setSidebarOpen(false)}
                   className={`lg:hidden p-2 rounded-xl transition-all duration-300 ${darkMode ? "text-gray-400 hover:text-white" : "text-gray-500 hover:text-gray-900"}`}
+                  aria-label="Đóng thanh điều hướng"
                 >
-                  <FaTimes className="text-lg" />
+                  <FaTimes className="text-lg" aria-hidden="true" />
                 </button>
               </div>
             </motion.div>
@@ -246,8 +247,9 @@ const AdminLayout = ({ children }) => {
                   className={`lg:hidden p-4 rounded-2xl transition-all duration-300 ${darkMode ? "text-gray-400" : "text-gray-500"}`}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.9 }}
+                  aria-label="Mở thanh điều hướng"
                 >
-                  <FaBars className="text-xl" />
+                  <FaBars className="text-xl" aria-hidden="true" />
                 </button>
 
                 {/* Search */}
@@ -282,10 +284,10 @@ const AdminLayout = ({ children }) => {
                   className={`p-4 rounded-2xl transition-all duration-300 ${darkMode ? "text-gray-300 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-100"}`}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.9 }}
-                  title={darkMode ? "Chuyển sang chế độ sáng" : "Chuyển sang chế độ tối"}
+                  aria-label={darkMode ? "Chuyển sang chế độ sáng" : "Chuyển sang chế độ tối"}
                 >
                   <motion.div animate={{ rotate: darkMode ? 180 : 0 }} transition={{ duration: 0.5 }}>
-                    {darkMode ? <FaSun className="text-yellow-500 text-xl" /> : <FaMoon className="text-xl" />}
+                    {darkMode ? <FaSun className="text-yellow-500 text-xl" aria-hidden="true" /> : <FaMoon className="text-xl" aria-hidden="true" />}
                   </motion.div>
                 </button>
 
@@ -294,8 +296,10 @@ const AdminLayout = ({ children }) => {
                   <button
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
                     className={`relative p-4 rounded-2xl transition-all duration-300 ${darkMode ? "text-gray-300 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-100"}`}
+                    aria-label={`Thông báo${unreadCount > 0 ? ` (${unreadCount} chưa đọc)` : ''}`}
+                    aria-expanded={notificationsOpen}
                   >
-                    <FaBell className="text-xl" />
+                    <FaBell className="text-xl" aria-hidden="true" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full text-xs text-white flex items-center justify-center font-bold shadow-lg">
                         {unreadCount}
@@ -355,6 +359,8 @@ const AdminLayout = ({ children }) => {
                     onClick={() => setProfileOpen(!profileOpen)}
                     className={`flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 cursor-pointer ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
                     whileHover={{ x: 4 }}
+                    aria-label="Menu hồ sơ"
+                    aria-expanded={profileOpen}
                   >
                     <div className="relative w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-xl overflow-hidden">
                       {avatarUrl ? (

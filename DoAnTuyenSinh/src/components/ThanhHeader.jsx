@@ -184,6 +184,9 @@ function ThanhHeader() {
               onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
+              aria-label="Tư vấn và Học bổng"
+              aria-expanded={showDropdown}
+              aria-haspopup="true"
             >
               <FaQuestionCircle className="text-base" />
               <span className="hidden xl:block">Tư vấn & Học bổng</span>
@@ -240,6 +243,7 @@ function ThanhHeader() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.2 }}
+            aria-label={darkMode ? "Chuyển sang chế độ sáng" : "Chuyển sang chế độ tối"}
             title={darkMode ? "Chuyển sang chế độ sáng" : "Chuyển sang chế độ tối"}
           >
             <motion.div animate={{ rotate: darkMode ? 180 : 0 }} transition={{ duration: 0.5 }}>
@@ -264,6 +268,8 @@ function ThanhHeader() {
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
+                aria-label="Menu tài khoản"
+                aria-expanded={showUserDropdown}
               >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg overflow-hidden ${
@@ -422,6 +428,8 @@ function ThanhHeader() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.2 }}
+            aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <FaTimes /> : <FaBars />}
           </motion.button>

@@ -840,7 +840,7 @@ function HoSoNguoiDung() {
           className="mb-12 text-center"
         >
           <motion.h1
-            className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 md:mb-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -848,7 +848,7 @@ function HoSoNguoiDung() {
             Chinh sua ho so
           </motion.h1>
           <motion.p
-            className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -900,7 +900,7 @@ function HoSoNguoiDung() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex-1 min-w-0 py-6 px-6 font-semibold text-sm flex flex-col items-center gap-3 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${
+                  className={`relative flex-1 min-w-0 py-4 px-2 sm:py-5 sm:px-4 md:py-6 md:px-6 font-semibold text-xs sm:text-sm flex flex-col items-center gap-2 sm:gap-3 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${
                     activeTab === tab.id
                       ? 'text-white'
                       : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
