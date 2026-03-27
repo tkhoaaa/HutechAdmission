@@ -1,7 +1,7 @@
 # STATE.md — UI/UX Redesign DoAnTuyenSinh
 
 **Project:** DoAnTuyenSinh - Website Tuyển Sinh HUTECH
-**Last Updated:** 2026-03-28 (after Phase 6)
+**Last Updated:** 2026-03-28 (after code splitting + lightwind cleanup)
 
 ## Project Reference
 
@@ -182,6 +182,14 @@ See: .planning/PROJECT.md (updated 2026-03-28)
   - Responsive: mobile-first scaling on 26 files (headings, padding, breakpoints)
   - Accessibility: ARIA labels on icon buttons, forms, navigation across all pages
   - ThemeContext deleted (no longer needed), replaced with Tailwind dark mode
+- ✅ Code splitting — commit `a1fb3d13`
+  - React.lazy() for all 16 pages with Suspense loading fallback
+  - manualChunks: vendor-react, vendor-motion, vendor-charts (280KB lazy),
+    vendor-icons, vendor-ui, vendor-http, vendor-misc
+  - Initial load: 964KB → 62KB main + ~220KB vendor (~140KB gzip)
+- ✅ Lightwind cleanup — commit `e9ac7494`
+  - Deleted 129 orphaned files in src/components/lightswind/ (0 imports)
+  - All pages use src/components/ui/ shadcn-style components
 
 ## Open Issues
 
@@ -195,8 +203,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 ### Upcoming
 
-- **Code splitting**: Configure Vite rollupOptions.manualChunks to reduce main bundle size (currently 964KB)
-- **Lightwind cleanup**: Remove unused lightwind/* components (100+ orphaned files)
+(None)
 
 ## Notes
 
@@ -209,4 +216,4 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 - **Theme**: DarkModeContext still used for dark mode toggle state; sonner Toaster uses dark class on HTML
 
 ---
-*State updated: 2026-03-28 after Phase 6 completion — M1 MILESTONE DONE*
+*State updated: 2026-03-28 — M1 milestone DONE + code splitting + lightwind cleanup*
