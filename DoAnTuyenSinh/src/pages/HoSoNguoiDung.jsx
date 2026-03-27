@@ -384,8 +384,9 @@ function HoSoNguoiDung() {
                       />
                       <motion.label
                         className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-110 active:scale-90"
+                        aria-label="Tải lên ảnh đại diện"
                       >
-                        <FaCamera className="text-sm" />
+                        <FaCamera className="text-sm" aria-hidden="true" />
                         <input
                           ref={fileInputRef}
                           type="file"
@@ -713,8 +714,9 @@ function HoSoNguoiDung() {
                         type="button"
                         onClick={() => setShowPassword(prev => ({ ...prev, current: !prev.current }))}
                         className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        aria-label={showPassword.current ? "Ẩn mật khẩu hiện tại" : "Hiện mật khẩu hiện tại"}
                       >
-                        {showPassword.current ? <FaEyeSlash /> : <FaEye />}
+                        {showPassword.current ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                       </button>
                     </div>
                   </div>
@@ -737,8 +739,9 @@ function HoSoNguoiDung() {
                         type="button"
                         onClick={() => setShowPassword(prev => ({ ...prev, new: !prev.new }))}
                         className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        aria-label={showPassword.new ? "Ẩn mật khẩu mới" : "Hiện mật khẩu mới"}
                       >
-                        {showPassword.new ? <FaEyeSlash /> : <FaEye />}
+                        {showPassword.new ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                       </button>
                     </div>
                   </div>
@@ -761,8 +764,9 @@ function HoSoNguoiDung() {
                         type="button"
                         onClick={() => setShowPassword(prev => ({ ...prev, confirm: !prev.confirm }))}
                         className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        aria-label={showPassword.confirm ? "Ẩn xác nhận mật khẩu" : "Hiện xác nhận mật khẩu"}
                       >
-                        {showPassword.confirm ? <FaEyeSlash /> : <FaEye />}
+                        {showPassword.confirm ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                       </button>
                     </div>
                   </div>

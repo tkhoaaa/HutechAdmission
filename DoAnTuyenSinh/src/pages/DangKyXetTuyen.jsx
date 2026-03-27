@@ -744,8 +744,9 @@ function DangKyXetTuyen() {
                                           size="icon-sm"
                                           onClick={() => handleRemoveNganh(idx)}
                                           className="text-red-500 border-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                          aria-label="Xóa ngành học"
                                         >
-                                          <FaMinus />
+                                          <FaMinus aria-hidden="true" />
                                         </Button>
                                       )}
                                     </div>
