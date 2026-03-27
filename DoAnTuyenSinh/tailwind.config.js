@@ -32,6 +32,7 @@ export default {
             animation: {
                 'shimmer': 'shimmer 2s linear infinite',
                 'spin-slow': 'spin 3s linear infinite',
+                'spin-slower': 'spin 8s linear infinite',
             },
             keyframes: {
                 shimmer: {
