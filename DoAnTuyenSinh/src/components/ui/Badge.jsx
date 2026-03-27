@@ -1,49 +1,49 @@
-import React from 'react';
-import { clsx } from 'clsx';
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { cva } from "class-variance-authority";
 
-const badgeVariants = {
-  default:
-    'bg-muted text-muted-foreground',
-  success:
-    'bg-success/10 text-success border border-success/30',
-  warning:
-    'bg-warning/10 text-warning border border-warning/30',
-  error:
-    'bg-destructive/10 text-destructive border border-destructive/30',
-  info:
-    'bg-primary/10 text-primary border border-primary/30',
-  destructive:
-    'bg-destructive/10 text-destructive border border-destructive/30',
-  pending:
-    'bg-warning/10 text-warning border border-warning/30',
-  approved:
-    'bg-success/10 text-success border border-success/30',
-  rejected:
-    'bg-destructive/10 text-destructive border border-destructive/30',
-};
+import { cn } from "@/lib/utils"
 
-const Badge = ({ children, variant = 'default', size = 'md', icon, className = '', ...props }) => {
-  const sizeClasses = {
-    sm: 'px-2 py-0.5 text-xs',
-    md: 'px-2.5 py-1 text-xs',
-    lg: 'px-3 py-1.5 text-sm',
-  };
+const badgeVariants = cva(
+  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        secondary:
+          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        destructive:
+          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+        outline:
+          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        ghost:
+          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
 
-  return (
-    <span
-      className={clsx(
-        'inline-flex items-center gap-1.5 font-medium rounded-full',
-        badgeVariants[variant],
-        sizeClasses[size],
-        className
-      )}
-      {...props}
-    >
-      {icon && <span className="flex-shrink-0">{icon}</span>}
-      {children}
-    </span>
-  );
-};
+function Badge({
+  className,
+  variant = "default",
+  render,
+  ...props
+}) {
+  return useRender({
+    defaultTagName: "span",
+    props: mergeProps({
+      className: cn(badgeVariants({ variant }), className),
+    }, props),
+    render,
+    state: {
+      slot: "badge",
+      variant,
+    },
+  });
+}
 
-export { Badge };
-export default Badge;
+export { Badge, badgeVariants }
