@@ -1,7 +1,7 @@
 # STATE.md — UI/UX Redesign DoAnTuyenSinh
 
 **Project:** DoAnTuyenSinh - Website Tuyển Sinh HUTECH
-**Last Updated:** 2026-03-28 (after Phase 5)
+**Last Updated:** 2026-03-28 (after Phase 6)
 
 ## Project Reference
 
@@ -12,8 +12,9 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 ## Current Milestone
 
 **Milestone:** M1 - UI/UX Redesign
-**Status:** ● In Progress
+**Status:** ✅ Complete
 **Started:** 2026-03-28
+**Completed:** 2026-03-28
 
 ## Current Phase
 
@@ -24,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 | 3 | Layout & Navigation | ✅ Complete | 100% |
 | 4 | Public Pages | ✅ Complete | 100% |
 | 5 | Admin Pages | ✅ Complete | 100% |
-| 6 | Polish & Performance | ○ Pending | 0% |
+| 6 | Polish & Performance | ✅ Complete | 100% |
 
-**Active Phase:** None — Phase 5 just completed
+**Active Phase:** None — Phase 6 just completed. M1 milestone DONE.
 
 ## Phase Status
 
@@ -89,6 +90,26 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 - [x] All business logic preserved (forms, API calls, state management, data fetching)
 - [x] `npm run build` passes (3226 modules, 7.77s)
 - [x] Net change: -1809 / +719 lines across 10 files
+
+### Phase 6 — Polish & Performance ✅
+
+| Plan | Description | Status | Notes |
+|------|-------------|--------|-------|
+| 6.1 | Toast migration | ✅ Complete | react-hot-toast → sonner, sonner.jsx fixed for non-Next.js |
+| 6.2 | Responsive audit | ✅ Complete | Mobile-first scaling on all 26 files, hero headings, container padding |
+| 6.3 | Accessibility audit | ✅ Complete | ARIA labels on icon buttons, form inputs, layout components |
+
+## Phase 6 Acceptance Criteria — All Verified
+
+- [x] `sonner.jsx`: Removed `useTheme` from `next-themes`, works with dark class
+- [x] `App.jsx`: Replaced `ToastProvider` with `<Toaster position="top-right" richColors closeButton />`
+- [x] `useAutoSave.js`: Migrated from `showToast` to `sonner toast`
+- [x] `DangKyXetTuyen.jsx`: Migrated from `showToast` to `sonner toast`
+- [x] Responsive: Mobile-first scaling on hero, sections, navigation across 26 files
+- [x] Accessibility: ARIA labels, aria-expanded, aria-controls on all pages
+- [x] ThemeContext deleted, no longer imported anywhere
+- [x] `npm run build` passes (3222 modules, 7.75s)
+- [x] Net change: -15 / +165 lines across 26 files
 
 ### Phase 3 — Layout & Navigation ✅
 
@@ -156,6 +177,11 @@ See: .planning/PROJECT.md (updated 2026-03-28)
   - Removed all infinite framer-motion loops, replaced with CSS
   - Removed useDarkMode hook, replaced with dark: Tailwind prefix
   - Added 8 new keyframes to tailwind.config.js
+- ✅ Phase 6 complete — commit `2b56ee08`
+  - Toast: react-hot-toast → sonner, sonner.jsx fixed for non-Next.js setup
+  - Responsive: mobile-first scaling on 26 files (headings, padding, breakpoints)
+  - Accessibility: ARIA labels on icon buttons, forms, navigation across all pages
+  - ThemeContext deleted (no longer needed), replaced with Tailwind dark mode
 
 ## Open Issues
 
@@ -169,16 +195,18 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 ### Upcoming
 
-- Phase 6: Polish & Performance (toast migration, code splitting, etc.)
+- **Code splitting**: Configure Vite rollupOptions.manualChunks to reduce main bundle size (currently 964KB)
+- **Lightwind cleanup**: Remove unused lightwind/* components (100+ orphaned files)
 
 ## Notes
 
+- M1 milestone COMPLETE — all 6 phases done
 - Dự án là brownfield (existing codebase) — đã có UI audit đầy đủ từ 2 Explore agents
 - User muốn kết hợp shadcn/ui + V0/Vercel
 - Business logic giữ nguyên — chỉ refactor UI
 - shadcn v4.1.1 initialized với 24+ components (base-nova style, lucide icons)
-- **Compatibility fix**: `shadcn/tailwind.css` uses Tailwind v4 syntax but project has v3.4 — removed import, kept CSS vars inline
-- **Toast system**: `react-hot-toast` (Toast.jsx) still in use by DangKyXetTuyen.jsx. sonner.jsx available but not integrated. Migration to sonner deferred to Phase 6.
+- **Toast system**: sonner v2.x now used throughout (replaced react-hot-toast)
+- **Theme**: DarkModeContext still used for dark mode toggle state; sonner Toaster uses dark class on HTML
 
 ---
-*State updated: 2026-03-28 after Phase 2 completion*
+*State updated: 2026-03-28 after Phase 6 completion — M1 MILESTONE DONE*
