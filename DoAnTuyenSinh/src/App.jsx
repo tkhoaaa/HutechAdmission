@@ -1,63 +1,179 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AnimatePresence } from "framer-motion";
-import TrangChu from "./pages/TrangChu";
-import ThongTinTuyenSinh from "./pages/ThongTinTuyenSinh";
-import DangKyXetTuyen from "./pages/DangKyXetTuyen";
-import TraCuuKetQua from "./pages/TraCuuKetQua";
-import LienHe from "./pages/LienHe";
 import ThanhHeader from "./components/ThanhHeader";
 import ChanTrang from "./components/ChanTrang";
 import ScrollToTop from "./components/ScrollToTop";
-import DangNhap from "./accounts/DangNhap";
-import DangKyTaiKhoan from "./accounts/DangKyTaiKhoan";
-import DangKyTaiKhoanAdmin from "./accounts/DangKyTaiKhoanAdmin";
-import QuenMatKhau from "./accounts/QuenMatKhau";
-import CauHoiThuongGap from "./pages/CauHoiThuongGap";
 import { UserContextProvider } from "./accounts/UserContext";
 import { DarkModeProvider } from "./contexts/DarkModeContext";
-import DangKyHocBong from "./pages/DangKyHocBong";
-import DangKyTuVan from "./pages/DangKyTuVan";
-import HoSoNguoiDung from "./pages/HoSoNguoiDung";
 import { Toaster } from "./components/ui/sonner";
 import PageTransition from "./components/ui/PageTransition";
-
-
-// Admin Components
 import AdminLayout from "./admin/components/AdminLayout";
-import TongQuan from "./admin/pages/TongQuan";
-import QuanLyHoSo from "./admin/pages/QuanLyHoSo";
-import QuanLyFAQ from "./admin/pages/QuanLyFAQ";
-import BaoCao from "./admin/pages/BaoCao";
-import CaiDat from "./admin/pages/CaiDat";
-import HoSoQuanLi from "./admin/pages/HoSoQuanLi";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
-// Public Layout Component with AnimatePresence
+// Lazy-loaded public pages
+const TrangChu = lazy(() => import("./pages/TrangChu"));
+const ThongTinTuyenSinh = lazy(() => import("./pages/ThongTinTuyenSinh"));
+const DangKyXetTuyen = lazy(() => import("./pages/DangKyXetTuyen"));
+const TraCuuKetQua = lazy(() => import("./pages/TraCuuKetQua"));
+const LienHe = lazy(() => import("./pages/LienHe"));
+const DangNhap = lazy(() => import("./accounts/DangNhap"));
+const DangKyTaiKhoan = lazy(() => import("./accounts/DangKyTaiKhoan"));
+const DangKyTaiKhoanAdmin = lazy(() => import("./accounts/DangKyTaiKhoanAdmin"));
+const QuenMatKhau = lazy(() => import("./accounts/QuenMatKhau"));
+const CauHoiThuongGap = lazy(() => import("./pages/CauHoiThuongGap"));
+const DangKyHocBong = lazy(() => import("./pages/DangKyHocBong"));
+const DangKyTuVan = lazy(() => import("./pages/DangKyTuVan"));
+const HoSoNguoiDung = lazy(() => import("./pages/HoSoNguoiDung"));
+
+// Lazy-loaded admin pages
+const TongQuan = lazy(() => import("./admin/pages/TongQuan"));
+const QuanLyHoSo = lazy(() => import("./admin/pages/QuanLyHoSo"));
+const QuanLyFAQ = lazy(() => import("./admin/pages/QuanLyFAQ"));
+const BaoCao = lazy(() => import("./admin/pages/BaoCao"));
+const CaiDat = lazy(() => import("./admin/pages/CaiDat"));
+const HoSoQuanLi = lazy(() => import("./admin/pages/HoSoQuanLi"));
+
+// Loading fallback
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="loading-dots">
+      <div />
+      <div />
+      <div />
+    </div>
+  </div>
+);
+
+// Admin loading fallback
+const AdminPageLoader = () => (
+  <div className="flex-1 flex items-center justify-center">
+    <div className="loading-dots">
+      <div />
+      <div />
+      <div />
+    </div>
+  </div>
+);
+
+// Public Layout with lazy loading
 function PublicLayout() {
   const location = useLocation();
-  
+
   return (
     <>
       <ThanhHeader />
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageTransition><TrangChu /></PageTransition>} />
-          <Route path="/thong-tin-tuyen-sinh" element={<PageTransition><ThongTinTuyenSinh /></PageTransition>} />
-          <Route path="/dang-ky-xet-tuyen" element={<PageTransition><DangKyXetTuyen /></PageTransition>} />
-          <Route path="/tra-cuu-ket-qua" element={<PageTransition><TraCuuKetQua /></PageTransition>} />
-          <Route path="/lien-he" element={<PageTransition><LienHe /></PageTransition>} />
-          <Route path="/accounts/dang-nhap" element={<PageTransition type="fade"><DangNhap /></PageTransition>} />
-          <Route path="/login" element={<Navigate to="/accounts/dang-nhap" replace />} />
-          <Route path="/accounts/dang-ky" element={<PageTransition type="fade"><DangKyTaiKhoan /></PageTransition>} />
-          <Route path="/accounts/dang-ky-admin" element={<PageTransition type="fade"><DangKyTaiKhoanAdmin /></PageTransition>} />
-          <Route path="/accounts/quen-mat-khau" element={<PageTransition type="fade"><QuenMatKhau /></PageTransition>} />
-          <Route path="/cau-hoi-thuong-gap" element={<PageTransition><CauHoiThuongGap /></PageTransition>} />
-          <Route path="/dang-ky-hoc-bong" element={<PageTransition><DangKyHocBong /></PageTransition>} />
-          <Route path="/dang-ky-tu-van" element={<PageTransition><DangKyTuVan /></PageTransition>} />
-          <Route path="/ho-so-nguoi-dung" element={<PageTransition><HoSoNguoiDung /></PageTransition>} />
-
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><TrangChu /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/thong-tin-tuyen-sinh"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><ThongTinTuyenSinh /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/dang-ky-xet-tuyen"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><DangKyXetTuyen /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/tra-cuu-ket-qua"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><TraCuuKetQua /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/lien-he"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><LienHe /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/accounts/dang-nhap"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition type="fade"><DangNhap /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/login"
+            element={<Navigate to="/accounts/dang-nhap" replace />}
+          />
+          <Route
+            path="/accounts/dang-ky"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition type="fade"><DangKyTaiKhoan /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/accounts/dang-ky-admin"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition type="fade"><DangKyTaiKhoanAdmin /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/accounts/quen-mat-khau"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition type="fade"><QuenMatKhau /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/cau-hoi-thuong-gap"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><CauHoiThuongGap /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/dang-ky-hoc-bong"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><DangKyHocBong /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/dang-ky-tu-van"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><DangKyTuVan /></PageTransition>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/ho-so-nguoi-dung"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition><HoSoNguoiDung /></PageTransition>
+              </Suspense>
+            }
+          />
         </Routes>
       </AnimatePresence>
       <ChanTrang />
@@ -70,65 +186,86 @@ function App() {
     <HelmetProvider>
       <DarkModeProvider>
         <UserContextProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <Toaster position="top-right" richColors closeButton expand={false} />
-          <Routes>
-            {/* Admin Routes */}
-            <Route path="/admin" element={
-              <AdminProtectedRoute>
-                <AdminLayout currentPage="tong-quan">
-                  <TongQuan />
-                </AdminLayout>
-              </AdminProtectedRoute>
-            } />
-            <Route path="/admin/tong-quan" element={
-              <AdminProtectedRoute>
-                <AdminLayout currentPage="tong-quan">
-                  <TongQuan />
-                </AdminLayout>
-              </AdminProtectedRoute>
-            } />
-            <Route path="/admin/quan-ly-ho-so" element={
-              <AdminProtectedRoute>
-                <AdminLayout currentPage="quan-ly-ho-so">
-                  <QuanLyHoSo />
-                </AdminLayout>
-              </AdminProtectedRoute>
-            } />
-            <Route path="/admin/quan-ly-faq" element={
-              <AdminProtectedRoute>
-                <AdminLayout currentPage="quan-ly-faq">
-                  <QuanLyFAQ />
-                </AdminLayout>
-              </AdminProtectedRoute>
-            } />
-            <Route path="/admin/bao-cao" element={
-              <AdminProtectedRoute>
-                <AdminLayout currentPage="bao-cao">
-                  <BaoCao />
-                </AdminLayout>
-              </AdminProtectedRoute>
-            } />
-            <Route path="/admin/cai-dat" element={
-              <AdminProtectedRoute>
-                <AdminLayout currentPage="cai-dat">
-                  <CaiDat />
-                </AdminLayout>
-              </AdminProtectedRoute>
-            } />
-            <Route path="/admin/ho-so-quan-ly" element={
-              <AdminProtectedRoute>
-                <AdminLayout currentPage="ho-so-quan-ly">
-                  <HoSoQuanLi/>
-                </AdminLayout>
-              </AdminProtectedRoute>
-            } />
-            
-            {/* Public Routes */}
-            <Route path="/*" element={<PublicLayout />} />
-          </Routes>
-        </BrowserRouter>
+          <BrowserRouter>
+            <ScrollToTop />
+            <Toaster position="top-right" richColors closeButton expand={false} />
+            <Routes>
+              {/* Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminLayout currentPage="tong-quan">
+                      <Suspense fallback={<AdminPageLoader />}><TongQuan /></Suspense>
+                    </AdminLayout>
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/tong-quan"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminLayout currentPage="tong-quan">
+                      <Suspense fallback={<AdminPageLoader />}><TongQuan /></Suspense>
+                    </AdminLayout>
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/quan-ly-ho-so"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminLayout currentPage="quan-ly-ho-so">
+                      <Suspense fallback={<AdminPageLoader />}><QuanLyHoSo /></Suspense>
+                    </AdminLayout>
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/quan-ly-faq"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminLayout currentPage="quan-ly-faq">
+                      <Suspense fallback={<AdminPageLoader />}><QuanLyFAQ /></Suspense>
+                    </AdminLayout>
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/bao-cao"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminLayout currentPage="bao-cao">
+                      <Suspense fallback={<AdminPageLoader />}><BaoCao /></Suspense>
+                    </AdminLayout>
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/cai-dat"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminLayout currentPage="cai-dat">
+                      <Suspense fallback={<AdminPageLoader />}><CaiDat /></Suspense>
+                    </AdminLayout>
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/ho-so-quan-ly"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminLayout currentPage="ho-so-quan-ly">
+                      <Suspense fallback={<AdminPageLoader />}><HoSoQuanLi /></Suspense>
+                    </AdminLayout>
+                  </AdminProtectedRoute>
+                }
+              />
+
+              {/* Public Routes */}
+              <Route path="/*" element={<PublicLayout />} />
+            </Routes>
+          </BrowserRouter>
         </UserContextProvider>
       </DarkModeProvider>
     </HelmetProvider>
