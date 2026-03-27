@@ -1,0 +1,26 @@
+{
+  "projectName": "DoAnTuyenSinh",
+  "createdAt": "2026-03-28",
+  "coreValue": "Thiết kế lại toàn bộ UI/UX theo shadcn/ui + design system hiện đại, nhất quán, performace tối ưu.",
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "UI/UX Redesign",
+      "status": "in_progress",
+      "started": "2026-03-28",
+      "phases": [
+        { "id": "P1", "name": "Foundation & Design System", "status": "pending" },
+        { "id": "P2", "name": "Shared Component Library", "status": "pending" },
+        { "id": "P3", "name": "Layout & Navigation", "status": "pending" },
+        { "id": "P4", "name": "Public Pages", "status": "pending" },
+        { "id": "P5", "name": "Admin Pages", "status": "pending" },
+        { "id": "P6", "name": "Polish & Performance", "status": "pending" }
+      ]
+    }
+  ],
+  "workflow": {
+    "style": "incremental",
+    "verifyEachPhase": true,
+    "autoCommitOnPhaseComplete": false
+  }
+}
