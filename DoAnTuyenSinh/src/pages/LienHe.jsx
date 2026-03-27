@@ -26,7 +26,7 @@ import {
 } from "react-icons/fa";
 import { useDarkMode } from "../contexts/DarkModeContext";
 import SEO from "../components/SEO";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 
@@ -95,23 +95,27 @@ const ANIMATION_VARIANTS = {
 };
 
 // Floating particle component
-const FloatingParticle = ({ delay = 0, size = "small" }) => {
+const FloatingParticle = ({ delay = 0, size = "small", index = 0 }) => {
   const { darkMode } = useDarkMode();
-  
+
   const sizeClasses = {
     small: "w-1 h-1",
     medium: "w-2 h-2",
     large: "w-3 h-3"
   };
 
+  const xPos = ((index * 7 + 5) % 90) + 5;
+  const yPos = ((index * 11 + 13) % 80) + 10;
+  const duration = 3 + (index * 0.3) % 3;
+
   return (
     <motion.div
       className={`absolute rounded-full ${sizeClasses[size]} ${
         darkMode ? 'bg-blue-400/20' : 'bg-blue-500/10'
       }`}
-      initial={{ 
-        x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-        y: typeof window !== 'undefined' ? window.innerHeight + 10 : 1000,
+      initial={{
+        x: xPos,
+        y: yPos + 10,
         opacity: 0
       }}
       animate={{
@@ -120,7 +124,7 @@ const FloatingParticle = ({ delay = 0, size = "small" }) => {
         scale: [0, 1, 0]
       }}
       transition={{
-        duration: Math.random() * 4 + 3,
+        duration: duration,
         delay: delay,
         repeat: Infinity,
         ease: "linear"
@@ -247,11 +251,12 @@ function LienHe() {
       }`}>
         {/* Animated background particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {particles.map(particle => (
-            <FloatingParticle 
-              key={particle.id} 
-              delay={particle.delay} 
+          {particles.map((particle, i) => (
+            <FloatingParticle
+              key={particle.id}
+              delay={particle.delay}
               size={particle.size}
+              index={i}
             />
           ))}
         </div>

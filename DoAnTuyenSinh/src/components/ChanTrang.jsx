@@ -18,7 +18,7 @@ import {
   FaChevronRight,
   FaStar,
 } from "react-icons/fa";
-import Button from "./ui/Button";
+import { Button } from "./ui/Button";
 
 // Enhanced animation variants
 const footerVariants = {
@@ -224,8 +224,8 @@ function ChanTrang() {
             key={i}
             className="absolute w-2 h-2 bg-blue-400/20 rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${((i * 7 + 5) % 85) + 5}%`,
+              top: `${((i * 11 + 13) % 75) + 10}%`,
             }}
             animate={{
               y: [-20, -100],
@@ -233,9 +233,9 @@ function ChanTrang() {
               scale: [0.5, 1, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 3 + (i % 5) * 0.4,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: i * 0.3,
             }}
           />
         ))}

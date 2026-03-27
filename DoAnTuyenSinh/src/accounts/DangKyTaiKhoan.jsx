@@ -94,8 +94,8 @@ function DangKyTaiKhoan() {
             style={{
               width: `${60 + i * 20}px`,
               height: `${60 + i * 20}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${((i * 17 + 3) % 85) + 5}%`,
+              top: `${((i * 13 + 7) % 80) + 5}%`,
             }}
             animate={{
               y: [0, -30, 0],
@@ -122,8 +122,8 @@ function DangKyTaiKhoan() {
               darkMode ? 'bg-blue-400/30' : 'bg-blue-500/40'
             }`}
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${((i * 11 + 5) % 90) + 5}%`,
+              top: `${((i * 7 + 13) % 85) + 5}%`,
             }}
             animate={{
               y: [-20, -100],
@@ -131,9 +131,9 @@ function DangKyTaiKhoan() {
               scale: [0.5, 1, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 3 + (i % 4) * 0.5,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: i * 0.25,
             }}
           />
         ))}

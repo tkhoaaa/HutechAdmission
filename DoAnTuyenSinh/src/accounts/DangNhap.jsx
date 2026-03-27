@@ -118,15 +118,15 @@ function DangNhap() {
           <motion.div
             key={i}
             className={`absolute rounded-full ${
-              darkMode 
-                ? 'bg-gradient-to-r from-indigo-500/10 to-purple-500/10' 
+              darkMode
+                ? 'bg-gradient-to-r from-indigo-500/10 to-purple-500/10'
                 : 'bg-gradient-to-r from-indigo-400/20 to-purple-400/20'
             }`}
             style={{
               width: `${50 + i * 15}px`,
               height: `${50 + i * 15}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${((i * 7 + 5) % 85) + 5}%`,
+              top: `${((i * 11 + 13) % 75) + 10}%`,
             }}
             animate={{
               y: [0, -25, 0],
@@ -153,8 +153,8 @@ function DangNhap() {
               darkMode ? 'text-indigo-400/30' : 'text-indigo-500/40'
             }`}
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${((i * 19 + 10) % 80) + 5}%`,
+              top: `${((i * 13 + 20) % 70) + 15}%`,
             }}
             animate={{
               y: [-25, -80],
@@ -163,9 +163,9 @@ function DangNhap() {
               scale: [0.8, 1.2, 0.8],
             }}
             transition={{
-              duration: 4 + Math.random() * 2,
+              duration: 4 + i * 0.4,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: i * 0.4,
             }}
           >
             <FaSignInAlt className="text-lg" />

@@ -23,7 +23,7 @@ import {
 } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import SEO from "../components/SEO";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
@@ -381,17 +381,17 @@ function DangKyXetTuyen() {
                   key={i}
                   className="absolute w-2 h-2 bg-white/20 rounded-full"
                   style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
+                    left: `${((i * 11 + 7) % 85) + 5}%`,
+                    top: `${((i * 13 + 11) % 80) + 10}%`,
                   }}
                   animate={{
                     y: [-20, 20],
                     opacity: [0.2, 0.8, 0.2],
                   }}
                   transition={{
-                    duration: 3 + Math.random() * 2,
+                    duration: 3 + (i % 5) * 0.4,
                     repeat: Infinity,
-                    delay: Math.random() * 2,
+                    delay: i * 0.1,
                   }}
                 />
               ))}

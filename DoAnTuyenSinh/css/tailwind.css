@@ -1,5 +1,4 @@
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @tailwind base;
 @tailwind components;
@@ -11,27 +10,29 @@
     html {
         font-family: "Inter", system-ui, sans-serif;
         scroll-behavior: smooth;
-    @apply font-sans;
     }
     body {
-        @apply antialiased bg-background text-foreground;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: var(--background);
+        color: var(--foreground);
         padding-top: 80px;
-        /* Space for fixed header */
     }
     /* Custom scrollbar */
-     ::-webkit-scrollbar {
+    ::-webkit-scrollbar {
         width: 8px;
     }
-     ::-webkit-scrollbar-track {
-        @apply bg-gray-100;
+    ::-webkit-scrollbar-track {
+        background-color: #f3f4f6;
     }
-     ::-webkit-scrollbar-thumb {
-        @apply bg-gray-300 rounded-full;
+    ::-webkit-scrollbar-thumb {
+        background-color: #d1d5db;
+        border-radius: 9999px;
     }
-     ::-webkit-scrollbar-thumb:hover {
-        @apply bg-gray-400;
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #9ca3af;
     }
-  .theme {
+    .theme {
         --font-heading: var(--font-sans);
         --font-sans: 'Geist Variable', sans-serif;
     }
@@ -42,7 +43,7 @@
         --card-foreground: oklch(0.145 0 0);
         --popover: oklch(1 0 0);
         --popover-foreground: oklch(0.145 0 0);
-        --primary: oklch(0.205 0 0);
+        --primary: #3b82f6;
         --primary-foreground: oklch(0.985 0 0);
         --secondary: oklch(0.97 0 0);
         --secondary-foreground: oklch(0.205 0 0);
@@ -102,8 +103,9 @@
         --sidebar-border: oklch(1 0 0 / 10%);
         --sidebar-ring: oklch(0.556 0 0);
     }
-  * {
-    @apply border-border outline-ring/50;
+  *, *::before, *::after {
+    border-color: var(--border);
+    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
     }
 }
 
@@ -192,44 +194,98 @@
     }
 }
 
+/* Custom keyframes (not in Tailwind config) */
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+    0% { opacity: 0; transform: translateX(20px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+    0% { opacity: 0; transform: translateX(-20px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+@keyframes bounceGentle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+    100% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+@keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+@keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+}
+@keyframes floatFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+@keyframes pulseRing {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+@keyframes slideUp {
+    0% { transform: translateY(100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideDown {
+    0% { transform: translateY(-100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
 /* Custom utility classes */
 
 @layer utilities {
     /* Animation utilities */
-    .animate-fade-in {
-        animation: fadeIn 0.5s ease-in-out;
-    }
-    .animate-fade-in-up {
-        animation: fadeInUp 0.5s ease-out;
-    }
-    .animate-fade-in-down {
-        animation: fadeInDown 0.5s ease-out;
-    }
-    .animate-slide-in-right {
-        animation: slideInRight 0.3s ease-out;
-    }
-    .animate-slide-in-left {
-        animation: slideInLeft 0.3s ease-out;
-    }
-    .animate-scale-in {
-        animation: scaleIn 0.2s ease-out;
-    }
-    .animate-bounce-gentle {
-        animation: bounceGentle 2s infinite;
-    }
-    .animate-pulse-glow {
-        animation: pulseGlow 2s ease-in-out infinite alternate;
-    }
-    .animate-float {
-        animation: float 6s ease-in-out infinite;
-    }
-    .animate-gradient {
-        animation: gradient 15s ease infinite;
-        background-size: 300% 300%;
-    }
-    .animate-shimmer {
-        animation: shimmer 2s linear infinite;
-    }
+    .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+    .animate-fade-in-up { animation: fadeInUp 0.5s ease-out; }
+    .animate-fade-in-down { animation: fadeInDown 0.5s ease-out; }
+    .animate-slide-in-right { animation: slideInRight 0.3s ease-out; }
+    .animate-slide-in-left { animation: slideInLeft 0.3s ease-out; }
+    .animate-scale-in { animation: scaleIn 0.2s ease-out; }
+    .animate-bounce-gentle { animation: bounceGentle 2s infinite; }
+    .animate-pulse-glow { animation: pulseGlow 2s ease-in-out infinite alternate; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-gradient { animation: gradient 15s ease infinite; background-size: 300% 300%; }
+    .animate-shimmer { animation: shimmer 2s linear infinite; }
+    .animate-float-slow { animation: floatSlow 6s ease-in-out infinite; }
+    .animate-float-float { animation: floatFloat 8s ease-in-out infinite; }
+    .animate-pulse-ring { animation: pulseRing 2s ease-out infinite; }
+    .animate-slide-up { animation: slideUp 0.3s ease-out; }
+    .animate-slide-down { animation: slideDown 0.3s ease-out; }
+    .animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
     /* Background utilities */
     .bg-gradient-mesh {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

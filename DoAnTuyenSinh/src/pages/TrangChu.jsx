@@ -26,7 +26,7 @@ import StructuredData, {
   websiteData,
 } from "../components/StructuredData";
 import OptimizedImage from "../components/OptimizedImage";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import VideoModal from "../components/VideoModal";
 

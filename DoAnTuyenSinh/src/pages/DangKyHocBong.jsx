@@ -21,7 +21,7 @@ import {
 } from "react-icons/fa";
 import { UserContext } from "../accounts/UserContext";
 import SEO from "../components/SEO";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 
@@ -197,25 +197,31 @@ function DangKyHocBong() {
 
         {/* Floating Particles */}
         <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 bg-blue-400/30 dark:bg-blue-600/20 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [-20, -100, -20],
-                opacity: [0, 1, 0],
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
+          {[...Array(20)].map((_, i) => {
+            const leftPos = ((i * 7 + 5) % 90) + 5;
+            const topPos = ((i * 11 + 13) % 80) + 10;
+            const duration = 3 + (i * 0.25) % 2.5;
+            const delay = i * 0.15;
+            return (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 bg-blue-400/30 dark:bg-blue-600/20 rounded-full"
+                style={{
+                  left: `${leftPos}%`,
+                  top: `${topPos}%`,
+                }}
+                animate={{
+                  y: [-20, -100, -20],
+                  opacity: [0, 1, 0],
+                }}
+                transition={{
+                  duration: duration,
+                  repeat: Infinity,
+                  delay: delay,
+                }}
+              />
+            );
+          })}
         </div>
 
         {/* Hero Section */}

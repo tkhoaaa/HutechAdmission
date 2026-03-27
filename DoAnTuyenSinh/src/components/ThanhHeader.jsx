@@ -31,7 +31,7 @@ import {
   FaDesktop,
 } from "react-icons/fa";
 import { UserContext } from "../accounts/UserContext";
-import Button from "./ui/Button";
+import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 import { debugUserAvatar, getAvatarUrl } from "../utils/avatarUtils";
 

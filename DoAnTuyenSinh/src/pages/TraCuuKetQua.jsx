@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa";
 import { useDarkMode } from "../contexts/DarkModeContext";
 import SEO from "../components/SEO";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 
@@ -79,17 +79,21 @@ const ANIMATION_VARIANTS = {
 };
 
 // Particle component for background effects
-const Particle = ({ delay = 0 }) => {
+const Particle = ({ delay = 0, index = 0 }) => {
   const { darkMode } = useDarkMode();
-  
+
+  const xPos = ((index * 7 + 5) % 90) + 5;
+  const yPos = ((index * 11 + 13) % 80) + 10;
+  const duration = 2 + (index * 0.25) % 2.5;
+
   return (
     <motion.div
       className={`absolute w-2 h-2 rounded-full ${
         darkMode ? 'bg-blue-400/20' : 'bg-blue-500/10'
       }`}
-      initial={{ 
-        x: Math.random() * window.innerWidth,
-        y: window.innerHeight + 10,
+      initial={{
+        x: xPos,
+        y: yPos + 10,
         opacity: 0
       }}
       animate={{
@@ -98,7 +102,7 @@ const Particle = ({ delay = 0 }) => {
         scale: [0, 1, 0]
       }}
       transition={{
-        duration: Math.random() * 3 + 2,
+        duration: duration,
         delay: delay,
         repeat: Infinity,
         ease: "linear"
@@ -290,8 +294,8 @@ function TraCuuKetQua() {
       }`}>
         {/* Animated background particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {particles.map(particle => (
-            <Particle key={particle.id} delay={particle.delay} />
+          {particles.map((particle, i) => (
+            <Particle key={particle.id} delay={particle.delay} index={i} />
           ))}
         </div>
 

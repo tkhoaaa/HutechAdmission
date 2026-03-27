@@ -29,7 +29,7 @@ import {
 import { UserContext } from "../accounts/UserContext";
 import { useDarkMode } from "../contexts/DarkModeContext";
 import SEO from "../components/SEO";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 
@@ -139,55 +139,63 @@ function DangKyTuVan() {
         {/* Animated Background Elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           {/* Floating Orbs */}
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className={`absolute rounded-full blur-xl ${
-                darkMode 
-                  ? 'bg-gradient-to-r from-blue-600/10 to-purple-600/10' 
-                  : 'bg-gradient-to-r from-blue-300/20 to-purple-300/20'
-              }`}
-              style={{
-                width: `${100 + i * 50}px`,
-                height: `${100 + i * 50}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                x: [0, 100, 0],
-                y: [0, -100, 0],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: 10 + i * 2,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            />
-          ))}
-          
+          {[...Array(8)].map((_, i) => {
+            const leftPos = ((i * 13 + 7) % 80) + 10;
+            const topPos = ((i * 17 + 11) % 70) + 15;
+            return (
+              <motion.div
+                key={i}
+                className={`absolute rounded-full blur-xl ${
+                  darkMode
+                    ? 'bg-gradient-to-r from-blue-600/10 to-purple-600/10'
+                    : 'bg-gradient-to-r from-blue-300/20 to-purple-300/20'
+                }`}
+                style={{
+                  width: `${100 + i * 50}px`,
+                  height: `${100 + i * 50}px`,
+                  left: `${leftPos}%`,
+                  top: `${topPos}%`,
+                }}
+                animate={{
+                  x: [0, 100, 0],
+                  y: [0, -100, 0],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 10 + i * 2,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+            );
+          })}
+
           {/* Sparkle Effects */}
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={`sparkle-${i}`}
-              className={`absolute w-2 h-2 rounded-full ${
-                darkMode ? 'bg-cyan-400' : 'bg-yellow-400'
-              }`}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: i * 0.2,
-              }}
-            />
-          ))}
+          {[...Array(20)].map((_, i) => {
+            const leftPos = ((i * 7 + 5) % 90) + 5;
+            const topPos = ((i * 11 + 13) % 85) + 5;
+            return (
+              <motion.div
+                key={`sparkle-${i}`}
+                className={`absolute w-2 h-2 rounded-full ${
+                  darkMode ? 'bg-cyan-400' : 'bg-yellow-400'
+                }`}
+                style={{
+                  left: `${leftPos}%`,
+                  top: `${topPos}%`,
+                }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  scale: [0, 1, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+              />
+            );
+          })}
         </div>
 
         {/* Hero Section */}

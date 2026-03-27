@@ -85,8 +85,8 @@ function DangKyTaiKhoanAdmin() {
             style={{
               width: `${80 + i * 25}px`,
               height: `${80 + i * 25}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${((i * 7 + 5) % 85) + 5}%`,
+              top: `${((i * 11 + 13) % 75) + 10}%`,
             }}
             animate={{
               y: [0, -40, 0],
@@ -113,8 +113,8 @@ function DangKyTaiKhoanAdmin() {
               darkMode ? 'text-yellow-400/40' : 'text-yellow-500/50'
             }`}
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${((i * 13 + 7) % 85) + 5}%`,
+              top: `${((i * 17 + 11) % 75) + 10}%`,
             }}
             animate={{
               y: [-30, -120],
@@ -123,9 +123,9 @@ function DangKyTaiKhoanAdmin() {
               scale: [0.5, 1, 0.5],
             }}
             transition={{
-              duration: 4 + Math.random() * 2,
+              duration: 4 + (i % 5) * 0.4,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: i * 0.4,
             }}
           >
             <FaCrown className="text-lg" />
