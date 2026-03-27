@@ -36,36 +36,29 @@ const Modal = ({
   const modalRef = useRef(null);
   const previousActiveElement = useRef(null);
 
-  // Handle escape key
   useEffect(() => {
     if (!closeOnEscape) return;
-
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isOpen) {
         onClose();
       }
     };
-
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose, closeOnEscape]);
 
-  // Handle body scroll
   useEffect(() => {
     if (!preventScroll) return;
-
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, preventScroll]);
 
-  // Handle focus management
   useEffect(() => {
     if (isOpen) {
       previousActiveElement.current = document.activeElement;
@@ -75,7 +68,6 @@ const Modal = ({
     }
   }, [isOpen]);
 
-  // Handle overlay click
   const handleOverlayClick = (e) => {
     if (closeOnOverlayClick && e.target === e.currentTarget) {
       onClose();
@@ -89,13 +81,13 @@ const Modal = ({
   };
 
   const modalVariants = {
-    hidden: { 
-      opacity: 0, 
+    hidden: {
+      opacity: 0,
       scale: 0.8,
       y: 50
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       scale: 1,
       y: 0,
       transition: {
@@ -104,8 +96,8 @@ const Modal = ({
         damping: 30
       }
     },
-    exit: { 
-      opacity: 0, 
+    exit: {
+      opacity: 0,
       scale: 0.8,
       y: 50,
       transition: {
@@ -115,7 +107,7 @@ const Modal = ({
   };
 
   const modalClasses = clsx(
-    'relative bg-white rounded-2xl shadow-2xl',
+    'relative bg-background dark:bg-card rounded-2xl border border-border dark:border-border shadow-xl',
     'w-full mx-4',
     modalSizes[size],
     className
@@ -123,7 +115,7 @@ const Modal = ({
 
   const overlayClasses = clsx(
     'fixed inset-0 z-50 flex items-center justify-center p-4',
-    'bg-black/50',
+    'bg-black/50 dark:bg-black/70',
     {
       'backdrop-blur-sm': blur,
     },
@@ -157,13 +149,12 @@ const Modal = ({
             exit={animate ? "exit" : undefined}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
             {(title || showCloseButton) && (
               <div className="flex items-center justify-between p-6 pb-4">
                 {title && (
-                  <h2 
+                  <h2
                     id="modal-title"
-                    className="text-xl font-semibold text-gray-900"
+                    className="text-xl font-semibold text-foreground"
                   >
                     {title}
                   </h2>
@@ -171,7 +162,7 @@ const Modal = ({
                 {showCloseButton && (
                   <button
                     onClick={onClose}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                     aria-label="Close modal"
                   >
                     <FaTimes className="w-5 h-5" />
@@ -179,8 +170,6 @@ const Modal = ({
                 )}
               </div>
             )}
-
-            {/* Content */}
             <div className={clsx('px-6', {
               'pb-6': !title && !showCloseButton,
               'pt-0 pb-6': title || showCloseButton
@@ -196,16 +185,15 @@ const Modal = ({
   return createPortal(modalContent, document.body);
 };
 
-// Modal sub-components
 const ModalHeader = ({ children, className = '', ...props }) => (
-  <div className={clsx('px-6 py-4 border-b border-gray-200', className)} {...props}>
+  <div className={clsx('px-6 py-4 border-b border-border dark:border-border', className)} {...props}>
     {children}
   </div>
 );
 
 const ModalTitle = ({ children, className = '', as: Component = 'h2', ...props }) => (
-  <Component 
-    className={clsx('text-xl font-semibold text-gray-900', className)} 
+  <Component
+    className={clsx('text-xl font-semibold text-foreground', className)}
     {...props}
   >
     {children}
@@ -219,12 +207,11 @@ const ModalBody = ({ children, className = '', ...props }) => (
 );
 
 const ModalFooter = ({ children, className = '', ...props }) => (
-  <div className={clsx('px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl', className)} {...props}>
+  <div className={clsx('px-6 py-4 border-t border-border dark:border-border bg-muted dark:bg-card rounded-b-2xl', className)} {...props}>
     {children}
   </div>
 );
 
-// Attach sub-components
 Modal.Header = ModalHeader;
 Modal.Title = ModalTitle;
 Modal.Body = ModalBody;
@@ -232,4 +219,4 @@ Modal.Footer = ModalFooter;
 
 export { Modal };
 export default Modal;
-export { ModalHeader, ModalTitle, ModalBody, ModalFooter }; 
+export { ModalHeader, ModalTitle, ModalBody, ModalFooter };

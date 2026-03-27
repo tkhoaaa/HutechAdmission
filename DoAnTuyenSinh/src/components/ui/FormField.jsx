@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCheck, FaExclamationTriangle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Input } from './Input';
+import { clsx } from 'clsx';
 
 const FormField = ({
   label,
@@ -28,10 +29,9 @@ const FormField = ({
 
   const isPassword = type === 'password';
   const inputType = isPassword && showPassword ? 'text' : type;
-  
+
   const hasError = error && hasBeenTouched;
   const hasSuccess = success && hasBeenTouched && !error;
-  const isValid = validation ? validation(value) : !error;
 
   const handleFocus = (e) => {
     setIsFocused(true);
@@ -52,65 +52,66 @@ const FormField = ({
     setShowPassword(!showPassword);
   };
 
-  const fieldVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 }
-  };
+  const labelColorClass = hasError
+    ? 'text-destructive dark:text-destructive'
+    : hasSuccess
+    ? 'text-green-600 dark:text-green-400'
+    : isFocused
+    ? 'text-primary dark:text-primary'
+    : 'text-foreground dark:text-foreground';
 
-  const errorVariants = {
-    initial: { opacity: 0, scale: 0.8, y: -10 },
-    animate: { opacity: 1, scale: 1, y: 0 },
-    exit: { opacity: 0, scale: 0.8, y: -10 }
-  };
+  const ringColorClass = hasError
+    ? 'ring-2 ring-destructive dark:ring-destructive'
+    : hasSuccess
+    ? 'ring-2 ring-green-500 dark:ring-green-400'
+    : isFocused
+    ? 'ring-2 ring-primary dark:ring-primary'
+    : 'ring-1 ring-input dark:ring-input';
+
+  const passwordStrength = isPassword && value
+    ? value.length < 6 ? 'weak' : value.length < 8 ? 'medium' : 'strong'
+    : null;
+
+  const strengthColorClass = passwordStrength === 'weak'
+    ? 'bg-destructive dark:bg-destructive'
+    : passwordStrength === 'medium'
+    ? 'bg-yellow-500 dark:bg-yellow-400'
+    : 'bg-green-500 dark:bg-green-400';
+
+  const strengthWidthClass = passwordStrength === 'weak'
+    ? 'w-1/3'
+    : passwordStrength === 'medium'
+    ? 'w-2/3'
+    : 'w-full';
+
+  const strengthTextClass = passwordStrength === 'weak'
+    ? 'text-destructive dark:text-destructive'
+    : passwordStrength === 'medium'
+    ? 'text-yellow-600 dark:text-yellow-400'
+    : 'text-green-600 dark:text-green-400';
 
   return (
-    <motion.div
-      variants={fieldVariants}
-      initial="initial"
-      animate="animate"
-      className={`relative ${className}`}
-    >
-      {/* Label */}
+    <div className={`relative ${className}`}>
       {label && (
-        <motion.label
+        <label
           htmlFor={name}
-          className={`block text-sm font-semibold mb-2 transition-colors duration-200 ${
-            hasError
-              ? 'text-error-600 dark:text-error-400'
-              : hasSuccess
-              ? 'text-success-600 dark:text-success-400'
-              : isFocused
-              ? 'text-primary-600 dark:text-primary-400'
-              : 'text-gray-700 dark:text-gray-300'
-          }`}
-          animate={{
-            scale: isFocused ? 1.02 : 1,
-          }}
-          transition={{ duration: 0.2 }}
+          className={clsx(
+            'block text-sm font-semibold mb-2 transition-colors duration-200',
+            labelColorClass
+          )}
         >
           {label}
           {required && (
-            <span className="text-error-500 ml-1">*</span>
+            <span className="text-destructive ml-1">*</span>
           )}
-        </motion.label>
+        </label>
       )}
 
-      {/* Input Container */}
       <div className="relative">
-        <motion.div
-          className={`relative rounded-xl transition-all duration-300 ${
-            hasError
-              ? 'ring-2 ring-error-500 dark:ring-error-400'
-              : hasSuccess
-              ? 'ring-2 ring-success-500 dark:ring-success-400'
-              : isFocused
-              ? 'ring-2 ring-primary-500 dark:ring-primary-400'
-              : 'ring-1 ring-gray-300 dark:ring-gray-600'
-          }`}
-          whileHover={{ scale: 1.01 }}
-          whileFocus={{ scale: 1.02 }}
-        >
+        <div className={clsx(
+          'relative rounded-xl transition-all duration-300',
+          ringColorClass
+        )}>
           <Input
             id={name}
             name={name}
@@ -121,48 +122,45 @@ const FormField = ({
             onBlur={handleBlur}
             placeholder={placeholder}
             disabled={disabled}
-            className={`
-              w-full px-4 py-3 rounded-xl border-0 bg-white dark:bg-gray-800 
-              text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400
-              focus:outline-none focus:ring-0 transition-all duration-200
-              ${leftIcon ? 'pl-12' : ''}
-              ${rightIcon || isPassword || hasError || hasSuccess ? 'pr-12' : ''}
-              ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-              ${inputClassName}
-            `}
+            className={clsx(
+              'w-full px-4 py-3 rounded-xl border-0',
+              'bg-background dark:bg-input',
+              'text-foreground dark:text-foreground',
+              'placeholder:text-muted-foreground dark:placeholder:text-muted-foreground',
+              'focus:outline-none focus:ring-0',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              leftIcon ? 'pl-12' : '',
+              (rightIcon || isPassword || hasError || hasSuccess) ? 'pr-12' : '',
+              inputClassName
+            )}
             {...props}
           />
 
-          {/* Left Icon */}
           {leftIcon && (
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500">
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground">
               {leftIcon}
             </div>
           )}
 
-          {/* Right Icons */}
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-            {/* Password Toggle */}
             {isPassword && (
-              <motion.button
+              <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </motion.button>
+              </button>
             )}
 
-            {/* Validation Icons */}
             <AnimatePresence>
               {hasError && (
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   exit={{ scale: 0, rotate: 180 }}
-                  className="text-error-500 dark:text-error-400"
+                  className="text-destructive"
                 >
                   <FaExclamationTriangle />
                 </motion.div>
@@ -172,66 +170,49 @@ const FormField = ({
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   exit={{ scale: 0, rotate: 180 }}
-                  className="text-success-500 dark:text-success-400"
+                  className="text-green-600 dark:text-green-400"
                 >
                   <FaCheck />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Custom Right Icon */}
             {rightIcon && (
-              <div className="text-gray-400 dark:text-gray-500">
+              <div className="text-muted-foreground">
                 {rightIcon}
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Progress Bar for Password Strength */}
-        {isPassword && value && (
+        {passwordStrength && (
           <motion.div
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
             className="mt-2"
           >
-            <div className="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div className="h-1 bg-muted dark:bg-muted rounded-full overflow-hidden">
               <motion.div
-                className={`h-full transition-all duration-300 ${
-                  value.length < 6
-                    ? 'bg-error-500 w-1/3'
-                    : value.length < 8
-                    ? 'bg-warning-500 w-2/3'
-                    : 'bg-success-500 w-full'
-                }`}
+                className={clsx('h-full transition-all duration-300', strengthColorClass)}
                 initial={{ width: 0 }}
-                animate={{ 
-                  width: value.length < 6 ? '33%' : value.length < 8 ? '66%' : '100%' 
-                }}
+                animate={{ width: strengthWidthClass }}
               />
             </div>
-            <p className={`text-xs mt-1 ${
-              value.length < 6
-                ? 'text-error-600 dark:text-error-400'
-                : value.length < 8
-                ? 'text-warning-600 dark:text-warning-400'
-                : 'text-success-600 dark:text-success-400'
-            }`}>
-              {value.length < 6 ? 'Yếu' : value.length < 8 ? 'Trung bình' : 'Mạnh'}
+            <p className={clsx('text-xs mt-1', strengthTextClass)}>
+              {passwordStrength === 'weak' ? 'Yếu' : passwordStrength === 'medium' ? 'Trung bình' : 'Mạnh'}
             </p>
           </motion.div>
         )}
       </div>
 
-      {/* Error/Success Messages */}
       <AnimatePresence>
         {hasError && (
           <motion.div
-            variants={errorVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="mt-2 flex items-center gap-2 text-error-600 dark:text-error-400 text-sm"
+            initial={{ opacity: 0, y: -10, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className="mt-2 flex items-center gap-2 text-destructive dark:text-destructive text-sm"
           >
             <FaExclamationTriangle className="flex-shrink-0" />
             <span>{error}</span>
@@ -239,11 +220,11 @@ const FormField = ({
         )}
         {hasSuccess && success && (
           <motion.div
-            variants={errorVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="mt-2 flex items-center gap-2 text-success-600 dark:text-success-400 text-sm"
+            initial={{ opacity: 0, y: -10, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className="mt-2 flex items-center gap-2 text-green-600 dark:text-green-400 text-sm"
           >
             <FaCheck className="flex-shrink-0" />
             <span>{success}</span>
@@ -251,20 +232,19 @@ const FormField = ({
         )}
       </AnimatePresence>
 
-      {/* Character Count */}
       {props.maxLength && (
         <div className="mt-1 text-right">
-          <span className={`text-xs ${
-            value.length > props.maxLength * 0.9
-              ? 'text-warning-600 dark:text-warning-400'
-              : 'text-gray-500 dark:text-gray-400'
-          }`}>
+          <span className={clsx('text-xs', {
+            'text-yellow-600 dark:text-yellow-400': value.length > props.maxLength * 0.9,
+            'text-muted-foreground': value.length <= props.maxLength * 0.9,
+          })}>
             {value.length}/{props.maxLength}
           </span>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 
-export default FormField; 
+export default FormField;
+export { FormField };

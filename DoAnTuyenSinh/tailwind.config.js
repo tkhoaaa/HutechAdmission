@@ -46,6 +46,7 @@ export default {
                 'gradient-success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 'gradient-warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                 'gradient-error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                'grid-pattern': 'linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)',
             },
         },
     },

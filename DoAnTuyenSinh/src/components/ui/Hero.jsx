@@ -57,9 +57,6 @@ const Hero = React.forwardRef(({
       variants={heroVariants}
       {...props}
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-      
       {/* Content */}
       <div className="relative z-10">
         {children}
