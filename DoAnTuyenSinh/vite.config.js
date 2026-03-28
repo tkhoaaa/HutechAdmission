@@ -41,12 +41,11 @@ export default defineConfig({
                     if (id.includes('node_modules/react-icons/')) return 'vendor-icons'
                     if (id.includes('node_modules/lucide-react/')) return 'vendor-icons'
 
-                    // UI utilities
-                    if (id.includes('node_modules/tailwind-merge/')) return 'vendor-ui'
-                    if (id.includes('node_modules/clsx/')) return 'vendor-ui'
-                    if (id.includes('node_modules/cva/')) return 'vendor-ui'
-                    if (id.includes('node_modules/class-variance-authority/')) return 'vendor-ui'
-                    if (id.includes('node_modules/cmdk/')) return 'vendor-ui'
+                    // UI utilities — split each into own chunk to avoid minification bugs
+                    if (id.includes('node_modules/tailwind-merge/')) return 'vendor-tailwind-merge'
+                    if (id.includes('node_modules/clsx/')) return 'vendor-clsx'
+                    if (id.includes('node_modules/class-variance-authority/')) return 'vendor-cva'
+                    if (id.includes('node_modules/cmdk/')) return 'vendor-cmdk'
 
                     // Other node_modules
                     if (id.includes('node_modules/')) return 'vendor-misc'
