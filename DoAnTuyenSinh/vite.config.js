@@ -32,10 +32,10 @@ export default defineConfig({
                     if (id.includes('node_modules/axios/')) return 'vendor-http'
                     if (id.includes('node_modules/sonner/')) return 'vendor-ui'
 
-                    // Heavy charting — put in own chunk
-                    if (id.includes('node_modules/recharts/')) return 'vendor-charts'
-                    if (id.includes('node_modules/d3-')) return 'vendor-charts'
-                    if (id.includes('node_modules/resize-observer')) return 'vendor-charts'
+                    // Heavy charting — keep with react to avoid forwardRef init order bugs
+                    if (id.includes('node_modules/recharts/')) return 'vendor-react'
+                    if (id.includes('node_modules/d3-')) return 'vendor-react'
+                    if (id.includes('node_modules/resize-observer')) return 'vendor-react'
 
                     // Icon libraries
                     if (id.includes('node_modules/react-icons/')) return 'vendor-icons'
