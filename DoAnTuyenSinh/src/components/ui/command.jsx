@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/Dialog"
+} from "@/components/ui/dialog"
 import {
   InputGroup,
   InputGroupAddon,
