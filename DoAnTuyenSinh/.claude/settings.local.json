@@ -42,7 +42,8 @@
       "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && rm -f src/components/ui/Card.modern.jsx 2>&1 && echo \"Deleted Card.modern.jsx\")",
       "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npm run build 2>&1)",
       "Bash(ls -la DoAnTuyenSinh/dist/assets/vendor-misc*.js)",
-      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && node -e \"\nimport\\('./backend/config/database.js'\\).then\\(\\({default: pool}\\) => {\n  // Test the insert query to see if it fails\n  pool.query\\('DESCRIBE users'\\).then\\(\\([rows]\\) => {\n    console.log\\('Users table columns:', rows.map\\(r => r.Field\\).join\\(', '\\)\\);\n    pool.end\\(\\);\n  }\\);\n}\\);\n\" 2>&1)"
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && node -e \"\nimport\\('./backend/config/database.js'\\).then\\(\\({default: pool}\\) => {\n  // Test the insert query to see if it fails\n  pool.query\\('DESCRIBE users'\\).then\\(\\([rows]\\) => {\n    console.log\\('Users table columns:', rows.map\\(r => r.Field\\).join\\(', '\\)\\);\n    pool.end\\(\\);\n  }\\);\n}\\);\n\" 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npm run build 2>&1 | grep -E \"error|Could not|no such file\" | head -5)"
     ]
   }
 }
