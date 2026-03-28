@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaChevronDown,
@@ -14,14 +14,24 @@ import {
   FaRocket,
   FaHeart,
   FaFilter,
-  FaBookOpen,
-  FaUsers,
-  FaAward
+  FaSync,
 } from "react-icons/fa";
 import SEO from "../components/SEO";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
+import { authAPI } from "../utils/apiClient";
+
+// Category icon mapping
+const categoryIcons = {
+  "Tuyển sinh": FaGraduationCap,
+  "Học phí": FaMoneyBillWave,
+  "Học bổng": FaMoneyBillWave,
+  "Cơ sở vật chất": FaBuilding,
+  "Chương trình đào tạo": FaGraduationCap,
+  "Hồ sơ": FaBuilding,
+  "Khác": FaQuestionCircle,
+};
 
 // Enhanced animation variants (entrance only - no infinite loops)
 const ANIMATION_VARIANTS = {
@@ -30,10 +40,10 @@ const ANIMATION_VARIANTS = {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+        staggerChildren: 0.08,
+        delayChildren: 0.2,
+      },
+    },
   },
   item: {
     hidden: { y: 30, opacity: 0, scale: 0.95 },
@@ -45,10 +55,10 @@ const ANIMATION_VARIANTS = {
         type: "spring",
         stiffness: 100,
         damping: 15,
-        duration: 0.6
-      }
-    }
-  }
+        duration: 0.6,
+      },
+    },
+  },
 };
 
 // Floating particle component with deterministic positioning
@@ -56,7 +66,7 @@ const FloatingParticle = ({ delay = 0, size = "small", index = 0 }) => {
   const sizeClasses = {
     small: "w-1 h-1",
     medium: "w-2 h-2",
-    large: "w-3 h-3"
+    large: "w-3 h-3",
   };
 
   const xPos = ((index * 7 + 5) % 90) + 5;
@@ -70,77 +80,80 @@ const FloatingParticle = ({ delay = 0, size = "small", index = 0 }) => {
         left: `${xPos}%`,
         top: `${yPos}%`,
         animationDelay: `${delay}s`,
-        animationDuration: `${duration}s`
+        animationDuration: `${duration}s`,
       }}
     />
   );
 };
 
-// Category icon mapping
-const categoryIcons = {
-  "Tuyen sinh": FaGraduationCap,
-  "Hoc phi & Hoc bong": FaMoneyBillWave,
-  "Co so vat chat": FaBuilding
-};
-
-const faqData = [
+// Demo data as fallback when API fails
+const DEMO_FAQ_DATA = [
   {
-    category: "Tuyen sinh",
+    category: "Tuyển sinh",
     questions: [
       {
-        question: "HUTECH co bao nhieu phuong thuc xet tuyen?",
+        id: 1,
+        question: "HUTECH có bao nhiêu phương thức xét tuyển?",
         answer:
-          "HUTECH co 4 phuong thuc xet tuyen: Xet tuyen hoc ba THPT, Xet tuyen ket qua thi THPT Quoc gia, Xet tuyen ket qua thi danh gia nang luc, va Xet tuyen thang theo quy dinh cua Bo GD&DT.",
+          "HUTECH có 4 phương thức xét tuyển: Xét tuyển học bạ THPT, Xét tuyển kết quả thi THPT Quốc gia, Xét tuyển kết quả thi đánh giá năng lực, và Xét tuyển thẳng theo quy định của Bộ GD&ĐT.",
       },
       {
-        question: "Thoi gian nhan ho so xet tuyen khi nao?",
+        id: 2,
+        question: "Thời gian nhận hồ sơ xét tuyển khi nào?",
         answer:
-          "Thoi gian nhan ho so xet tuyen thuong bat dau tu thang 3 va keo dai den thang 8 hang nam. Ban co the theo doi thong tin chi tiet tren website chinh thuc cua truong.",
+          "Thời gian nhận hồ sơ xét tuyển thường bắt đầu từ tháng 3 và kéo dài đến tháng 8 hàng năm. Bạn có thể theo dõi thông tin chi tiết trên website chính thức của trường.",
       },
       {
-        question: "HUTECH co bao nhieu nganh dao tao?",
+        id: 3,
+        question: "HUTECH có bao nhiêu ngành đào tạo?",
         answer:
-          "HUTECH co hon 50 nganh dao tao thuoc cac linh vuc: Cong nghe thong tin, Kinh te - Quan tri, Ky thuat, Ngoai ngu, Du lich, Y te va nhieu nganh khac.",
+          "HUTECH có hơn 50 ngành đào tạo thuộc các lĩnh vực: Công nghệ thông tin, Kinh tế - Quản trị, Kỹ thuật, Ngoại ngữ, Du lịch, Y tế và nhiều ngành khác.",
       },
     ],
   },
   {
-    category: "Hoc phi & Hoc bong",
+    category: "Học phí & Học bổng",
     questions: [
       {
-        question: "Hoc phi tai HUTECH nhu the nao?",
+        id: 4,
+        question: "Học phí tại HUTECH như thế nào?",
         answer:
-          "Hoc phi tai HUTECH duoc tinh theo tin chi va thay doi theo tung nganh hoc. Muc hoc phi trung binh tu 15-25 trieu dong/nam hoc. Truong co nhieu chinh sach ho tro hoc phi cho sinh vien.",
+          "Học phí tại HUTECH được tính theo tín chỉ và thay đổi theo từng ngành học. Mức học phí trung bình từ 15-25 triệu đồng/năm học. Trường có nhiều chính sách hỗ trợ học phí cho sinh viên.",
       },
       {
-        question: "Co nhung loai hoc bong nao?",
+        id: 5,
+        question: "Có những loại học bổng nào?",
         answer:
-          "HUTECH co nhieu loai hoc bong: Hoc bong khuyen khich hoc tap, Hoc bong tai nang, Hoc bong ho tro sinh vien ngheo, Hoc bong tu cac doanh nghiep doi tac.",
+          "HUTECH có nhiều loại học bổng: Học bổng khuyến khích học tập, Học bổng tài năng, Học bổng hỗ trợ sinh viên nghèo, Học bổng từ các doanh nghiệp đối tác.",
       },
       {
-        question: "Lam the nao de dang ky hoc bong?",
+        id: 6,
+        question: "Làm thế nào để đăng ký học bổng?",
         answer:
-          "Ban co the dang ky hoc bong thong qua form online tren website hoac lien he truc tiep voi phong Cong tac sinh vien de duoc huong dan chi tiet.",
+          "Bạn có thể đăng ký học bổng thông qua form online trên website hoặc liên hệ trực tiếp với phòng Công tác sinh viên để được hướng dẫn chi tiết.",
       },
     ],
   },
   {
-    category: "Co so vat chat",
+    category: "Cơ sở vật chất",
     questions: [
       {
-        question: "HUTECH co nhung co so nao?",
+        id: 7,
+        question: "HUTECH có những cơ sở nào?",
         answer:
-          "HUTECH co 3 co so chinh tai TP.HCM: Co so 1 (475A Dien Bien Phu, Q.Binh Thanh), Co so 2 (31/36 Ung Van Khiem, Q.Binh Thanh), va Co so 3 (288 Do Xuan Hop, Q.9).",
+          "HUTECH có 3 cơ sở chính tại TP.HCM: Cơ sở 1 (475A Điện Biên Phủ, Q.Bình Thạnh), Cơ sở 2 (31/36 Ung Văn Khiêm, Q.Bình Thạnh), và Cơ sở 3 (288 Đỗ Xuân Hợp, Q.9).",
       },
       {
-        question: "Thu vien co day du tai lieu khong?",
+        id: 8,
+        question: "Thư viện có đầy đủ tài liệu không?",
         answer:
-          "Thu vien HUTECH co hon 100,000 dau sach, tai lieu dien tu, va cac co so du lieu truc tuyen. Sinh vien co the truy cap 24/7 thong qua he thong thu vien so.",
+          "Thư viện HUTECH có hơn 100,000 đầu sách, tài liệu điện tử, và các cơ sở dữ liệu trực tuyến. Sinh viên có thể truy cập 24/7 thông qua hệ thống thư viện số.",
       },
       {
-        question: "Ky tuc xa co san cho sinh vien khong?",
+        id: 9,
+        question: "Ký túc xá có sẵn cho sinh viên không?",
         answer:
-          "HUTECH co ky tuc xa voi suc chua hon 2,000 sinh vien. Ky tuc xa duoc trang bi day du tien nghi voi muc phi hop ly. Sinh vien co the dang ky tu nam nhat.",
+          "HUTECH có ký túc xá với sức chứa hơn 2,000 sinh viên. Ký túc xá được trang bị đầy đủ tiện nghi với mức phí hợp lý. Sinh viên có thể đăng ký từ năm nhất.",
       },
     ],
   },
@@ -148,14 +161,56 @@ const faqData = [
 
 function CauHoiThuongGap() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Tất cả");
   const [expandedItems, setExpandedItems] = useState(new Set());
+  const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [usingDemo, setUsingDemo] = useState(false);
 
-  // Generate floating particles with deterministic values
-  const particles = Array.from({ length: 15 }, (_, i) => ({
-    id: i,
-    delay: (i * 0.7) % 5,
-    size: ["small", "medium", "large"][i % 3]
-  }));
+  // Fetch FAQs from API
+  const fetchFaqs = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await authAPI.getFAQs(
+        selectedCategory !== "Tất cả" ? { category: selectedCategory } : {}
+      );
+      if (res.success && res.data) {
+        setFaqs(res.data.faqs || []);
+        setUsingDemo(false);
+      } else {
+        throw new Error("Dữ liệu không hợp lệ");
+      }
+    } catch (err) {
+      console.warn("FAQ API failed, using demo data:", err.message);
+      setError("Đang hiển thị dữ liệu mẫu");
+      setFaqs([]);
+      setUsingDemo(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFaqs();
+  }, [selectedCategory]);
+
+  // Reset expanded items when category changes
+  useEffect(() => {
+    setExpandedItems(new Set());
+  }, [selectedCategory, searchTerm]);
+
+  // Generate floating particles
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 15 }, (_, i) => ({
+        id: i,
+        delay: (i * 0.7) % 5,
+        size: ["small", "medium", "large"][i % 3],
+      })),
+    []
+  );
 
   const toggleItem = (index) => {
     const newExpanded = new Set(expandedItems);
@@ -167,29 +222,67 @@ function CauHoiThuongGap() {
     setExpandedItems(newExpanded);
   };
 
-  const filteredData = faqData
-    .filter(
-      (category) =>
-        category.category === "Tat ca" || category.category === "Tat ca"
-    )
-    .map((category) => ({
-      ...category,
-      questions: category.questions.filter(
-        (q) =>
-          q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          q.answer.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    }))
-    .filter((category) => category.questions.length > 0);
+  // Get all categories from data
+  const allCategories = useMemo(() => {
+    if (usingDemo || faqs.length === 0) {
+      return ["Tất cả", ...DEMO_FAQ_DATA.map((cat) => cat.category)];
+    }
+    const cats = [...new Set(faqs.map((faq) => faq.category || "Khác"))];
+    return ["Tất cả", ...cats];
+  }, [faqs, usingDemo]);
 
-  const allCategories = ["Tat ca", ...faqData.map((cat) => cat.category)];
+  // Filter and group data
+  const groupedFaqs = useMemo(() => {
+    if (usingDemo || faqs.length === 0) {
+      // Use demo data
+      return DEMO_FAQ_DATA.map((cat) => ({
+        ...cat,
+        questions: cat.questions.filter(
+          (q) =>
+            searchTerm === "" ||
+            q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            q.answer.toLowerCase().includes(searchTerm.toLowerCase())
+        ),
+      })).filter(
+        (cat) =>
+          (selectedCategory === "Tất cả" || cat.category === selectedCategory) &&
+          cat.questions.length > 0
+      );
+    }
+
+    // Use API data
+    const filtered = faqs.filter(
+      (faq) =>
+        searchTerm === "" ||
+        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const grouped = {};
+    filtered.forEach((faq) => {
+      const cat = faq.category || "Khác";
+      if (!grouped[cat]) {
+        grouped[cat] = [];
+      }
+      grouped[cat].push(faq);
+    });
+
+    return Object.entries(grouped)
+      .filter(([cat]) => selectedCategory === "Tất cả" || cat === selectedCategory)
+      .map(([category, questions]) => ({ category, questions }));
+  }, [faqs, searchTerm, selectedCategory, usingDemo]);
+
+  const totalQuestions = groupedFaqs.reduce(
+    (sum, cat) => sum + cat.questions.length,
+    0
+  );
 
   return (
     <>
       <SEO
-        title="Cau hoi thuong gap - HUTECH"
-        description="Tim hieu cac cau hoi thuong gap ve tuyen sinh, hoc phi, hoc bong va co so vat chat tai HUTECH."
-        keywords="cau hoi thuong gap, tuyen sinh HUTECH, hoc phi, hoc bong, co so vat chat"
+        title="Câu hỏi thường gặp - HUTECH"
+        description="Tìm hiểu các câu hỏi thường gặp về tuyển sinh, học phí, học bổng và cơ sở vật chất tại HUTECH."
+        keywords="câu hỏi thường gặp, tuyển sinh HUTECH, học phí, học bổng, cơ sở vật chất"
         canonical="/cau-hoi-thuong-gap"
       />
 
@@ -206,14 +299,20 @@ function CauHoiThuongGap() {
           ))}
         </div>
 
-        {/* Floating geometric shapes - CSS animated */}
+        {/* Floating geometric shapes */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-blue-200/20 dark:bg-blue-500/5 animate-float" />
-          <div className="absolute top-60 right-20 w-32 h-32 rounded-full bg-purple-200/20 dark:bg-purple-500/5 animate-float-slow" style={{ animationDelay: "1.5s" }} />
-          <div className="absolute bottom-40 left-1/3 w-24 h-24 rounded-full bg-emerald-200/20 dark:bg-emerald-500/5 animate-float" style={{ animationDelay: "3s" }} />
+          <div
+            className="absolute top-60 right-20 w-32 h-32 rounded-full bg-purple-200/20 dark:bg-purple-500/5 animate-float-slow"
+            style={{ animationDelay: "1.5s" }}
+          />
+          <div
+            className="absolute bottom-40 left-1/3 w-24 h-24 rounded-full bg-emerald-200/20 dark:bg-emerald-500/5 animate-float"
+            style={{ animationDelay: "3s" }}
+          />
         </div>
 
-        {/* Enhanced Hero Section */}
+        {/* Hero Section */}
         <motion.section
           initial="hidden"
           animate="visible"
@@ -222,7 +321,7 @@ function CauHoiThuongGap() {
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div variants={ANIMATION_VARIANTS.item} className="text-center">
-              {/* Animated icon - CSS pulse */}
+              {/* Animated icon */}
               <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 relative bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-600 dark:to-purple-600 shadow-2xl animate-pulse-soft">
                 <FaQuestionCircle className="text-4xl text-white" />
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30 animate-pulse-soft" />
@@ -238,7 +337,7 @@ function CauHoiThuongGap() {
                 <div className="animate-pulse-soft">
                   <FaHeart className="text-red-500" />
                 </div>
-                <span className="font-semibold">Ho tro 24/7</span>
+                <span className="font-semibold">Hỗ trợ 24/7</span>
                 <FaStar className="text-yellow-500" />
               </motion.div>
 
@@ -250,7 +349,7 @@ function CauHoiThuongGap() {
                 transition={{ delay: 0.5, duration: 0.8 }}
               >
                 <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
-                  Cau hoi thuong gap
+                  Câu hỏi thường gặp
                 </span>
               </motion.h1>
 
@@ -261,7 +360,8 @@ function CauHoiThuongGap() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7, duration: 0.8 }}
               >
-                Tim cau tra loi cho nhung thac mac pho bien ve tuyen sinh, hoc phi, hoc bong va co so vat chat tai HUTECH
+                Tìm câu trả lời cho những thắc mắc phổ biến về tuyển sinh, học phí,
+                học bổng và cơ sở vật chất tại HUTECH
               </motion.p>
 
               {/* Stats */}
@@ -272,9 +372,9 @@ function CauHoiThuongGap() {
                 transition={{ delay: 0.9, duration: 0.8 }}
               >
                 {[
-                  { icon: FaBookOpen, number: "50+", label: "Cau hoi" },
-                  { icon: FaUsers, number: "24/7", label: "Ho tro" },
-                  { icon: FaAward, number: "100%", label: "Mien phi" }
+                  { icon: FaQuestionCircle, number: `${totalQuestions}+`, label: "Câu hỏi" },
+                  { icon: FaStar, number: "24/7", label: "Hỗ trợ" },
+                  { icon: FaRocket, number: "100%", label: "Miễn phí" },
                 ].map((stat, index) => (
                   <motion.div
                     key={index}
@@ -298,7 +398,7 @@ function CauHoiThuongGap() {
           </div>
         </motion.section>
 
-        {/* Enhanced Search & Filter Section */}
+        {/* Search & Filter Section */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -322,7 +422,7 @@ function CauHoiThuongGap() {
                 >
                   <Input
                     type="text"
-                    placeholder="Tim kiem cau hoi cua ban..."
+                    placeholder="Tìm kiếm câu hỏi của bạn..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     leftIcon={<FaSearch className="text-blue-500" />}
@@ -347,30 +447,40 @@ function CauHoiThuongGap() {
                 >
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                     <FaFilter className="text-blue-500" />
-                    <span className="font-semibold">Loc theo danh muc:</span>
+                    <span className="font-semibold">Lọc theo danh mục:</span>
+                    {usingDemo && (
+                      <span className="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded-full">
+                        Dữ liệu mẫu
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-3">
                     {allCategories.map((category, index) => {
-                      const IconComponent = categoryIcons[category] || FaQuestionCircle;
+                      const IconComponent =
+                        categoryIcons[category] || FaQuestionCircle;
+                      const isActive = selectedCategory === category;
 
                       return (
                         <div
                           key={category}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.6 + index * 0.1 }}
                           className="hover:scale-105 active:scale-95 transition-transform"
                         >
                           <Button
-                            variant={index === 0 ? "primary" : "outline"}
+                            variant={isActive ? "primary" : "outline"}
                             size="md"
-                            onClick={() => {}}
-                            leftIcon={category !== "Tat ca" ? <IconComponent /> : <FaStar />}
+                            onClick={() => setSelectedCategory(category)}
+                            leftIcon={
+                              category !== "Tất cả" ? (
+                                <IconComponent />
+                              ) : (
+                                <FaStar />
+                              )
+                            }
                             className={`transition-all duration-300 ${
-                              index === 0
-                                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl'
-                                : `border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-lg`
+                              isActive
+                                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl"
+                                : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-lg"
                             }`}
                           >
                             {category}
@@ -379,13 +489,30 @@ function CauHoiThuongGap() {
                       );
                     })}
                   </div>
+
+                  {/* Refresh button */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={fetchFaqs}
+                      disabled={loading}
+                      className="text-sm text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 disabled:opacity-50"
+                    >
+                      <FaSync
+                        className={`text-xs ${loading ? "animate-spin" : ""}`}
+                      />
+                      Làm mới dữ liệu
+                    </button>
+                    {error && (
+                      <span className="text-xs text-amber-500">{error}</span>
+                    )}
+                  </div>
                 </motion.div>
               </Card.Content>
             </Card>
           </div>
         </motion.section>
 
-        {/* Enhanced FAQ Content */}
+        {/* FAQ Content */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -393,42 +520,83 @@ function CauHoiThuongGap() {
           className="py-16"
         >
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            {filteredData.length === 0 ? (
+            {loading && faqs.length === 0 && !usingDemo ? (
+              /* Loading skeleton */
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-6"
+              >
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white dark:bg-gray-800 rounded-2xl p-6 animate-pulse"
+                  >
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-gray-300 dark:bg-gray-600" />
+                      <div>
+                        <div className="h-6 w-40 bg-gray-300 dark:bg-gray-600 rounded mb-2" />
+                        <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {[1, 2].map((j) => (
+                        <div
+                          key={j}
+                          className="h-16 bg-gray-100 dark:bg-gray-700 rounded-xl"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            ) : groupedFaqs.length === 0 ? (
+              /* No results */
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="text-center py-16"
               >
-                <Card variant="glass" className="max-w-md mx-auto backdrop-blur-xl">
+                <Card
+                  variant="glass"
+                  className="max-w-md mx-auto backdrop-blur-xl"
+                >
                   <Card.Content className="p-12">
                     <div className="mb-6 animate-float">
                       <FaLightbulb className="text-6xl mx-auto text-yellow-500 dark:text-yellow-400" />
                     </div>
                     <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-                      Khong tim thay cau hoi phu hop
+                      Không tìm thấy câu hỏi phù hợp
                     </h3>
                     <p className="mb-6 text-gray-600 dark:text-gray-300">
-                      Hay thu tim kiem voi tu khoa khac hoac lien he voi chung toi de duoc ho tro
+                      Hãy thử tìm kiếm với từ khóa khác hoặc liên hệ với chúng
+                      tôi để được hỗ trợ
                     </p>
                     <Button
                       variant="primary"
                       className="bg-gradient-to-r from-blue-600 to-purple-600"
                       leftIcon={<FaRocket />}
+                      onClick={() => {
+                        setSearchTerm("");
+                        setSelectedCategory("Tất cả");
+                      }}
                     >
-                      Lien he ho tro
+                      Xem tất cả câu hỏi
                     </Button>
                   </Card.Content>
                 </Card>
               </motion.div>
             ) : (
+              /* FAQ List */
               <motion.div
                 variants={ANIMATION_VARIANTS.container}
                 initial="hidden"
                 animate="visible"
                 className="space-y-8"
               >
-                {faqData.map((category, categoryIndex) => {
-                  const IconComponent = categoryIcons[category.category] || FaQuestionCircle;
+                {groupedFaqs.map((category, categoryIndex) => {
+                  const IconComponent =
+                    categoryIcons[category.category] || FaQuestionCircle;
 
                   return (
                     <motion.div
@@ -451,12 +619,12 @@ function CauHoiThuongGap() {
                                 {category.category}
                               </h2>
                               <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {category.questions.length} cau hoi
+                                {category.questions.length} câu hỏi
                               </p>
                             </div>
                           </div>
 
-                          {/* Animated background gradient - CSS based */}
+                          {/* Animated background gradient */}
                           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-emerald-500/5 -z-10 animate-gradient-shift" />
                         </Card.Header>
 
@@ -468,7 +636,7 @@ function CauHoiThuongGap() {
 
                               return (
                                 <motion.div
-                                  key={index}
+                                  key={item.id || index}
                                   initial={{ opacity: 0, y: 10 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ delay: index * 0.1 }}
@@ -482,11 +650,11 @@ function CauHoiThuongGap() {
                                     aria-controls={`faq-answer-${itemIndex}`}
                                     className={`w-full px-6 py-5 text-left transition-all duration-300 flex items-center justify-between ${
                                       isExpanded
-                                        ? 'bg-gray-100 dark:bg-gray-800/50'
-                                        : 'bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                                        ? "bg-gray-100 dark:bg-gray-800/50"
+                                        : "bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-700/50"
                                     }`}
                                   >
-                                    <span className="font-semibold text-base md:text-lg pr-4 text-gray-900 dark:text-white truncate">
+                                    <span className="font-semibold text-base md:text-lg pr-4 text-gray-900 dark:text-white">
                                       {item.question}
                                     </span>
                                     <motion.div
@@ -534,7 +702,7 @@ function CauHoiThuongGap() {
           </div>
         </motion.section>
 
-        {/* Enhanced Contact Section */}
+        {/* Contact Section */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -547,7 +715,7 @@ function CauHoiThuongGap() {
               className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 text-white shadow-2xl overflow-hidden"
             >
               <Card.Content className="relative p-12 text-center">
-                {/* Floating elements - CSS based */}
+                {/* Floating elements */}
                 <div className="absolute inset-0 overflow-hidden">
                   <div className="absolute top-4 left-4 w-20 h-20 bg-white/10 rounded-full animate-float" />
                   <div className="absolute bottom-4 right-4 w-16 h-16 bg-white/10 rounded-full animate-float-slow" />
@@ -564,10 +732,11 @@ function CauHoiThuongGap() {
                   </div>
 
                   <h2 className="text-4xl font-bold mb-4">
-                    Van chua tim duoc cau tra loi?
+                    Vẫn chưa tìm được câu trả lời?
                   </h2>
                   <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                    Doi ngu tu van cua chung toi luon san sang ho tro ban 24/7 voi tat ca su nhiet tinh
+                    Đội ngũ tư vấn của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7 với tất
+                    cả sự nhiệt tình
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -577,6 +746,7 @@ function CauHoiThuongGap() {
                         size="lg"
                         leftIcon={<FaPhone />}
                         className="bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl"
+                        onClick={() => (window.location.href = "tel:19002088")}
                       >
                         Hotline: 1900 2088
                       </Button>
@@ -588,15 +758,19 @@ function CauHoiThuongGap() {
                         size="lg"
                         leftIcon={<FaEnvelope />}
                         className="bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl"
+                        onClick={() =>
+                          (window.location.href =
+                            "mailto:tuyensinh@hutech.edu.vn")
+                        }
                       >
-                        Email: tuyen sinh@hutech.edu.vn
+                        Email: tuyensinh@hutech.edu.vn
                       </Button>
                     </div>
                   </div>
 
                   <div className="mt-8 flex items-center justify-center gap-2 text-white/80 animate-pulse-soft">
                     <FaStar className="text-yellow-300" />
-                    <span>Phan hoi trong vong 5 phut</span>
+                    <span>Phản hồi trong vòng 5 phút</span>
                     <FaStar className="text-yellow-300" />
                   </div>
                 </motion.div>

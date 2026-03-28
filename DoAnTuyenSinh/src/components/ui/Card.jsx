@@ -5,14 +5,29 @@ import { cn } from "@/lib/utils"
 function Card({
   className,
   size = "default",
+  variant = "default",
+  hover = false,
+  shimmer = false,
   ...props
 }) {
+  const variantClasses = {
+    default: "bg-card text-card-foreground",
+    glass: "bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50",
+    gradient: "bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 text-white",
+  };
+
+  const hoverClass = hover ? "hover:shadow-xl hover:scale-[1.01] transition-all duration-300 cursor-pointer" : "";
+  const shimmerClass = shimmer ? "relative overflow-hidden" : "";
+
   return (
     <div
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "group/card flex flex-col gap-4 overflow-hidden rounded-xl py-4 text-sm ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        variantClasses[variant] || variantClasses.default,
+        hoverClass,
+        shimmerClass,
         className
       )}
       {...props} />
@@ -112,3 +127,11 @@ export {
   CardDescription,
   CardContent,
 }
+
+// Compound component pattern: Card.Header, Card.Content, etc.
+Card.Header = CardHeader;
+Card.Content = CardContent;
+Card.Footer = CardFooter;
+Card.Title = CardTitle;
+Card.Action = CardAction;
+Card.Description = CardDescription;

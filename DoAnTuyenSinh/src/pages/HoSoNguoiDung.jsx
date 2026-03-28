@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "../accounts/UserContext";
+import { useDarkMode } from "../contexts/DarkModeContext";
 import {
   FaUser,
   FaEnvelope,
@@ -28,6 +29,7 @@ import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 
 function HoSoNguoiDung() {
+  const { darkMode } = useDarkMode();
   const { user, username, role, login, updateUser } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -269,7 +271,8 @@ function HoSoNguoiDung() {
     }
   };
 
-  const tabs = [
+  // Static tabs — memoized to avoid recreation on each render
+  const tabs = useMemo(() => [
     {
       id: 'profile',
       label: 'Ho so ca nhan',
@@ -298,7 +301,7 @@ function HoSoNguoiDung() {
       gradient: 'from-purple-500 to-pink-600',
       description: 'Lich su hoat dong'
     }
-  ];
+  ], []);
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -480,7 +483,7 @@ function HoSoNguoiDung() {
                           className="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                           placeholder="Ten nguoi dung"
                         />
-                        <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400" />
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Ten nguoi dung khong the thay doi
@@ -503,7 +506,7 @@ function HoSoNguoiDung() {
                           className="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                           placeholder="Nhap so dien thoai"
                         />
-                        <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400" />
                       </div>
                     </motion.div>
                   </div>
@@ -713,7 +716,7 @@ function HoSoNguoiDung() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(prev => ({ ...prev, current: !prev.current }))}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label={showPassword.current ? "Ẩn mật khẩu hiện tại" : "Hiện mật khẩu hiện tại"}
                       >
                         {showPassword.current ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
@@ -738,7 +741,7 @@ function HoSoNguoiDung() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(prev => ({ ...prev, new: !prev.new }))}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label={showPassword.new ? "Ẩn mật khẩu mới" : "Hiện mật khẩu mới"}
                       >
                         {showPassword.new ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
@@ -763,7 +766,7 @@ function HoSoNguoiDung() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(prev => ({ ...prev, confirm: !prev.confirm }))}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label={showPassword.confirm ? "Ẩn xác nhận mật khẩu" : "Hiện xác nhận mật khẩu"}
                       >
                         {showPassword.confirm ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}

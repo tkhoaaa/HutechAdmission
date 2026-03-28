@@ -11,6 +11,7 @@ import { Toaster } from "./components/ui/sonner";
 import PageTransition from "./components/ui/PageTransition";
 import AdminLayout from "./admin/components/AdminLayout";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Lazy-loaded public pages
 const TrangChu = lazy(() => import("./pages/TrangChu"));
@@ -189,6 +190,7 @@ function App() {
           <BrowserRouter>
             <ScrollToTop />
             <Toaster position="top-right" richColors closeButton expand={false} />
+            <ErrorBoundary>
             <Routes>
               {/* Admin Routes */}
               <Route
@@ -265,6 +267,7 @@ function App() {
               {/* Public Routes */}
               <Route path="/*" element={<PublicLayout />} />
             </Routes>
+            </ErrorBoundary>
           </BrowserRouter>
         </UserContextProvider>
       </DarkModeProvider>

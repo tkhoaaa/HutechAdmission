@@ -132,13 +132,14 @@ function DangKyTuVan() {
         {/* Animated Background Elements - CSS based */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           {/* Floating Orbs */}
-          {Array.from({ length: 8 }, (_, i) => {
+          {/* Subtle background orbs */}
+          {Array.from({ length: 3 }, (_, i) => {
             const leftPos = ((i * 13 + 7) % 80) + 10;
             const topPos = ((i * 17 + 11) % 70) + 15;
             return (
               <div
                 key={i}
-                className={`absolute rounded-full blur-xl animate-float-float bg-gradient-to-r ${
+                className={`absolute rounded-full bg-gradient-to-r ${
                   i % 2 === 0
                     ? 'from-blue-300/20 to-purple-300/20 dark:from-blue-600/10 dark:to-purple-600/10'
                     : 'from-purple-300/20 to-pink-300/20 dark:from-purple-600/10 dark:to-pink-600/10'
@@ -148,28 +149,24 @@ function DangKyTuVan() {
                   height: `${100 + i * 50}px`,
                   left: `${leftPos}%`,
                   top: `${topPos}%`,
-                  animationDuration: `${10 + i * 2}s`,
-                  animationDelay: `${(i * 1.3) % 5}s`,
                 }}
               />
             );
           })}
 
-          {/* Sparkle Effects - CSS based */}
-          {Array.from({ length: 20 }, (_, i) => {
+          {/* Subtle sparkle effects */}
+          {Array.from({ length: 5 }, (_, i) => {
             const leftPos = ((i * 7 + 5) % 90) + 5;
             const topPos = ((i * 11 + 13) % 85) + 5;
             return (
               <div
                 key={`sparkle-${i}`}
-                className={`absolute w-2 h-2 rounded-full animate-shine ${
-                  i % 2 === 0 ? 'bg-yellow-400' : 'bg-cyan-400 dark:bg-cyan-400'
+                className={`absolute w-2 h-2 rounded-full ${
+                  i % 2 === 0 ? 'bg-yellow-400' : 'bg-cyan-400'
                 }`}
                 style={{
                   left: `${leftPos}%`,
                   top: `${topPos}%`,
-                  animationDuration: '3s',
-                  animationDelay: `${(i * 0.3) % 3}s`,
                 }}
               />
             );
@@ -197,7 +194,6 @@ function DangKyTuVan() {
                 className="w-24 h-24 mx-auto mb-8 rounded-3xl flex items-center justify-center shadow-2xl bg-gradient-to-br from-cyan-500 to-blue-500 dark:from-cyan-600 dark:to-blue-600 relative"
               >
                 <FaHeadset className="text-white text-4xl" />
-                <div className="absolute inset-0 rounded-3xl animate-pulse-ring" />
               </motion.div>
 
               {/* Badge */}
@@ -207,9 +203,9 @@ function DangKyTuVan() {
                 transition={{ delay: 0.4 }}
                 className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-8 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 border border-emerald-200 dark:border-emerald-700/50 text-emerald-700 dark:text-emerald-300 backdrop-blur-sm shadow-lg"
               >
-                <FaStar className="animate-pulse" />
+                <FaStar />
                 <span className="font-bold">Tư vấn miễn phí 24/7</span>
-                <FaHeart className="animate-pulse text-red-500" />
+                <FaHeart className="text-red-500" />
               </motion.div>
 
               {/* Title */}

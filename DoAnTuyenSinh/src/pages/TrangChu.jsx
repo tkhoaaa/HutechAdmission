@@ -16,6 +16,7 @@ import {
   ClipboardList,
   Headphones
 } from "lucide-react";
+import { useDarkMode } from "../contexts/DarkModeContext";
 import SEO from "../components/SEO";
 import StructuredData, {
   organizationData,
@@ -58,6 +59,7 @@ const itemAnimation = {
 };
 
 function TrangChu() {
+  const { darkMode } = useDarkMode();
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const videoUrl = "https://youtu.be/ayTTBNBtNpk?si=7byB99-BkTZPRP0n";
 
@@ -91,12 +93,12 @@ function TrangChu() {
         >
           {/* Enhanced background pattern */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-amber-500/5"></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-amber-500/5 dark:from-blue-400/5 dark:to-amber-400/5"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent dark:via-gray-800/10 dark:to-transparent"></div>
             {/* Floating shapes - CSS animated */}
-            <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-amber-400/20 rounded-full blur-xl animate-float" />
-            <div className="absolute bottom-20 right-10 w-48 h-48 bg-gradient-to-br from-amber-400/20 to-blue-400/20 rounded-full blur-xl animate-float-slow" />
-            <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-gradient-to-br from-amber-400/20 to-blue-400/20 rounded-full blur-lg animate-float" />
+            <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-amber-400/20 dark:from-blue-600/10 dark:to-amber-600/10 rounded-full blur-xl animate-float" />
+            <div className="absolute bottom-20 right-10 w-48 h-48 bg-gradient-to-br from-amber-400/20 to-blue-400/20 dark:from-amber-600/10 dark:to-blue-600/10 rounded-full blur-xl animate-float-slow" />
+            <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-gradient-to-br from-amber-400/20 to-blue-400/20 dark:from-amber-600/10 dark:to-blue-600/10 rounded-full blur-lg animate-float" />
           </div>
 
           <div className="container mx-auto flex flex-col lg:flex-row items-center gap-16 px-4 relative z-10">
@@ -254,7 +256,7 @@ function TrangChu() {
                 </div>
 
                 {/* Decorative elements */}
-                <div className="absolute -z-10 top-8 left-8 w-full h-full bg-gradient-to-br from-blue-200/50 to-amber-200/50 dark:from-blue-800/30 dark:to-amber-800/30 rounded-3xl"></div>
+                <div className="absolute -z-10 top-8 left-8 w-full h-full bg-gradient-to-br from-blue-200/50 to-amber-200/50 dark:from-blue-900/30 dark:to-amber-900/30 rounded-3xl"></div>
               </div>
             </motion.div>
           </div>
@@ -270,8 +272,8 @@ function TrangChu() {
         >
           {/* Background decorations */}
           <div className="absolute inset-0">
-            <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-400/10 to-amber-400/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-yellow-400/10 to-blue-400/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-400/10 to-amber-400/10 dark:from-blue-600/5 dark:to-amber-600/5 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-yellow-400/10 to-blue-400/10 dark:from-yellow-600/5 dark:to-blue-600/5 rounded-full blur-3xl"></div>
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
@@ -389,8 +391,8 @@ function TrangChu() {
         >
           {/* Background decorations */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-blue-400/5 to-purple-400/5 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-green-400/5 to-blue-400/5 rounded-full blur-3xl"></div>
+            <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-blue-400/5 to-purple-400/5 dark:from-blue-600/3 dark:to-purple-600/3 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-green-400/5 to-blue-400/5 dark:from-green-600/3 dark:to-blue-600/3 rounded-full blur-3xl"></div>
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
@@ -549,7 +551,7 @@ function TrangChu() {
           {/* Enhanced background effects */}
           <div className="absolute inset-0">
             {/* Animated gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer-cta" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent dark:via-gray-600/5 animate-shimmer-cta" />
 
             {/* Floating geometric shapes - CSS animated */}
             <div className="absolute top-20 left-20 w-32 h-32 bg-white/5 rounded-full blur-xl animate-float-up opacity-30" />

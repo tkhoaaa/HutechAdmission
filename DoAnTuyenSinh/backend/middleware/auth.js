@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import pool from '../config/database.js';
 
 export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -42,4 +43,25 @@ export const requireRole = (roles) => {
 
         next();
     };
+};
+
+export const authenticateAdminFAQ = async(req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ success: false, message: 'Không có quyền truy cập' });
+        }
+        const token = authHeader.split(' ')[1];
+        const [rows] = await pool.execute(
+            'SELECT id, username, role FROM users WHERE token = ? AND role IN ("admin", "staff")',
+            [token]
+        );
+        if (rows.length === 0) {
+            return res.status(401).json({ success: false, message: 'Token không hợp lệ hoặc không có quyền' });
+        }
+        req.user = rows[0];
+        next();
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Lỗi xác thực', error: error.message });
+    }
 };

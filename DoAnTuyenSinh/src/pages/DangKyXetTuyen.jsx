@@ -352,15 +352,13 @@ function DangKyXetTuyen() {
 
             {/* Floating Elements - CSS based */}
             <div className="absolute inset-0 overflow-hidden">
-              {Array.from({ length: 20 }, (_, i) => (
+              {Array.from({ length: 6 }, (_, i) => (
                 <div
                   key={i}
-                  className="absolute w-2 h-2 bg-white/20 rounded-full animate-float"
+                  className="absolute w-2 h-2 bg-white/20 rounded-full"
                   style={{
                     left: `${((i * 11 + 7) % 85) + 5}%`,
                     top: `${((i * 13 + 11) % 80) + 10}%`,
-                    animationDuration: `${3 + (i % 5) * 0.4}s`,
-                    animationDelay: `${(i * 0.1) % 3}s`,
                   }}
                 />
               ))}
@@ -384,9 +382,8 @@ function DangKyXetTuyen() {
               <StaggerItem>
                 <div className="relative inline-block mb-8 hover:scale-105 transition-transform">
                   <div className="w-32 h-32 bg-white/10 backdrop-blur-xl rounded-3xl flex items-center justify-center mx-auto shadow-2xl border border-white/20 relative">
-                    <div className="absolute inset-2 border-2 border-dashed border-white/30 rounded-3xl animate-spin-slow" />
                     <FaGraduationCap className="text-white text-5xl relative z-10" />
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-star-pulse">
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
                       <FaStar className="text-yellow-800 text-xs" />
                     </div>
                   </div>
@@ -523,7 +520,7 @@ function DangKyXetTuyen() {
                                 <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
                                   <FaUser className="text-white text-xl" />
                                 </div>
-                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center animate-star-pulse">
+                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                                   <span className="text-white text-xs font-bold">1</span>
                                 </div>
                               </div>
@@ -688,7 +685,7 @@ function DangKyXetTuyen() {
                                 <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
                                   <FaGraduationCap className="text-white text-xl" />
                                 </div>
-                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center animate-star-pulse">
+                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                                   <span className="text-white text-xs font-bold">2</span>
                                 </div>
                               </div>
@@ -803,7 +800,7 @@ function DangKyXetTuyen() {
                                 <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg">
                                   <FaFileUpload className="text-white text-xl" />
                                 </div>
-                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center animate-star-pulse">
+                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                                   <span className="text-white text-xs font-bold">3</span>
                                 </div>
                               </div>
@@ -912,7 +909,7 @@ function DangKyXetTuyen() {
                                   <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
                                     <FaFileUpload className="text-white text-xl" />
                                   </div>
-                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center animate-star-pulse">
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
                                     <span className="text-white text-xs font-bold">4</span>
                                   </div>
                                 </div>
@@ -1007,7 +1004,7 @@ function DangKyXetTuyen() {
                                   <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
                                     <FaCheckCircle className="text-white text-xl" />
                                   </div>
-                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center animate-star-pulse">
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center">
                                     <span className="text-white text-xs font-bold">4</span>
                                   </div>
                                 </div>
@@ -1067,7 +1064,7 @@ function DangKyXetTuyen() {
                                   <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
                                     <FaGraduationCap className="text-white text-xl" />
                                   </div>
-                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center animate-star-pulse">
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center">
                                     <span className="text-white text-xs font-bold">4</span>
                                   </div>
                                 </div>
@@ -1169,7 +1166,7 @@ function DangKyXetTuyen() {
                                 <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
                                   <FaFileUpload className="text-white text-xl" />
                                 </div>
-                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center animate-star-pulse">
+                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
                                   <span className="text-white text-xs font-bold">5</span>
                                 </div>
                               </div>
@@ -1191,7 +1188,7 @@ function DangKyXetTuyen() {
 
                               <div className="flex items-center gap-4">
                                 <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-orange-400 dark:border-orange-600 rounded-2xl cursor-pointer bg-white/50 dark:bg-gray-800/50 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300 group">
-                                  <div className="flex flex-col items-center animate-float">
+                                  <div className="flex flex-col items-center">
                                     <FaFileUpload className="w-12 h-12 text-orange-500 dark:text-orange-400 mb-3 group-hover:scale-110 transition-transform" />
                                     <span className="text-orange-600 dark:text-orange-400 font-semibold text-lg">
                                       Upload File

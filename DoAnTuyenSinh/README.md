@@ -246,20 +246,15 @@ Hệ thống Tuyển sinh HUTECH là một ứng dụng web full-stack hiện đ
 - **React Router DOM** - Client-side routing
 - **Framer Motion** - Advanced animations & transitions
 - **Tailwind CSS** - Utility-first CSS framework với custom design system
-- **Headless UI** - Unstyled, accessible UI components
-- **Heroicons** - Beautiful hand-crafted SVG icons
 - **Axios** - HTTP client với interceptors
 - **React Helmet Async** - SEO management
 - **React Icons** - Comprehensive icon library
 - **PostCSS** - CSS processing & optimization
-- **GSAP** - Professional animation library
-- **Lottie React** - After Effects animations
 - **React Spring** - Spring-physics based animations
-- **TSParticles** - Particle effects và backgrounds
-- **Flowbite** - Component library
 - **Lucide React** - Beautiful icons
 - **Recharts** - Charts và data visualization
 - **Clsx** - Utility for constructing className strings
+- **Sonner** - Toast notifications
 
 ### Backend
 
@@ -567,13 +562,19 @@ CREATE TABLE hoso (
 - ✅ Xem thông tin tuyển sinh
 - ✅ Đọc FAQ với search và filter
 - ✅ Liên hệ hỗ trợ với form validation
+- ✅ Quên mật khẩu với email reset
+- ✅ Email thông báo khi thay đổi thông tin cá nhân
 
 ### 👑 Cho Admin
 
 - ✅ Dashboard tổng quan với statistics cards
 - ✅ Quản lý hồ sơ xét tuyển với filters và search
-- ✅ Quản lý FAQ với CRUD operations
+- ✅ Quản lý FAQ với CRUD, pagination và search
 - ✅ Quản lý thông tin tuyển sinh
+- ✅ Cài đặt hệ thống (system, notifications, upload)
+- ✅ Thông báo real-time trong sidebar
+- ✅ Quản lý người dùng (kích hoạt/vô hiệu/xóa)
+- ✅ Nhật ký hoạt động và thiết bị đăng nhập
 - ✅ Thống kê báo cáo với charts
 - ✅ Role-based access control
 - ✅ Modern admin layout với sidebar
@@ -688,10 +689,7 @@ CREATE TABLE nganh_khoi_thi (
 ### 🎭 Modern Animation System
 
 - **Framer Motion**: Advanced page transitions và component animations
-- **GSAP**: Professional timeline-based animations
 - **React Spring**: Spring-physics based micro-interactions
-- **Lottie**: After Effects animations integration
-- **TSParticles**: Dynamic particle effects và backgrounds
 - **Custom Keyframes**: Tailwind CSS custom animations
 
 ### 🎨 Modern Design System
@@ -1867,7 +1865,6 @@ pm2 save
 - Batch operations cho admin
 - Mobile app với React Native
 - AI-powered admission recommendations
-- Demo Mode cho tất cả user features
 - Serverless backend với Vercel Functions
 - Enhanced environment detection cho multiple deployment platforms
 
@@ -1876,6 +1873,40 @@ pm2 save
 _Hệ thống Tuyển sinh HUTECH - Giải pháp tuyển sinh trực tuyến hoàn chỉnh với UI/UX hiện đại và 3 phương thức xét tuyển 🎓✨_
 
 ## 📝 Changelog
+
+### 2025-XX-XX
+
+#### Stage 1: Foundation & Core Features
+- [MỚI] Complete admin dashboard with real API integration
+- [MỚI] Full dark mode support with context-based theme management
+- [MỚI] Video modal integration for promotional content
+
+#### Stage 2: Missing Features Completion
+- [MỚI] FAQ admin page with CRUD, pagination, and search
+- [MỚI] Settings page with system, notification, and upload configuration
+- [MỚI] Notifications backend API (CRUD endpoints) and AdminLayout integration
+- [MỚI] User management in settings (activate/deactivate/delete users)
+- [MỚI] Activity log display and device management
+
+#### Stage 3: UX/UI Improvements
+- [MỚI] Replaced all alert() calls with sonner toast notifications
+- [MỚI] Added aria-label attributes to action buttons for accessibility
+- [MỚI] Dark mode consistency across all admin pages
+
+#### Stage 4: Email & Notifications
+- [MỚI] QuenMatKhau page fully wired to real backend API (forgot/reset password)
+- [MỚI] Profile update emails sent on: password change, email change, avatar change, profile info change
+- [MỚI] Backend notification system with 7 email trigger types
+
+#### Stage 5: Testing & Polish
+- [MỚI] ErrorBoundary component with retry and home navigation fallback
+- [MỚI] Removed 14 unused packages (gsap, tsparticles, heroicons, headlessui, lottie, flowbite, etc.)
+- [MỚI] Wrapped static data arrays in useMemo for performance optimization
+- [MỚI] Optimized ThongTinTuyenSinh.jsx and HoSoNguoiDung.jsx rendering
+
+#### Stage 6: Documentation
+- [MỚI] Updated README with current tech stack and feature list
+- [MỚI] Backend settings endpoints now return mock data (ready for settings table migration)
 
 ### 2024-07-24
 - [MỚI] Avatar admin hiển thị ở header, dropdown và sidebar (AdminLayout)

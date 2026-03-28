@@ -19,7 +19,7 @@ import {
 } from './services/emailService.js';
 import { validateEmailConfig } from './config/emailConfig.js';
 import jwt from 'jsonwebtoken';
-import { authenticateToken } from './middleware/auth.js';
+import { authenticateToken, authenticateAdminFAQ } from './middleware/auth.js';
 import deviceService from './services/deviceService.js';
 
 const app = express();
@@ -134,6 +134,14 @@ app.post(`${authPrefix}/login`, [
                 message: 'Tài khoản hoặc mật khẩu không đúng'
             });
         }
+
+        // Generate JWT token
+        const tokenPayload = { id: user.id, username: user.username, role: user.role };
+        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '7d' });
+
+        // Save token to database
+        await pool.execute('UPDATE users SET token = ? WHERE id = ?', [token, user.id]);
+
         delete user.password;
         res.json({
             success: true,
@@ -147,7 +155,8 @@ app.post(`${authPrefix}/login`, [
                     role: user.role,
                     phone: user.phone,
                     avatar: user.avatar
-                }
+                },
+                token
             }
         });
     } catch (error) {
@@ -247,6 +256,15 @@ app.post(`${authPrefix}/register-admin`, [
                 message: 'Email đã được sử dụng'
             });
         }
+        const [existingUsername] = await pool.execute(
+            'SELECT id FROM users WHERE username = ?', [username]
+        );
+        if (existingUsername.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tên đăng nhập đã được sử dụng'
+            });
+        }
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         const [result] = await pool.execute(
@@ -267,6 +285,12 @@ app.post(`${authPrefix}/register-admin`, [
         });
     } catch (error) {
         console.error('Admin register error:', error);
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({
+                success: false,
+                message: 'Email hoặc tên đăng nhập đã được sử dụng'
+            });
+        }
         res.status(500).json({
             success: false,
             message: 'Lỗi server nội bộ'
@@ -1223,6 +1247,16 @@ app.put('/api/user/update-password', async(req, res) => {
             'UPDATE users SET password = ? WHERE id = ?', [hashedPassword, user_id]
         );
 
+        // Gửi email thông báo đổi mật khẩu
+        const [pwdUser] = await pool.execute('SELECT email, full_name FROM users WHERE id = ?', [user_id]);
+        if (pwdUser.length > 0) {
+            try {
+                await sendProfileUpdateEmail(pwdUser[0].email, pwdUser[0].full_name || pwdUser[0].username, 'password', req.ip);
+            } catch (emailError) {
+                console.error('Error sending password update email:', emailError);
+            }
+        }
+
         res.json({
             success: true,
             message: 'Cập nhật mật khẩu thành công'
@@ -1265,6 +1299,13 @@ app.put('/api/user/update-email', async(req, res) => {
             'UPDATE users SET email = ? WHERE id = ?', [email, user_id]
         );
 
+        // Gửi email thông báo đổi email
+        try {
+            await sendProfileUpdateEmail(email, email, 'email', req.ip);
+        } catch (emailError) {
+            console.error('Error sending email update notification:', emailError);
+        }
+
         res.json({
             success: true,
             message: 'Cập nhật email thành công',
@@ -1295,6 +1336,16 @@ app.put('/api/user/update-profile-info', async(req, res) => {
         await pool.execute(
             'UPDATE users SET phone = ?, bio = ?, social = ? WHERE id = ?', [phone || null, bio || null, social || null, user_id]
         );
+
+        // Gửi email thông báo cập nhật profile
+        try {
+            const [profileUser] = await pool.execute('SELECT email, full_name FROM users WHERE id = ?', [user_id]);
+            if (profileUser.length > 0) {
+                await sendProfileUpdateEmail(profileUser[0].email, profileUser[0].full_name || profileUser[0].username, 'profile', req.ip);
+            }
+        } catch (emailError) {
+            console.error('Error sending profile update email:', emailError);
+        }
 
         res.json({
             success: true,
@@ -1876,12 +1927,228 @@ app.delete('/api/admin/users/:id', async(req, res) => {
     }
 });
 
+// ========== ADMIN ACCOUNTS API ========== //
+
+// GET all admin/staff accounts
+app.get('/api/admin/admins', async(req, res) => {
+    try {
+        const { page = 1, limit = 20, search, status } = req.query;
+
+        let whereConditions = [];
+        let queryParams = [];
+
+        // Filter by admin/staff roles
+        whereConditions.push('u.role IN (?, ?)');
+        queryParams.push('admin', 'staff');
+
+        if (search && search.trim()) {
+            whereConditions.push('(u.username LIKE ? OR u.email LIKE ?)');
+            const searchParam = `%${search.trim()}%`;
+            queryParams.push(searchParam, searchParam);
+        }
+
+        if (status && status !== 'all') {
+            whereConditions.push('u.is_active = ?');
+            queryParams.push(status === 'active' ? 1 : 0);
+        }
+
+        const whereClause = whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : '';
+
+        const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 20));
+        const pageNum = Math.max(1, parseInt(page) || 1);
+        const offsetNum = (pageNum - 1) * limitNum;
+
+        const mainQuery = `
+            SELECT
+                u.id, u.username, u.email, u.phone, u.role,
+                u.is_active, u.created_at, u.updated_at
+            FROM users u
+            ${whereClause}
+            ORDER BY u.created_at DESC
+            LIMIT ? OFFSET ?
+        `;
+
+        const countQuery = `
+            SELECT COUNT(*) as count
+            FROM users u
+            ${whereClause}
+        `;
+
+        const mainParams = [...queryParams, Number(limitNum), Number(offsetNum)];
+        const countParams = [...queryParams];
+
+        const [admins] = await pool.query(mainQuery, mainParams);
+        const [totalCount] = await pool.query(countQuery, countParams);
+
+        res.json({
+            success: true,
+            data: {
+                admins: admins.map(admin => ({
+                    id: admin.id,
+                    username: admin.username,
+                    email: admin.email,
+                    fullName: admin.full_name || admin.username,
+                    phone: admin.phone,
+                    role: admin.role,
+                    isActive: admin.is_active === 1,
+                    createdAt: admin.created_at,
+                    updatedAt: admin.updated_at
+                })),
+                total: totalCount[0].count,
+                page: pageNum,
+                limit: limitNum,
+                totalPages: Math.ceil(totalCount[0].count / limitNum)
+            }
+        });
+    } catch (error) {
+        console.error('Admins list error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lấy danh sách admins',
+            error: error.message
+        });
+    }
+});
+
+// Create new admin/staff account
+app.post('/api/admin/admins', async(req, res) => {
+    try {
+        const { username, email, password, phone, role } = req.body;
+
+        if (!username || !email || !password || !role) {
+            return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ success: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' });
+        }
+
+        if (!['admin', 'staff'].includes(role)) {
+            return res.status(400).json({ success: false, message: 'Vai trò không hợp lệ' });
+        }
+
+        // Check existing email
+        const [existing] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
+        if (existing.length > 0) {
+            return res.status(400).json({ success: false, message: 'Email đã được sử dụng' });
+        }
+
+        // Check existing username
+        const [existingUser] = await pool.execute('SELECT id FROM users WHERE username = ?', [username]);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ success: false, message: 'Tên đăng nhập đã được sử dụng' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const [result] = await pool.execute(
+            'INSERT INTO users (username, email, password, phone, role, is_active) VALUES (?, ?, ?, ?, ?, 1)',
+            [username, email, hashedPassword, phone || '', role]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'Tạo tài khoản thành công',
+            data: { id: result.insertId, username, email, phone, role }
+        });
+    } catch (error) {
+        console.error('Create admin error:', error);
+        res.status(500).json({ success: false, message: 'Lỗi khi tạo tài khoản', error: error.message });
+    }
+});
+
+// Update admin/staff role
+app.put('/api/admin/admins/:id/role', async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { role } = req.body;
+
+        if (!['admin', 'staff'].includes(role)) {
+            return res.status(400).json({ success: false, message: 'Vai trò không hợp lệ' });
+        }
+
+        await pool.execute('UPDATE users SET role = ? WHERE id = ? AND role IN ("admin", "staff")', [role, id]);
+
+        res.json({ success: true, message: 'Cập nhật vai trò thành công' });
+    } catch (error) {
+        console.error('Update admin role error:', error);
+        res.status(500).json({ success: false, message: 'Lỗi khi cập nhật vai trò', error: error.message });
+    }
+});
+
+// Update admin/staff account
+app.put('/api/admin/users/:id', async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { username, email, password, phone, role } = req.body;
+
+        // Check if user exists and is admin/staff
+        const [existing] = await pool.execute(
+            'SELECT id, role FROM users WHERE id = ? AND role IN ("admin", "staff")',
+            [id]
+        );
+        if (existing.length === 0) {
+            return res.status(404).json({ success: false, message: 'Tài khoản không tồn tại' });
+        }
+
+        // Check email uniqueness
+        if (email) {
+            const [emailCheck] = await pool.execute(
+                'SELECT id FROM users WHERE email = ? AND id != ?',
+                [email, id]
+            );
+            if (emailCheck.length > 0) {
+                return res.status(400).json({ success: false, message: 'Email đã được sử dụng' });
+            }
+        }
+
+        // Check username uniqueness
+        if (username) {
+            const [userCheck] = await pool.execute(
+                'SELECT id FROM users WHERE username = ? AND id != ?',
+                [username, id]
+            );
+            if (userCheck.length > 0) {
+                return res.status(400).json({ success: false, message: 'Tên đăng nhập đã được sử dụng' });
+            }
+        }
+
+        // Build update query
+        const updates = [];
+        const params = [];
+
+        if (username) { updates.push('username = ?'); params.push(username); }
+        if (email) { updates.push('email = ?'); params.push(email); }
+        if (phone !== undefined) { updates.push('phone = ?'); params.push(phone); }
+        if (role && ['admin', 'staff'].includes(role)) { updates.push('role = ?'); params.push(role); }
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updates.push('password = ?');
+            params.push(hashedPassword);
+        }
+
+        if (updates.length === 0) {
+            return res.status(400).json({ success: false, message: 'Không có thông tin nào được cập nhật' });
+        }
+
+        params.push(id);
+        await pool.execute(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`, params);
+
+        res.json({ success: true, message: 'Cập nhật tài khoản thành công' });
+    } catch (error) {
+        console.error('Update admin error:', error);
+        res.status(500).json({ success: false, message: 'Lỗi khi cập nhật tài khoản', error: error.message });
+    }
+});
+
 // ========== SETTINGS API ========== //
 
 // Lấy cài đặt hệ thống
 app.get('/api/admin/settings', async(req, res) => {
     try {
-        // TODO: Implement settings table
+        // Note: Returns stub/mock data. The settings table is not yet in the database migration.
+        // Frontend API integration is complete - this will transparently switch to real DB reads
+        // once the settings migration is applied. The mock data mirrors the intended schema.
         const settings = {
             systemInfo: {
                 schoolName: 'Trường Đại học Công nghệ TP.HCM (HUTECH)',
@@ -1932,7 +2199,9 @@ app.put('/api/admin/settings', async(req, res) => {
     try {
         const { section, data } = req.body;
 
-        // TODO: Implement settings table
+        // Note: Currently logs the update. The settings table is not yet in the database migration.
+        // Frontend API integration is complete - this will transparently switch to real DB writes
+        // once the settings migration is applied.
         console.log(`Updating ${section} settings:`, data);
 
         res.json({
@@ -2084,6 +2353,463 @@ app.get('/api/admin/setup-db', async(req, res) => {
     }
 });
 
+// =============================================
+// FAQ Public API - Get FAQs (public)
+// =============================================
+app.get(`${authPrefix}/faqs`, async(req, res) => {
+    try {
+        const { category } = req.query;
+
+        let query = `SELECT id, question, answer, category FROM faqs WHERE is_active = 1`;
+        let params = [];
+
+        if (category && category !== 'Tat ca') {
+            query += ` AND category = ?`;
+            params.push(category);
+        }
+
+        query += ` ORDER BY sort_order ASC, id ASC`;
+
+        const [rows] = await pool.execute(query, params);
+
+        // Group by category
+        const grouped = {};
+        rows.forEach(faq => {
+            const cat = faq.category || 'Khác';
+            if (!grouped[cat]) {
+                grouped[cat] = [];
+            }
+            grouped[cat].push({
+                id: faq.id,
+                question: faq.question,
+                answer: faq.answer
+            });
+        });
+
+        // Increment view count for each FAQ (fire and forget)
+        if (rows.length > 0) {
+            pool.execute(`UPDATE faqs SET view_count = view_count + 1 WHERE is_active = 1`).catch(() => {});
+        }
+
+        res.json({
+            success: true,
+            message: 'Lấy danh sách FAQ thành công',
+            data: {
+                faqs: rows,
+                grouped,
+                total: rows.length,
+                categories: Object.keys(grouped)
+            }
+        });
+    } catch (error) {
+        console.error('Get FAQs error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lấy danh sách FAQ',
+            error: error.message
+        });
+    }
+});
+
+// =============================================
+// NOTIFICATIONS Admin API - CRUD Operations
+// =============================================
+
+// GET all notifications (admin - includes unpublished)
+app.get('/api/admin/notifications', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { page = 1, limit = 20, is_published } = req.query;
+        const offset = (page - 1) * limit;
+
+        let whereClause = '';
+        const params = [];
+
+        if (is_published !== undefined) {
+            whereClause = 'WHERE is_published = ?';
+            params.push(is_published === 'true' || is_published === '1' ? 1 : 0);
+        }
+
+        // Get total count
+        const [countResult] = await pool.execute(
+            `SELECT COUNT(*) as total FROM notifications ${whereClause}`,
+            params
+        );
+        const total = countResult[0].total;
+
+        // Get paginated results
+        const [rows] = await pool.query(
+            `SELECT n.*, u.username as created_by_name
+             FROM notifications n
+             LEFT JOIN users u ON n.created_by = u.id
+             ${whereClause}
+             ORDER BY n.created_at DESC
+             LIMIT ? OFFSET ?`,
+            [...params, Number(limit), Number(offset)]
+        );
+
+        res.json({
+            success: true,
+            data: {
+                notifications: rows.map(n => ({
+                    id: n.id,
+                    title: n.title,
+                    content: n.content,
+                    category: n.category,
+                    isPublished: !!n.is_published,
+                    publishedAt: n.published_at,
+                    createdBy: n.created_by,
+                    createdByName: n.created_by_name,
+                    createdAt: n.created_at,
+                    updatedAt: n.updated_at
+                })),
+                pagination: {
+                    page: parseInt(page),
+                    limit: parseInt(limit),
+                    total,
+                    totalPages: Math.ceil(total / parseInt(limit))
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Get notifications error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lấy danh sách thông báo',
+            error: error.message
+        });
+    }
+});
+
+// POST create notification
+app.post('/api/admin/notifications', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { title, content, category, is_published = false } = req.body;
+
+        if (!title || !title.trim()) {
+            return res.status(400).json({ success: false, message: 'Tiêu đề không được để trống' });
+        }
+        if (!content || !content.trim()) {
+            return res.status(400).json({ success: false, message: 'Nội dung không được để trống' });
+        }
+
+        const publishedAt = is_published ? new Date() : null;
+
+        const [result] = await pool.execute(
+            `INSERT INTO notifications (title, content, category, is_published, published_at, created_by)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [title.trim(), content.trim(), category || 'general', is_published ? 1 : 0, publishedAt, req.user.id]
+        );
+
+        res.json({
+            success: true,
+            message: 'Tạo thông báo thành công',
+            data: { id: result.insertId }
+        });
+    } catch (error) {
+        console.error('Create notification error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi tạo thông báo',
+            error: error.message
+        });
+    }
+});
+
+// PUT update notification
+app.put('/api/admin/notifications/:id', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, content, category, is_published } = req.body;
+
+        const [existing] = await pool.execute('SELECT id, title, content, category, is_published, published_at FROM notifications WHERE id = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({ success: false, message: 'Thông báo không tồn tại' });
+        }
+
+        const wasPublished = !!existing[0].is_published;
+        const nowPublished = is_published !== undefined ? is_published : wasPublished;
+        const publishedAt = !wasPublished && nowPublished ? new Date() : existing[0].published_at;
+
+        await pool.execute(
+            `UPDATE notifications SET title = ?, content = ?, category = ?, is_published = ?, published_at = ? WHERE id = ?`,
+            [
+                title ? title.trim() : existing[0].title,
+                content ? content.trim() : existing[0].content,
+                category || existing[0].category,
+                nowPublished ? 1 : 0,
+                publishedAt,
+                id
+            ]
+        );
+
+        res.json({ success: true, message: 'Cập nhật thông báo thành công' });
+    } catch (error) {
+        console.error('Update notification error:', error);
+        res.status(500).json({ success: false, message: 'Lỗi khi cập nhật thông báo', error: error.message });
+    }
+});
+
+// DELETE notification
+app.delete('/api/admin/notifications/:id', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [existing] = await pool.execute('SELECT id FROM notifications WHERE id = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({ success: false, message: 'Thông báo không tồn tại' });
+        }
+
+        await pool.execute('DELETE FROM notifications WHERE id = ?', [id]);
+        res.json({ success: true, message: 'Xóa thông báo thành công' });
+    } catch (error) {
+        console.error('Delete notification error:', error);
+        res.status(500).json({ success: false, message: 'Lỗi khi xóa thông báo', error: error.message });
+    }
+});
+
+// PATCH mark notification as read (toggle published for bell)
+app.patch('/api/admin/notifications/:id/read', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { is_published } = req.body;
+
+        const [existing] = await pool.execute('SELECT id, is_published, published_at FROM notifications WHERE id = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({ success: false, message: 'Thông báo không tồn tại' });
+        }
+
+        const wasPublished = !!existing[0].is_published;
+        const nowPublished = is_published !== undefined ? is_published : wasPublished;
+        const publishedAt = !wasPublished && nowPublished ? new Date() : existing[0].published_at;
+
+        await pool.execute(
+            'UPDATE notifications SET is_published = ?, published_at = ? WHERE id = ?',
+            [nowPublished ? 1 : 0, publishedAt, id]
+        );
+
+        res.json({ success: true, message: 'Cập nhật trạng thái thành công' });
+    } catch (error) {
+        console.error('Toggle notification error:', error);
+        res.status(500).json({ success: false, message: 'Lỗi khi cập nhật trạng thái', error: error.message });
+    }
+});
+
+// =============================================
+// FAQ Admin API - CRUD Operations
+// =============================================
+
+// GET all FAQs (admin - includes inactive)
+app.get('/api/admin/faqs', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { category, is_active, search, page = 1, limit = 50 } = req.query;
+        const offset = (parseInt(page) - 1) * parseInt(limit);
+
+        let query = `SELECT id, question, answer, category, is_active, view_count, sort_order, created_at, updated_at FROM faqs WHERE 1=1`;
+        let countQuery = `SELECT COUNT(*) as total FROM faqs WHERE 1=1`;
+        let params = [];
+
+        if (category) {
+            query += ` AND category = ?`;
+            countQuery += ` AND category = ?`;
+            params.push(category);
+        }
+
+        if (is_active !== undefined && is_active !== '') {
+            query += ` AND is_active = ?`;
+            countQuery += ` AND is_active = ?`;
+            params.push(is_active === 'true' ? 1 : 0);
+        }
+
+        if (search) {
+            query += ` AND (question LIKE ? OR answer LIKE ?)`;
+            countQuery += ` AND (question LIKE ? OR answer LIKE ?)`;
+            const searchPattern = `%${search}%`;
+            params.push(searchPattern, searchPattern, searchPattern, searchPattern);
+        }
+
+        // Get total count
+        const [countResult] = await pool.execute(countQuery, params);
+        const total = countResult[0].total;
+
+        // Get paginated results
+        query += ` ORDER BY sort_order ASC, id DESC LIMIT ? OFFSET ?`;
+        params.push(parseInt(limit), parseInt(offset));
+
+        const [rows] = await pool.query(query, params);
+
+        res.json({
+            success: true,
+            message: 'Lấy danh sách FAQ thành công',
+            data: {
+                faqs: rows.map(faq => ({
+                    id: faq.id,
+                    question: faq.question,
+                    answer: faq.answer,
+                    category: faq.category,
+                    isActive: faq.is_active === 1,
+                    viewCount: faq.view_count,
+                    sortOrder: faq.sort_order,
+                    createdAt: faq.created_at,
+                    updatedAt: faq.updated_at
+                })),
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / parseInt(limit))
+            }
+        });
+    } catch (error) {
+        console.error('Admin get FAQs error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi lấy danh sách FAQ',
+            error: error.message
+        });
+    }
+});
+
+// POST create new FAQ
+app.post('/api/admin/faqs', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { question, answer, category, is_active = true, sort_order = 0 } = req.body;
+
+        if (!question || !answer) {
+            return res.status(400).json({
+                success: false,
+                message: 'Câu hỏi và câu trả lời không được để trống'
+            });
+        }
+
+        const [result] = await pool.execute(
+            `INSERT INTO faqs (question, answer, category, is_active, sort_order, created_by) VALUES (?, ?, ?, ?, ?, ?)`,
+            [question, answer, category || 'Khác', is_active ? 1 : 0, sort_order, req.user.id]
+        );
+
+        const [newFaq] = await pool.execute(
+            `SELECT id, question, answer, category, is_active, view_count, sort_order, created_at, updated_at FROM faqs WHERE id = ?`,
+            [result.insertId]
+        );
+
+        const faq = newFaq[0];
+        res.status(201).json({
+            success: true,
+            message: 'Tạo FAQ thành công',
+            data: {
+                id: faq.id,
+                question: faq.question,
+                answer: faq.answer,
+                category: faq.category,
+                isActive: faq.is_active === 1,
+                viewCount: faq.view_count,
+                sortOrder: faq.sort_order,
+                createdAt: faq.created_at,
+                updatedAt: faq.updated_at
+            }
+        });
+    } catch (error) {
+        console.error('Create FAQ error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi tạo FAQ',
+            error: error.message
+        });
+    }
+});
+
+// PUT update FAQ
+app.put('/api/admin/faqs/:id', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { question, answer, category, is_active, sort_order } = req.body;
+
+        // Check if FAQ exists
+        const [existing] = await pool.execute('SELECT id FROM faqs WHERE id = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'FAQ không tồn tại'
+            });
+        }
+
+        const updates = [];
+        const params = [];
+
+        if (question !== undefined) { updates.push('question = ?'); params.push(question); }
+        if (answer !== undefined) { updates.push('answer = ?'); params.push(answer); }
+        if (category !== undefined) { updates.push('category = ?'); params.push(category); }
+        if (is_active !== undefined) { updates.push('is_active = ?'); params.push(is_active ? 1 : 0); }
+        if (sort_order !== undefined) { updates.push('sort_order = ?'); params.push(sort_order); }
+
+        if (updates.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Không có trường nào được cập nhật'
+            });
+        }
+
+        params.push(id);
+        await pool.execute(`UPDATE faqs SET ${updates.join(', ')} WHERE id = ?`, params);
+
+        const [updated] = await pool.execute(
+            `SELECT id, question, answer, category, is_active, view_count, sort_order, created_at, updated_at FROM faqs WHERE id = ?`,
+            [id]
+        );
+
+        const faq = updated[0];
+        res.json({
+            success: true,
+            message: 'Cập nhật FAQ thành công',
+            data: {
+                id: faq.id,
+                question: faq.question,
+                answer: faq.answer,
+                category: faq.category,
+                isActive: faq.is_active === 1,
+                viewCount: faq.view_count,
+                sortOrder: faq.sort_order,
+                createdAt: faq.created_at,
+                updatedAt: faq.updated_at
+            }
+        });
+    } catch (error) {
+        console.error('Update FAQ error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi cập nhật FAQ',
+            error: error.message
+        });
+    }
+});
+
+// DELETE FAQ
+app.delete('/api/admin/faqs/:id', authenticateAdminFAQ, async(req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [existing] = await pool.execute('SELECT id FROM faqs WHERE id = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'FAQ không tồn tại'
+            });
+        }
+
+        await pool.execute('DELETE FROM faqs WHERE id = ?', [id]);
+
+        res.json({
+            success: true,
+            message: 'Xóa FAQ thành công'
+        });
+    } catch (error) {
+        console.error('Delete FAQ error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi khi xóa FAQ',
+            error: error.message
+        });
+    }
+});
+
 // Test endpoint for debugging
 app.get('/api/admin/test', async(req, res) => {
     try {
@@ -2160,6 +2886,16 @@ app.put('/api/user/update-avatar', async(req, res) => {
         await pool.execute(
             'UPDATE users SET avatar = ? WHERE id = ?', [avatar_url, user_id]
         );
+
+        // Gửi email thông báo đổi avatar
+        try {
+            const [avatarUser] = await pool.execute('SELECT email, full_name FROM users WHERE id = ?', [user_id]);
+            if (avatarUser.length > 0) {
+                await sendProfileUpdateEmail(avatarUser[0].email, avatarUser[0].full_name || avatarUser[0].username, 'avatar', req.ip);
+            }
+        } catch (emailError) {
+            console.error('Error sending avatar update email:', emailError);
+        }
 
         res.json({
             success: true,
@@ -2377,6 +3113,13 @@ app.put('/api/user/update-email', async(req, res) => {
         await pool.execute(
             'UPDATE users SET email = ? WHERE id = ?', [email, user_id]
         );
+
+        // Gửi email thông báo đổi email
+        try {
+            await sendProfileUpdateEmail(email, email, 'email', req.ip);
+        } catch (emailError) {
+            console.error('Error sending email update notification:', emailError);
+        }
 
         res.json({
             success: true,

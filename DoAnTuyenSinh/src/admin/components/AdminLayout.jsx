@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "../../accounts/UserContext";
 import { useDarkMode } from "../../contexts/DarkModeContext";
 import { getAvatarUrl } from "../../utils/avatarUtils";
+import { adminAPI } from "../../utils/apiClient";
 import {
   FaBars,
   FaTimes,
@@ -41,6 +42,8 @@ const AdminLayout = ({ children }) => {
 
   const displayName = username || user?.username || user?.name || user?.email || "Admin";
   const avatarUrl = getAvatarUrl(user);
+  const [notifications, setNotifications] = useState([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -59,19 +62,46 @@ const AdminLayout = ({ children }) => {
     setSidebarOpen(false);
   }, [location]);
 
+  const fetchNotifications = async () => {
+    if (isDemoMode) {
+      setNotifications([
+        { id: 1, title: "Hồ sơ mới cần duyệt", message: "Có 5 hồ sơ mới cần xử lý ngay", time: "5 phút trước", type: "warning", unread: true },
+        { id: 2, title: "Báo cáo tuần đã sẵn sàng", message: "Báo cáo thống kê tuần này đã được tạo", time: "1 giờ trước", type: "info", unread: true },
+        { id: 3, title: "Hệ thống cập nhật", message: "Hệ thống đã được cập nhật thành công", time: "2 giờ trước", type: "success", unread: false },
+        { id: 4, title: "Người dùng mới đăng ký", message: "12 người dùng mới đăng ký hôm nay", time: "3 giờ trước", type: "info", unread: false },
+      ]);
+      return;
+    }
+    setNotificationsLoading(true);
+    try {
+      const res = await adminAPI.getNotifications({ limit: 10 });
+      if (res.success) {
+        setNotifications(res.data.notifications.map(n => ({
+          id: n.id,
+          title: n.title,
+          message: n.content,
+          time: n.createdAt ? new Date(n.createdAt).toLocaleString("vi-VN") : "",
+          type: n.isPublished ? "info" : "warning",
+          unread: !n.isPublished,
+        })));
+      }
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [isDemoMode]);
+
   const menuItems = [
     { id: "tong-quan", label: "Tổng Quan", icon: FaHome, path: "/admin/tong-quan", color: "from-blue-500 to-blue-600", description: "Dashboard chính", badge: "Hot" },
     { id: "quan-ly-ho-so", label: "Quản Lý Hồ Sơ", icon: FaFileAlt, path: "/admin/quan-ly-ho-so", color: "from-green-500 to-green-600", description: "Xét duyệt hồ sơ", badge: "89" },
     { id: "quan-ly-faq", label: "Quản Lý FAQ", icon: FaQuestionCircle, path: "/admin/quan-ly-faq", color: "from-purple-500 to-purple-600", description: "Câu hỏi thường gặp" },
     { id: "bao-cao", label: "Báo Cáo", icon: FaChartBar, path: "/admin/bao-cao", color: "from-orange-500 to-orange-600", description: "Thống kê chi tiết", badge: "New" },
     { id: "cai-dat", label: "Cài Đặt", icon: FaCog, path: "/admin/cai-dat", color: "from-gray-500 to-gray-600", description: "Thiết lập hệ thống" },
-  ];
-
-  const notifications = [
-    { id: 1, title: "Hồ sơ mới cần duyệt", message: "Có 5 hồ sơ mới cần xử lý ngay", time: "5 phút trước", type: "warning", unread: true },
-    { id: 2, title: "Báo cáo tuần đã sẵn sàng", message: "Báo cáo thống kê tuần này đã được tạo", time: "1 giờ trước", type: "info", unread: true },
-    { id: 3, title: "Hệ thống cập nhật", message: "Hệ thống đã được cập nhật thành công", time: "2 giờ trước", type: "success", unread: false },
-    { id: 4, title: "Người dùng mới đăng ký", message: "12 người dùng mới đăng ký hôm nay", time: "3 giờ trước", type: "info", unread: false },
   ];
 
   const notificationConfig = {
@@ -327,7 +357,16 @@ const AdminLayout = ({ children }) => {
                             </span>
                           </div>
                           <div className="space-y-4 max-h-80 overflow-y-auto">
-                            {notifications.map((notification) => (
+                            {notificationsLoading ? (
+                              <div className="flex items-center justify-center py-8">
+                                <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                              </div>
+                            ) : notifications.length === 0 ? (
+                              <div className={`text-center py-8 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                                <FaBell className="mx-auto mb-2 text-2xl opacity-50" />
+                                <p className="text-sm">Không có thông báo nào</p>
+                              </div>
+                            ) : notifications.map((notification) => (
                               <motion.div
                                 key={notification.id}
                                 className={`flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 cursor-pointer ${
@@ -347,6 +386,16 @@ const AdminLayout = ({ children }) => {
                               </motion.div>
                             ))}
                           </div>
+                          {notifications.length > 0 && (
+                            <div className={`p-4 border-t ${darkMode ? "border-gray-700" : "border-gray-200"} text-center`}>
+                              <button
+                                onClick={() => setNotificationsOpen(false)}
+                                className={`text-sm font-medium ${darkMode ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"}`}
+                              >
+                                Đóng thông báo
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </motion.div>
                     )}

@@ -288,8 +288,9 @@ function HoSoQuanLi() {
                       e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUI5QkEzIi8+CjxwYXRoIGQ9Ik0yMCA5MEM0MCA3MCA4MCA3MCAxMDAgOTBWMTIwSDIwVjkwWiIgZmlsbD0iIzlCOUJBMyIvPgo8L3N2Zz4K";
                     }}
                   />
-                  <label className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-3 rounded-full cursor-pointer hover:from-blue-600 hover:to-cyan-600 hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg">
-                    <FaCamera className="text-sm" />
+                  <label className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-3 rounded-full cursor-pointer hover:from-blue-600 hover:to-cyan-600 hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg"
+                    aria-label="Tải lên ảnh đại diện">
+                    <FaCamera className="text-sm" aria-hidden="true" />
                     <input
                       type="file"
                       accept="image/*"
@@ -534,8 +535,9 @@ function HoSoQuanLi() {
                       type="button"
                       onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:scale-110 active:scale-95 transition-all duration-200"
+                      aria-label={showCurrentPassword ? "Ẩn mật khẩu hiện tại" : "Hiện mật khẩu hiện tại"}
                     >
-                      {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                      {showCurrentPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                     </button>
                   </div>
                 </motion.div>
@@ -559,8 +561,9 @@ function HoSoQuanLi() {
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:scale-110 active:scale-95 transition-all duration-200"
+                      aria-label={showNewPassword ? "Ẩn mật khẩu mới" : "Hiện mật khẩu mới"}
                     >
-                      {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                      {showNewPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                     </button>
                   </div>
                 </motion.div>
@@ -584,8 +587,9 @@ function HoSoQuanLi() {
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:scale-110 active:scale-95 transition-all duration-200"
+                      aria-label={showConfirmPassword ? "Ẩn xác nhận mật khẩu" : "Hiện xác nhận mật khẩu"}
                     >
-                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                      {showConfirmPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                     </button>
                   </div>
                 </motion.div>

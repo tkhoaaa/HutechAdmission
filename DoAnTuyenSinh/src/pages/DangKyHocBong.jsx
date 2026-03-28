@@ -23,9 +23,11 @@ import SEO from "../components/SEO";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
+import { useDarkMode } from "../contexts/DarkModeContext";
 
 function DangKyHocBong() {
   const { user } = useContext(UserContext);
+  const { darkMode } = useDarkMode();
   const [activeTab, setActiveTab] = useState("register");
   const [form, setForm] = useState({
     ho_ten: "",
@@ -809,7 +811,7 @@ function DangKyHocBong() {
                           <motion.button
                             onClick={loadApplications}
                             disabled={loadingList}
-                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                            className={`px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 dark:from-blue-600 dark:to-purple-600 dark:hover:from-blue-700 dark:hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 hover:scale-105 active:scale-95`}
                             initial={{ x: 20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                           >
@@ -932,7 +934,7 @@ function DangKyHocBong() {
                                     </p>
                                     <p className="flex items-center gap-2">
                                       <strong className="text-slate-700 dark:text-slate-300">Trang thai:</strong>
-                                      <span className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 rounded-full text-xs font-bold shadow-lg animate-pulse-soft">
+                                      <span className={`px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 dark:from-yellow-600 dark:to-orange-600 dark:text-yellow-100 rounded-full text-xs font-bold shadow-lg animate-pulse-soft`}>
                                         Dang xu ly
                                       </span>
                                     </p>

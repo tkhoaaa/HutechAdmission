@@ -20,7 +20,29 @@
       "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npm run build 2>&1 | tail -15)",
       "Bash(git fetch:*)",
       "Bash(git pull:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Read(//c/Users/Admin/source/repos/DoAnTuyenSinh/**)",
+      "Bash(npx get-shit-done-cc@latest --claude --local)",
+      "Bash(npx shadcn@latest init --yes --defaults 2>&1)",
+      "Bash(ls tsconfig*.json vite.config.* 2>/dev/null)",
+      "Bash(npx shadcn@latest add card input dialog select tabs badge avatar separator skeleton dropdown-menu sheet tooltip sonner --yes 2>&1)",
+      "Bash(npx shadcn@latest add card --yes --overwrite 2>&1; npx shadcn@latest add input --yes --overwrite 2>&1; npx shadcn@latest add dialog --yes --overwrite 2>&1; npx shadcn@latest add select --yes --overwrite 2>&1; npx shadcn@latest add tabs --yes --overwrite 2>&1; npx shadcn@latest add badge --yes --overwrite 2>&1; npx shadcn@latest add avatar --yes --overwrite 2>&1; npx shadcn@latest add separator --yes --overwrite 2>&1; npx shadcn@latest add skeleton --yes --overwrite 2>&1; npx shadcn@latest add dropdown-menu --yes --overwrite 2>&1; npx shadcn@latest add sheet --yes --overwrite 2>&1; npx shadcn@latest add tooltip --yes --overwrite 2>&1; npx shadcn@latest add sonner --yes --overwrite 2>&1)",
+      "Bash(npx shadcn@latest add accordion --yes --overwrite 2>&1; npx shadcn@latest add progress --yes --overwrite 2>&1; npx shadcn@latest add switch --yes --overwrite 2>&1; npx shadcn@latest add checkbox --yes --overwrite 2>&1; npx shadcn@latest add textarea --yes --overwrite 2>&1; npx shadcn@latest add label --yes --overwrite 2>&1; npx shadcn@latest add table --yes --overwrite 2>&1; npx shadcn@latest add scroll-area --yes --overwrite 2>&1; npx shadcn@latest add popover --yes --overwrite 2>&1; npx shadcn@latest add command --yes --overwrite 2>&1)",
+      "Bash(git add:*)",
+      "Bash(grep -r \"animate-\" DoAnTuyenSinh/src/ --include=\"*.jsx\" --include=\"*.js\" -h 2>/dev/null | grep -oP \"animate-[a-z-]+\" | sort -u)",
+      "Bash(grep -r \"animate-\" DoAnTuyenSinh/src/ --include=\"*.jsx\" --include=\"*.js\" -h 2>/dev/null | grep -v \"lightswind\" | grep -v \"node_modules\" | sed 's/.*animate-\\\\\\([a-z-]*\\\\\\).*/\\\\1/' | sort -u)",
+      "Bash(grep -r \"animate-\" DoAnTuyenSinh/src/ --include=\"*.jsx\" --include=\"*.js\" -h 2>/dev/null | grep -v \"lightswind\" | grep -v \"node_modules\" | grep \"animate-\" | sed 's/.*\\\\\\(animate-[a-z-]*\\\\\\).*/\\\\1/' | sort -u)",
+      "Bash(grep -rn \"useTheme\\\\|ThemeProvider\\\\|ThemeContext\" DoAnTuyenSinh/src/ --include=\"*.jsx\" --include=\"*.js\" 2>/dev/null | grep -v \"node_modules\")",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && npm run build 2>&1)",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && sed -i 's/import Button from \"\\\\.\\\\.\\\\/components\\\\/ui\\\\/Button\";/import { Button } from \"\\\\.\\\\.\\\\/components\\\\/ui\\\\/Button\";/g' src/pages/ThongTinTuyenSinh.jsx src/pages/TraCuuKetQua.jsx src/pages/HoSoNguoiDung.jsx src/pages/LienHe.jsx src/pages/CauHoiThuongGap.jsx src/pages/DangKyHocBong.jsx src/pages/DangKyTuVan.jsx src/pages/DangKyXetTuyen.jsx 2>&1)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh/**)",
+      "Bash(done)",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && sed -i 's/import Button from \"\\\\.\\\\/ui\\\\/Button\";/import { Button } from \".\\\\/ui\\\\/Button\";/g' src/components/ChanTrang.jsx src/components/ThanhHeader.jsx 2>&1)",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && rm -f src/components/ui/Card.modern.jsx 2>&1 && echo \"Deleted Card.modern.jsx\")",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && npm run build 2>&1)",
+      "Bash(ls -la DoAnTuyenSinh/dist/assets/vendor-misc*.js)",
+      "Bash(cd \"C:\\\\Users\\\\Admin\\\\source\\\\repos\\\\DoAnTuyenSinh\\\\DoAnTuyenSinh\" && node -e \"\nimport\\('./backend/config/database.js'\\).then\\(\\({default: pool}\\) => {\n  // Test the insert query to see if it fails\n  pool.query\\('DESCRIBE users'\\).then\\(\\([rows]\\) => {\n    console.log\\('Users table columns:', rows.map\\(r => r.Field\\).join\\(', '\\)\\);\n    pool.end\\(\\);\n  }\\);\n}\\);\n\" 2>&1)"
     ]
   }
 }

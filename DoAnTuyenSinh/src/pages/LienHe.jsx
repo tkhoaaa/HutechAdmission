@@ -23,6 +23,7 @@ import {
   FaAward,
   FaSpinner,
 } from "react-icons/fa";
+import { useDarkMode } from "../contexts/DarkModeContext";
 import SEO from "../components/SEO";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
@@ -117,6 +118,7 @@ const socialLinks = [
 ];
 
 function LienHe() {
+  const { darkMode } = useDarkMode();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -193,7 +195,7 @@ function LienHe() {
               {/* Animated icon */}
               <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 relative bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-600 dark:to-purple-600 shadow-2xl animate-float-slow">
                 <FaEnvelope className="text-4xl text-white" />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30 animate-pulse" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30 dark:opacity-10 animate-pulse" />
               </div>
 
               {/* Support badge */}
@@ -251,7 +253,7 @@ function LienHe() {
                     animate={index === 1 ? { scale: [1, 1.05, 1] } : {}}
                     transition={index === 1 ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
                   >
-                    <stat.icon className="text-blue-500 text-xl" />
+                    <stat.icon className="text-blue-500 dark:text-blue-400 text-xl" />
                     <div>
                       <div className="font-bold text-lg text-gray-900 dark:text-white">
                         {stat.number}
@@ -305,11 +307,11 @@ function LienHe() {
                     <div className="p-8 text-center relative">
                       {/* Gradient background */}
                       <div
-                        className={`absolute inset-0 bg-gradient-to-r ${info.color} opacity-10 rounded-lg animate-pulse-glow`}
+                        className={`absolute inset-0 bg-gradient-to-r ${info.color} opacity-10 dark:opacity-5 rounded-lg animate-pulse-glow`}
                       />
 
                       <div className="relative z-10 w-16 h-16 mx-auto mb-6 rounded-xl flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 shadow-lg animate-float-slow">
-                        <info.icon className="text-2xl text-white" />
+                        <info.icon className="text-2xl text-white dark:text-white" />
                       </div>
 
                       <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
@@ -386,7 +388,7 @@ function LienHe() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              <div className="rounded-xl bg-white/10 dark:bg-gray-800/30 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-2xl">
+              <div className="rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 shadow-2xl">
                 <div className="p-12">
                   <AnimatePresence>
                     {success && (
@@ -396,7 +398,7 @@ function LienHe() {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: -20 }}
                       >
-                        <FaCheckCircle className="text-2xl" />
+                        <FaCheckCircle className="text-2xl dark:text-emerald-300" />
                         <span className="font-semibold">{success}</span>
                       </motion.div>
                     )}
@@ -425,7 +427,7 @@ function LienHe() {
                           value={form.name}
                           onChange={handleChange}
                           placeholder="Nhập họ và tên"
-                          leftIcon={<FaUser className="text-blue-500" />}
+                          leftIcon={<FaUser className="text-blue-500 dark:text-blue-400" />}
                           required
                           size="lg"
                           className="text-lg"
@@ -444,7 +446,7 @@ function LienHe() {
                           value={form.email}
                           onChange={handleChange}
                           placeholder="Nhập email"
-                          leftIcon={<FaEnvelope className="text-purple-500" />}
+                          leftIcon={<FaEnvelope className="text-purple-500 dark:text-purple-400" />}
                           required
                           size="lg"
                           className="text-lg"
@@ -465,7 +467,7 @@ function LienHe() {
                           value={form.phone}
                           onChange={handleChange}
                           placeholder="Nhập số điện thoại"
-                          leftIcon={<FaPhone className="text-green-500" />}
+                          leftIcon={<FaPhone className="text-green-500 dark:text-green-400" />}
                           size="lg"
                           className="text-lg"
                         />
@@ -482,7 +484,7 @@ function LienHe() {
                           value={form.subject}
                           onChange={handleChange}
                           placeholder="Nhập chủ đề"
-                          leftIcon={<FaComments className="text-orange-500" />}
+                          leftIcon={<FaComments className="text-orange-500 dark:text-orange-400" />}
                           required
                           size="lg"
                           className="text-lg"
@@ -567,7 +569,7 @@ function LienHe() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.9 }}
             >
-              <div className="rounded-xl bg-white/10 dark:bg-gray-800/30 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 shadow-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="p-0">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.484123456789!2d106.709123456789!3d10.80123456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e640d01%3A0xf89fba644b4c0b8!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBIdXRlY2g!5e0!3m2!1svi!2s!4v1234567890"

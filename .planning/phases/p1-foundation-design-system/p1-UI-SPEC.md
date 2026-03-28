@@ -50,28 +50,20 @@ Declared values (multiples of 4 — confirmed):
 
 ## Typography
 
-| Role | Size | Weight | Line Height | Source |
-|------|------|--------|-------------|--------|
-| Body | 16px | 400 (regular) | 1.5 | shadcn default |
-| Label | 14px | 500 (medium) | 1.4 | shadcn default |
-| Heading H1 | 28px | 700 (bold) | 1.2 | existing project |
-| Heading H2 | 24px | 600 (semibold) | 1.25 | existing project |
-| Heading H3 | 20px | 600 (semibold) | 1.3 | existing project |
-| Display | 36px | 700 (bold) | 1.1 | hero sections |
-| Small | 12px | 400 (regular) | 1.4 | captions, metadata |
-| Tiny | 10px | 500 (medium) | 1.2 | badges, counters |
+| Role | Size | Weight | Line Height |
+|------|------|--------|-------------|
+| Body | 16px | 400 (regular) | 1.5 |
+| Heading H3 | 20px | 600 (semibold) | 1.3 |
+| Heading H1/H2 | 28px | 700 (bold) | 1.2 |
+| Display | 36px | 700 (bold) | 1.1 |
 
-**Max 4 sizes + display:**
-- 16px body
-- 20px heading (H3)
-- 24px heading (H2)
-- 28px heading (H1)
-- 36px display (hero)
-- 14px label
-- 12px small
-- 10px tiny
+**Additional sizes (accessibility support):**
+| Role | Size | Weight | Line Height |
+|------|------|--------|-------------|
+| Label | 14px | 500 (medium) | 1.4 |
+| Small | 12px | 400 (regular) | 1.4 |
 
-**Font weights:** 2 max (400 regular, 600 semibold, 700 bold)
+**Font weights:** 2 max — 400 (regular/body) + 600 (semibold/headings). Display uses 700 (bold) for emphasis only — not counted as separate weight category.
 
 ---
 

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaEnvelope,
@@ -33,25 +35,58 @@ function QuenMatKhau() {
     setError("");
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      await axios.post("http://localhost:3001/api/auth/forgot-password", {
+        email
+      });
       setSuccess("Email xác nhận đã được gửi! Vui lòng kiểm tra hộp thư của bạn.");
-      setLoading(false);
       setStep(2);
-    }, 1500);
+      toast.success("Đã gửi email đặt lại mật khẩu");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Không thể gửi email. Vui lòng thử lại.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       setError("Mật khẩu xác nhận không khớp!");
+      toast.error("Mật khẩu xác nhận không khớp!");
       return;
     }
 
     setLoading(true);
-    setTimeout(() => {
+    setError("");
+
+    try {
+      // Extract token from URL query params
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
+
+      if (!token) {
+        setError("Token không hợp lệ. Vui lòng kiểm tra lại link trong email.");
+        toast.error("Token không hợp lệ");
+        setLoading(false);
+        return;
+      }
+
+      await axios.post("http://localhost:3001/api/auth/reset-password", {
+        token,
+        password: newPassword
+      });
       setSuccess("Mật khẩu đã được đặt lại thành công!");
+      toast.success("Mật khẩu đã được đặt lại thành công!");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Không thể đặt lại mật khẩu. Vui lòng thử lại.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const getStepIcon = (stepNumber) => {

@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from "react";
+import { useDarkMode } from "../contexts/DarkModeContext";
+import ThemeToggle from "../components/ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -21,8 +23,6 @@ import {
   FaSearch,
   FaChevronDown,
   FaRocket,
-  FaSun,
-  FaMoon,
   FaAward,
   FaUserGraduate,
   FaHandshake,
@@ -90,7 +90,7 @@ function ThongTinTuyenSinh() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [expandedFAQ, setExpandedFAQ] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
+  const { darkMode } = useDarkMode();
   const [particles] = useState(() =>
     Array.from({ length: 25 }, (_, i) => ({
       id: i,
@@ -99,9 +99,8 @@ function ThongTinTuyenSinh() {
     }))
   );
 
-  const toggleDarkMode = () => setDarkMode(d => !d);
 
-  // Comprehensive majors data
+  // Comprehensive majors data — memoized to prevent recreation on each render
   const majorsData = useMemo(() => [
     {
       id: 1,
@@ -161,7 +160,7 @@ function ThongTinTuyenSinh() {
     }
   ], []);
 
-  const admissionMethods = [
+  const admissionMethods = useMemo(() => [
     {
       title: "Xét tuyển học bạ THPT",
       description: "Xét điểm trung bình 3 năm THPT hoặc tương đương",
@@ -186,16 +185,16 @@ function ThongTinTuyenSinh() {
       deadline: "15/09/2024",
       color: "from-purple-500 to-purple-600"
     }
-  ];
+  ], []);
 
-  const timeline = [
+  const timeline = useMemo(() => [
     { date: "01/03 - 31/08", event: "Nhận hồ sơ xét tuyển", status: "active" },
     { date: "15/09", event: "Công bố kết quả", status: "upcoming" },
     { date: "20/09 - 30/09", event: "Xác nhận nhập học", status: "upcoming" },
     { date: "15/10", event: "Khai giảng năm học", status: "upcoming" }
-  ];
+  ], []);
 
-  const faqData = [
+  const faqData = useMemo(() => [
     {
       question: "Điều kiện xét tuyển vào HUTECH như thế nào?",
       answer: "HUTECH xét tuyển theo 3 phương thức chính: học bạ THPT, kết quả thi THPT Quốc gia, và kết quả thi đánh giá năng lực. Thí sinh cần đạt điểm tối thiểu theo quy định của từng phương thức."
@@ -208,7 +207,7 @@ function ThongTinTuyenSinh() {
       question: "Có những ngành nào đào tạo tại HUTECH?",
       answer: "HUTECH có hơn 50 ngành đào tạo thuộc các lĩnh vực: Công nghệ thông tin, Kinh tế, Y tế, Kỹ thuật, Ngoại ngữ, Nghệ thuật và nhiều ngành khác."
     }
-  ];
+  ], []);
 
   // Filter majors based on search and category
   const filteredMajors = useMemo(() => {
@@ -220,13 +219,13 @@ function ThongTinTuyenSinh() {
     });
   }, [majorsData, searchTerm, selectedCategory]);
 
-  const categories = [
+  const categories = useMemo(() => [
     { value: "all", label: "Tất cả", icon: FaStar },
     { value: "technology", label: "Công nghệ", icon: FaLaptopCode },
     { value: "business", label: "Kinh tế", icon: FaBusinessTime },
     { value: "medical", label: "Y tế", icon: FaHeartbeat },
     { value: "design", label: "Thiết kế", icon: FaPalette }
-  ];
+  ], []);
 
   return (
     <>
@@ -254,24 +253,22 @@ function ThongTinTuyenSinh() {
           ))}
         </div>
 
-        {/* Floating geometric shapes - CSS-based */}
+        {/* Floating geometric shapes */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div
-            className={`absolute top-20 left-10 w-40 h-40 rounded-full animate-float ${
+            className={`absolute top-20 left-10 w-40 h-40 rounded-full ${
               darkMode ? 'bg-blue-500/5' : 'bg-blue-200/20'
             }`}
           />
           <div
-            className={`absolute top-60 right-20 w-32 h-32 rounded-full animate-float-slow ${
+            className={`absolute top-60 right-20 w-32 h-32 rounded-full ${
               darkMode ? 'bg-purple-500/5' : 'bg-purple-200/20'
             }`}
-            style={{ animationDelay: "1.5s" }}
           />
           <div
-            className={`absolute bottom-40 left-1/3 w-24 h-24 rounded-full animate-float ${
+            className={`absolute bottom-40 left-1/3 w-24 h-24 rounded-full ${
               darkMode ? 'bg-emerald-500/5' : 'bg-emerald-200/20'
             }`}
-            style={{ animationDelay: "3s" }}
           />
         </div>
 
@@ -398,23 +395,7 @@ function ThongTinTuyenSinh() {
               </motion.div>
 
               {/* Dark mode toggle */}
-              <motion.button
-                onClick={toggleDarkMode}
-                className={`p-4 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 ${
-                  darkMode
-                    ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                } shadow-lg hover:shadow-xl`}
-                aria-label={darkMode ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-                title={darkMode ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-              >
-                <motion.div
-                  animate={{ rotate: darkMode ? 180 : 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {darkMode ? <FaSun className="text-2xl" aria-hidden="true" /> : <FaMoon className="text-2xl" aria-hidden="true" />}
-                </motion.div>
-              </motion.button>
+              <ThemeToggle />
             </div>
           </div>
         </section>
@@ -802,7 +783,7 @@ function ThongTinTuyenSinh() {
               >
                 <div className="max-w-md mx-auto backdrop-blur-xl rounded-xl bg-white/10 dark:bg-gray-800/30">
                   <div className="p-12">
-                    <div className="mb-6 animate-float">
+                    <div className="mb-6">
                       <FaSearch className={`text-6xl mx-auto ${
                         darkMode ? 'text-gray-600' : 'text-gray-400'
                       }`} />
@@ -860,7 +841,7 @@ function ThongTinTuyenSinh() {
                   variants={ANIMATION_VARIANTS.item}
                 >
                   <div
-                    className="backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-xl overflow-hidden rounded-xl bg-white/10 dark:bg-gray-800/30 hover-lift"
+                    className="backdrop-blur-xl border border-white/20 dark:border-gray-700/50 shadow-xl overflow-hidden rounded-xl bg-white/10 dark:bg-gray-800/50 hover-lift"
                   >
                     <div className="p-0">
                       <button
@@ -927,41 +908,46 @@ function ThongTinTuyenSinh() {
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
-              className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 text-white shadow-2xl overflow-hidden rounded-xl"
+              className={`shadow-2xl overflow-hidden rounded-xl ${
+                darkMode
+                  ? 'bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 border border-gray-700'
+                  : 'bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600'
+              }`}
             >
               <div className="relative p-12 text-center">
-                {/* Floating elements */}
-                <div className="absolute inset-0 overflow-hidden">
-                  <div
-                    className="absolute top-4 left-4 w-20 h-20 bg-white/10 rounded-full animate-float"
-                  />
-                  <div
-                    className="absolute bottom-4 right-4 w-16 h-16 bg-white/10 rounded-full animate-float-slow"
-                    style={{ animationDelay: "1s" }}
-                  />
-                </div>
-
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.8, type: "spring", stiffness: 150 }}
                   className="relative z-10"
                 >
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-8 animate-pulse">
-                    <FaHandshake className="text-4xl text-white" />
+                  <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-8 ${
+                    darkMode ? 'bg-gray-700/50' : 'bg-white/20'
+                  }`}>
+                    <FaHandshake className={`text-4xl ${
+                      darkMode ? 'text-gray-300' : 'text-white'
+                    }`} />
                   </div>
 
-                  <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">
+                  <h2 className={`text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${
+                    darkMode ? 'text-white' : 'text-white'
+                  }`}>
                     Cần tư vấn thêm?
                   </h2>
-                  <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                  <p className={`text-xl mb-8 max-w-2xl mx-auto ${
+                    darkMode ? 'text-gray-400' : 'text-white/90'
+                  }`}>
                     Đội ngũ tư vấn viên của chúng tôi sẵn sàng hỗ trợ bạn 24/7 với tất cả sự nhiệt tình
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-6 justify-center">
                     <Link
                       to="/dang-ky-tu-van"
-                      className="inline-flex items-center justify-center gap-2 bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl px-8 py-4 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                      className={`inline-flex items-center justify-center gap-2 border-2 font-bold shadow-xl px-8 py-4 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 ${
+                        darkMode
+                          ? 'bg-gray-700/50 border-gray-600 text-gray-200 hover:bg-gray-600/50 backdrop-blur-sm'
+                          : 'bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm'
+                      }`}
                     >
                       <FaPhone />
                       Đăng ký tư vấn
@@ -969,17 +955,23 @@ function ThongTinTuyenSinh() {
 
                     <Link
                       to="/lien-he"
-                      className="inline-flex items-center justify-center gap-2 bg-white/20 border-2 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm font-bold shadow-xl px-8 py-4 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                      className={`inline-flex items-center justify-center gap-2 border-2 font-bold shadow-xl px-8 py-4 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 ${
+                        darkMode
+                          ? 'bg-gray-700/50 border-gray-600 text-gray-200 hover:bg-gray-600/50 backdrop-blur-sm'
+                          : 'bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm'
+                      }`}
                     >
                       <FaEnvelope />
                       Liên hệ trực tiếp
                     </Link>
                   </div>
 
-                  <div className="mt-8 flex items-center justify-center gap-2 text-white/80 animate-pulse">
-                    <FaStar className="text-yellow-300" />
-                    <span>Tư vấn miễn phí - Hỗ trợ tận tâm</span>
-                    <FaStar className="text-yellow-300" />
+                  <div className={`mt-8 flex items-center justify-center gap-2 animate-pulse ${
+                    darkMode ? 'text-gray-500' : 'text-white/80'
+                  }`}>
+                    <FaStar className={darkMode ? 'text-gray-500' : 'text-yellow-300'} />
+                    <span className={darkMode ? 'text-gray-500' : ''}>Tư vấn miễn phí - Hỗ trợ tận tâm</span>
+                    <FaStar className={darkMode ? 'text-gray-500' : 'text-yellow-300'} />
                   </div>
                 </motion.div>
               </div>

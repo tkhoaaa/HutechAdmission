@@ -1,8 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
-import { FaUser, FaLock, FaEnvelope, FaEye, FaEyeSlash, FaSignInAlt, FaShieldAlt, FaRocket, FaStar } from "react-icons/fa";
+import { FaUser, FaLock, FaEnvelope, FaEye, FaEyeSlash, FaSignInAlt, FaShieldAlt, FaStar } from "react-icons/fa";
+import { toast } from "sonner";
 import { UserContext } from "./UserContext";
 import { Button, Input, Card } from "../components/ui";
 import { shouldShowDemoMode } from "../utils/environment";
@@ -11,28 +12,35 @@ function DangNhap() {
   const [form, setForm] = useState({ identifier: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const navigate = useNavigate();
   const { login, loginDemo, user, role } = useContext(UserContext);
+
+  // Navigate after successful login — avoids setTimeout race conditions
+  useEffect(() => {
+    if (loginSuccess) {
+      if (role === "admin") {
+        navigate("/admin/tong-quan", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [loginSuccess, role, navigate]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleDemoLogin = () => {
     setError("");
-    setSuccess("");
     loginDemo();
-    setSuccess("Đăng nhập Demo thành công!");
-    setTimeout(() => {
-      navigate("/admin");
-    }, 1000);
+    toast.success("Đăng nhập Demo thành công!");
+    navigate("/admin/tong-quan", { replace: true });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
     setLoading(true);
     try {
       const res = await axios.post("http://localhost:3001/api/auth/login", {
@@ -42,26 +50,14 @@ function DangNhap() {
 
       // Lấy thông tin user từ response
       if (res.data.success) {
-        const user = res.data.data.user;
-        const role = user.role;
-        const username = user.full_name || user.username || user.email;
+        const userData = res.data.data.user;
+        const authToken = res.data.data.token;
 
         // Sử dụng thông tin user từ login response trực tiếp
-        // Không cần gọi API profile riêng vì có thể endpoint chưa được implement
-        login(user.id, role, username, user);
+        login(userData.id, userData.role, userData.full_name || userData.username || userData.email, userData, authToken);
 
-        setSuccess("Đăng nhập thành công!");
-        if (role === "admin") {
-          setSuccess("Đăng nhập admin thành công! Đang chuyển hướng...");
-          setTimeout(() => {
-            navigate("/admin/tong-quan");
-          }, 1000);
-        } else {
-          setSuccess("Đăng nhập user thành công! Đang chuyển hướng...");
-          setTimeout(() => {
-            navigate("/");
-          }, 1000);
-        }
+        toast.success(`Đăng nhập ${userData.role === "admin" ? "admin" : "người dùng"} thành công!`);
+        setLoginSuccess(true);
       } else {
         throw new Error(res.data.message || "Đăng nhập thất bại");
       }
@@ -72,14 +68,17 @@ function DangNhap() {
         Array.isArray(err.response.data.errors)
       ) {
         setError(err.response.data.errors.map((e) => e.msg).join(" | "));
+        toast.error(err.response.data.errors.map((e) => e.msg).join(" | "));
       } else if (err.response?.data?.message) {
         setError(err.response.data.message);
+        toast.error(err.response.data.message);
       } else if (err.code === "ECONNREFUSED") {
-        setError(
-          "Không thể kết nối đến server. Vui lòng kiểm tra server có đang chạy không."
-        );
+        const msg = "Không thể kết nối đến server. Vui lòng kiểm tra server có đang chạy không.";
+        setError(msg);
+        toast.error(msg);
       } else {
         setError("Đăng nhập thất bại! Sai tài khoản hoặc mật khẩu.");
+        toast.error("Đăng nhập thất bại! Sai tài khoản hoặc mật khẩu.");
       }
     } finally {
       setLoading(false);
@@ -209,23 +208,6 @@ function DangNhap() {
                     <br />
                     Vai trò: {role}
                   </div>
-                </div>
-              </motion.div>
-            )}
-            {success && (
-              <motion.div
-                key="success-message"
-                className="mb-6 p-4 rounded-2xl border dark:bg-green-900/50 dark:border-green-700 dark:text-green-300 bg-green-100 border-green-400 text-green-700"
-                initial={{ opacity: 0, scale: 0.9, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="animate-pulse-soft">
-                    <FaRocket />
-                  </div>
-                  {success}
                 </div>
               </motion.div>
             )}

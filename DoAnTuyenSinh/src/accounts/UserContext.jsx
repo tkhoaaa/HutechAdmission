@@ -18,6 +18,7 @@ export function UserContextProvider({ children }) {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || ""
   );
+  const [token, setToken] = useState(localStorage.getItem("authToken") || "");
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Thêm loading state
 
@@ -27,31 +28,22 @@ export function UserContextProvider({ children }) {
     const storedRole = localStorage.getItem("role");
     const storedUsername = localStorage.getItem("username");
     const storedUserData = localStorage.getItem("userData");
-    
-    console.log("UserContext useEffect - Checking stored data:", {
-      demoMode,
-      storedUserId,
-      storedRole,
-      storedUsername,
-      hasUserData: !!storedUserData
-    });
-    
+    const storedToken = localStorage.getItem("authToken");
+
     if (demoMode === "true") {
-      console.log("Setting demo mode");
       setIsDemoMode(true);
       setUser(DEMO_USER);
       setRole("admin");
       setUserId(DEMO_USER.id);
       setUsername(DEMO_USER.username);
+      setToken("");
     } else if (storedUserId && storedRole) {
-      console.log("Restoring user session from localStorage");
-      
       // Xử lý userData từ localStorage
-      let processedUserData = storedUserData ? JSON.parse(storedUserData) : { 
-        id: storedUserId, 
-        username: storedUsername 
+      let processedUserData = storedUserData ? JSON.parse(storedUserData) : {
+        id: storedUserId,
+        username: storedUsername
       };
-      
+
       // Đảm bảo avatar được lưu đúng format (relative path)
       if (processedUserData.avatar && processedUserData.avatar.startsWith('http://localhost:3001')) {
         processedUserData.avatar = processedUserData.avatar.replace('http://localhost:3001', '');
@@ -61,24 +53,22 @@ export function UserContextProvider({ children }) {
       setRole(storedRole);
       setUsername(storedUsername || "");
       setUser(processedUserData);
+      setToken(storedToken || "");
       setIsDemoMode(false);
     } else {
-      console.log("No valid session found, clearing state");
       setUser(null);
       setRole(null);
       setUsername("");
       setUserId("");
+      setToken("");
       setIsDemoMode(false);
     }
-    
+
     // Đặt loading thành false sau khi đã kiểm tra xong
     setIsLoading(false);
   }, []); // Remove userId dependency to prevent infinite loops
 
-  const login = (id, role, username, userData) => {
-    // Debug logs
-    console.log("Login called with:", { id, role, username, userData });
-
+  const login = (id, role, username, userData, authToken = "") => {
     // Xử lý trường hợp username undefined/null
     const validUsername = username || userData?.username || userData?.name || userData?.email || "Người dùng";
 
@@ -92,9 +82,10 @@ export function UserContextProvider({ children }) {
     setUserId(id);
     setRole(role);
     setUsername(validUsername);
+    setToken(authToken);
     setUser({
-      ...userData, 
-      username: validUsername, 
+      ...userData,
+      username: validUsername,
       avatar: avatarPath // Lưu relative path
     });
     setIsLoading(false); // Đảm bảo loading state được reset
@@ -103,6 +94,9 @@ export function UserContextProvider({ children }) {
     localStorage.setItem("userId", id);
     localStorage.setItem("role", role);
     localStorage.setItem("username", validUsername);
+    if (authToken) {
+      localStorage.setItem("authToken", authToken);
+    }
     if (userData) {
       // Lưu userData với avatar path (relative)
       const userDataToStore = {
@@ -113,13 +107,6 @@ export function UserContextProvider({ children }) {
       localStorage.setItem("userData", JSON.stringify(userDataToStore));
     }
     localStorage.removeItem("demoMode");
-
-    console.log("Login completed. New state:", {
-      id,
-      role,
-      username: validUsername,
-      avatar: avatarPath
-    });
   };
 
   const updateUser = (updatedUserData) => {
@@ -152,53 +139,51 @@ export function UserContextProvider({ children }) {
   };
 
   const loginDemo = () => {
-    console.log("Demo login called");
-
     setIsDemoMode(true);
     setUserId(DEMO_USER.id);
     setRole("admin");
     setUsername(DEMO_USER.username);
+    setToken("");
     setUser(DEMO_USER);
-    setIsLoading(false); // Đảm bảo loading state được reset
+    setIsLoading(false);
 
-    // Lưu demo mode vào localStorage
     localStorage.setItem("demoMode", "true");
     localStorage.removeItem("userId");
     localStorage.removeItem("role");
     localStorage.removeItem("username");
+    localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-
-    console.log("Demo login completed");
   };
 
   const logout = () => {
-    console.log("Logout called");
-
     setUserId("");
     setRole(null);
     setUsername("");
+    setToken("");
     setIsDemoMode(false);
     setUser(null);
-    setIsLoading(false); // Reset loading state
-    
+    setIsLoading(false);
+
     localStorage.removeItem("userId");
     localStorage.removeItem("role");
     localStorage.removeItem("username");
+    localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     localStorage.removeItem("demoMode");
   };
 
   return (
-    <UserContext.Provider value={{ 
-      user, 
-      role, 
-      username, 
-      login, 
-      updateUser, 
-      loginDemo, 
-      logout, 
-      isDemoMode, 
-      isLoading 
+    <UserContext.Provider value={{
+      user,
+      role,
+      username,
+      token,
+      login,
+      updateUser,
+      loginDemo,
+      logout,
+      isDemoMode,
+      isLoading
     }}>
       {children}
     </UserContext.Provider>

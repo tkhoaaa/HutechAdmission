@@ -65,7 +65,8 @@ export const authAPI = {
     registerAdmin: (adminData) => apiClient.post('/auth/register-admin', adminData),
     getProfile: () => apiClient.get('/auth/profile'),
     changePassword: (passwordData) => apiClient.post('/auth/change-password', passwordData),
-    refreshToken: () => apiClient.post('/auth/refresh-token')
+    refreshToken: () => apiClient.post('/auth/refresh-token'),
+    getFAQs: (params = {}) => apiClient.get('/auth/faqs', { params }),
 };
 
 // Admin API
@@ -93,7 +94,18 @@ export const adminAPI = {
     getMajors: () => apiClient.get('/admin/majors'),
 
     // Admission Methods
-    getAdmissionMethods: () => apiClient.get('/admin/admission-methods')
+    getAdmissionMethods: () => apiClient.get('/admin/admission-methods'),
+
+    // Settings
+    getSettings: () => apiClient.get('/admin/settings'),
+    updateSettings: (settingsData) => apiClient.put('/admin/settings', settingsData),
+
+    // Notifications
+    getNotifications: (params = {}) => apiClient.get('/admin/notifications', { params }),
+    createNotification: (data) => apiClient.post('/admin/notifications', data),
+    updateNotification: (id, data) => apiClient.put(`/admin/notifications/${id}`, data),
+    deleteNotification: (id) => apiClient.delete(`/admin/notifications/${id}`),
+    markNotificationRead: (id, data) => apiClient.patch(`/admin/notifications/${id}/read`, data),
 };
 
 // Utility functions

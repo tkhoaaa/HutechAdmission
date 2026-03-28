@@ -21,6 +21,7 @@ import SEO from "../components/SEO";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
+import { useDarkMode } from "../contexts/DarkModeContext";
 
 // Mock data for demo
 const mockResults = {
@@ -68,6 +69,7 @@ const mockResults = {
 };
 
 function TraCuuKetQua() {
+  const { darkMode } = useDarkMode();
   const [maHoSo, setMaHoSo] = useState("");
   const [ketQua, setKetQua] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -197,7 +199,7 @@ function TraCuuKetQua() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
               >
-                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 dark:from-blue-400 dark:via-purple-400 dark:to-emerald-400 bg-clip-text text-transparent">
                 Tra cứu kết quả
                 </span>
               </motion.h1>
@@ -334,7 +336,7 @@ function TraCuuKetQua() {
                 >
                   <Card.Header className="relative overflow-hidden">
                     {/* Animated background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-emerald-500/5 -z-10 animate-gradient-shift" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-emerald-500/5 dark:from-blue-400/10 dark:via-purple-400/10 dark:to-emerald-400/10 -z-10 animate-gradient-shift" />
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-3">
                       <div className="flex items-center gap-3 text-lg sm:text-2xl">
                         <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
@@ -375,7 +377,7 @@ function TraCuuKetQua() {
                     >
                       {/* Enhanced Personal Information */}
                       <div className="space-y-6">
-                        <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-white`}>
+                        <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${darkMode ? "text-white" : "text-gray-900"}`}>
                           <FaIdCard className="text-blue-500" />
                           Thông tin cá nhân
                         </h3>
@@ -412,7 +414,7 @@ function TraCuuKetQua() {
 
                       {/* Enhanced Admission Information */}
                       <div className="space-y-6">
-                        <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-white`}>
+                        <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${darkMode ? "text-white" : "text-gray-900"}`}>
                           <FaGraduationCap className="text-purple-500" />
                           Thông tin xét tuyển
                         </h3>
@@ -465,7 +467,7 @@ function TraCuuKetQua() {
                               transition={{ delay: 0.5 }}
                             >
                               <motion.div
-                                className={`flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border border-emerald-200 dark:border-emerald-700 transition-all duration-300 hover:scale-105 animate-pulse-ring`}
+                                className={`flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-800/30 border border-emerald-200 dark:border-emerald-700 transition-all duration-300 hover:scale-105 animate-pulse-ring`}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                               >
@@ -476,7 +478,7 @@ function TraCuuKetQua() {
                                   <p className="text-sm text-emerald-600 dark:text-emerald-400">
                                     Ngành trúng tuyển
                                   </p>
-                                  <p className="font-bold text-lg text-emerald-700 dark:text-emerald-300">
+                                  <p className={`font-bold text-lg ${darkMode ? "text-emerald-300" : "text-emerald-700"}`}>
                                     {ketQua.nganhTrungTuyen}
                                   </p>
                                 </div>
@@ -537,7 +539,7 @@ function TraCuuKetQua() {
                                     {ketQua.nganhDangKy.map((nganh, index) => (
                                       <motion.p
                                         key={index}
-                                        className="font-bold text-amber-700 dark:text-amber-300"
+                                        className={`font-bold ${darkMode ? "text-amber-300" : "text-amber-700"}`}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: index * 0.2 }}
@@ -571,7 +573,7 @@ function TraCuuKetQua() {
                                     <p className="text-sm text-red-600 dark:text-red-400">
                                       Ngành đăng ký
                                     </p>
-                                    <p className="font-bold text-red-700 dark:text-red-300">
+                                    <p className={`font-bold ${darkMode ? "text-red-300" : "text-red-700"}`}>
                                       {ketQua.nganhDangKy[0]}
                                     </p>
                                   </div>
