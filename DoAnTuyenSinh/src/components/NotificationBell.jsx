@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBell, FaCircle } from 'react-icons/fa';
+import { FaBell, FaCircle, FaTrash, FaCheck } from 'react-icons/fa';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useDarkMode } from '../contexts/DarkModeContext';
 
@@ -14,7 +14,7 @@ const typeConfig = {
 
 export default function NotificationBell() {
   const { darkMode } = useDarkMode();
-  const { notifications, unreadCount, isConnected, isReconnecting, markAsRead } = useNotifications();
+  const { notifications, unreadCount, isConnected, isReconnecting, markAsRead, markAllAsRead, clearNotifications } = useNotifications();
   const [open, setOpen] = useState(false);
   const ref = useRef();
 
@@ -38,11 +38,14 @@ export default function NotificationBell() {
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
-        {(isConnected || isReconnecting) && (
-          <span
-            className={`absolute top-2 right-2 w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-green-400 animate-pulse' : 'bg-yellow-400 animate-ping'}`}
-            title={isConnected ? 'Đã kết nối SSE' : 'Đang kết nối lại...'}
-          />
+        {isConnected && (
+          <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" title="Đã kết nối SSE" />
+        )}
+        {isReconnecting && (
+          <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-yellow-400 animate-ping" title="Đang kết nối lại..." />
+        )}
+        {!isConnected && !isReconnecting && (
+          <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-red-500" title="Mất kết nối SSE" />
         )}
       </motion.button>
 
@@ -74,6 +77,24 @@ export default function NotificationBell() {
                   <span className={`text-sm font-semibold ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                     {unreadCount} mới
                   </span>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); markAllAsRead(); }}
+                      className={`p-1.5 rounded-lg transition-colors ${darkMode ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"}`}
+                      title="Đánh dấu đã đọc tất cả"
+                    >
+                      <FaCheck className="text-sm" />
+                    </button>
+                  )}
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); clearNotifications(); }}
+                      className={`p-1.5 rounded-lg transition-colors ${darkMode ? "text-gray-400 hover:text-red-400 hover:bg-gray-700" : "text-gray-500 hover:text-red-500 hover:bg-gray-100"}`}
+                      title="Xóa tất cả thông báo"
+                    >
+                      <FaTrash className="text-sm" />
+                    </button>
+                  )}
                 </div>
               </div>
 
