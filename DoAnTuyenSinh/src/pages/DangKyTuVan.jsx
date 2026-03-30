@@ -24,6 +24,7 @@ import {
   FaMagic,
   FaHeadset,
   FaChevronRight,
+  FaClock,
 } from "react-icons/fa";
 import { UserContext } from "../accounts/UserContext";
 import SEO from "../components/SEO";
