@@ -2369,6 +2369,37 @@ app.get('/api/admin/setup-db', async(req, res) => {
             (22, 1), (22, 2), (22, 5);
         `);
 
+        // Tạo bảng scholarship_applications nếu chưa có
+        await pool.execute(`
+            CREATE TABLE IF NOT EXISTS scholarship_applications (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                ho_ten VARCHAR(255) NOT NULL,
+                ngay_sinh DATE,
+                gioi_tinh ENUM('Nam', 'Nu') DEFAULT NULL,
+                cccd VARCHAR(20),
+                dia_chi TEXT,
+                phone VARCHAR(20),
+                email VARCHAR(255) NOT NULL,
+                nganh VARCHAR(255),
+                lop VARCHAR(100),
+                khoa VARCHAR(100),
+                diem_tb DECIMAL(4,2),
+                hoc_bong VARCHAR(255),
+                thanh_tich TEXT,
+                kinh_te VARCHAR(255),
+                so_thanh_vien INT DEFAULT 1,
+                ly_do TEXT,
+                nguon_thong_tin VARCHAR(255),
+                attachments JSON,
+                status ENUM('cho_xu_ly', 'dang_xu_ly', 'da_duyet', 'tu_choi') DEFAULT 'cho_xu_ly',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_email (email),
+                INDEX idx_status (status),
+                INDEX idx_created (created_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        `);
+
         // Kiểm tra dữ liệu
         const [nganhCount] = await pool.execute('SELECT COUNT(*) as count FROM nganh');
         const [appCount] = await pool.execute('SELECT COUNT(*) as count FROM applications');
