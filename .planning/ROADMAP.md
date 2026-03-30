@@ -1,139 +1,101 @@
-# Roadmap: UI/UX Redesign - DoAnTuyenSinh
+# Roadmap: DoAnTuyenSinh
 
-**Created:** 2026-03-28
-**Core Value:** Thiết kế lại toàn bộ UI/UX theo shadcn/ui + design system hiện đại, nhất quán, performace tối ưu.
+## Milestones
+
+- **M1** - UI/UX Redesign - Phases 1-6 (shipped 2026-03-28)
+- **M2** - Advanced Features - Phases 7-9 (in progress)
 
 ## Phases
 
-| # | Phase | Status | Description |
-|---|-------|--------|-------------|
-| 1 | Foundation & Design System | ● In Progress | Thiết lập shadcn/ui, design tokens, consolidate dark mode |
-| 2 | Shared Component Library | ○ Pending | Xây dựng lại Button, Card, Input, Modal, Table, v.v. |
-| 3 | Layout & Navigation | ○ Pending | Header, Footer, Auth Layout, Admin Layout refactor |
-| 4 | Public Pages | ○ Pending | Redesign 9 public pages |
-| 5 | Admin Pages | ○ Pending | Redesign 6 admin pages + admin layout |
-| 6 | Polish & Performance | ○ Pending | Animation optimization, accessibility audit, responsive fix |
+- [ ] **Phase 7: PWA Infrastructure** - Service Worker, offline page, install prompt
+- [ ] **Phase 8: Real-time + Admin Notifications** - SSE endpoint, NotificationBell
+- [ ] **Phase 9: Student Notifications + i18n** - Student SSE, LanguageSwitcher, locale files
+
+---
 
 ## Phase Details
 
-### Phase 1: Foundation & Design System
+### Phase 7: PWA Infrastructure
 
-**Mục tiêu:** Thiết lập nền tảng design system + shadcn/ui
+**Goal**: App works offline, loads instantly on repeat visits, and can be installed as a standalone app
 
-**Deliverables:**
-- shadcn/ui CLI configured trong project
-- Design tokens (CSS variables) cho colors, spacing, typography, shadows
-- Dark mode consolidation (xóa ThemeContext)
-- Tailwind config cleaned up
-- Animation system chuẩn hóa trong `src/utils/animations.js`
+**Depends on**: Nothing (M2 first phase)
 
-**Components touched:** Tailwind config, DarkModeContext, ThemeContext, animations.js
+**Requirements**: PWA-01, PWA-02, PWA-03
 
-**Estimates:** 2-3 ngày
+**Success Criteria** (what must be TRUE):
 
----
+1. Returning visitors see cached content served from Service Worker within 200ms
+2. When network is disconnected, user sees offline page with message and retry button
+3. First-time or engaged user sees install prompt banner ("Cai dat HUTECHS App")
+4. Static assets (JS, CSS, images) are cached with content-hashed filenames and cache-first strategy
+5. API calls use network-first strategy to prevent stale data
 
-### Phase 2: Shared Component Library
+**Plans**: 3 plans
 
-**Mục tiêu:** Xây dựng lại 16+ UI components theo shadcn/ui pattern
+Plans:
+- [ ] 07-01: Install and configure vite-plugin-pwa in vite.config.js with Workbox caching strategies
+- [ ] 07-02: Create offline fallback page (public/offline.html) and OfflineBoundary component
+- [ ] 07-03: Implement deferred install prompt banner with InstallPrompt component and useOffline hook
 
-**Deliverables:**
-- Button, Card, Input, Select, Dialog, Sheet, Tabs, Table, Badge, Avatar
-- Toast (Sonner), Skeleton, Accordion, Dropdown, Checkbox, Switch, Progress
-- StatsCard, Hero, Section, FeatureCard, EmptyState, PageHeader, FilterBar (custom)
-- ARIA attributes đầy đủ trên tất cả interactive elements
-- Keyboard navigation cho Select, Dropdown, Dialog
+### Phase 8: Real-time + Admin Notifications
 
-**Estimates:** 3-5 ngày
+**Goal**: Admins receive live notifications when new applications are submitted, with a notification bell in the header
 
----
+**Depends on**: Phase 7
 
-### Phase 3: Layout & Navigation
+**Requirements**: RT-01, RT-02
 
-**Mục tiêu:** Refactor Header, Footer, Auth Layout, Admin Layout
+**Success Criteria** (what must be TRUE):
 
-**Deliverables:**
-- Header: tách sub-components, shadcn Sheet cho mobile menu, DropdownMenu
-- Footer: tách sub-components, bỏ Math.random(), CSS animations
-- Auth Layout: unified layout cho DangNhap, DangKyTaiKhoan, QuenMatKhau
-- Admin Layout: dark mode nhất quán, shadcn NavigationMenu/DropdownMenu
-- Page transitions nhất quán qua AnimatePresence
+1. Admin browser maintains SSE connection to Express backend with 30s heartbeat
+2. SSE reconnects automatically with exponential backoff if connection drops
+3. Admin sees notification bell icon with live unread count badge in header
+4. Admin can open notification dropdown to see list of new application alerts
+5. SSE broadcasts to all connected admin clients when a new application is submitted
 
-**Estimates:** 2-3 ngày
+**Plans**: 3 plans
 
----
+Plans:
+- [ ] 08-01: Create SSE service (backend/services/sseService.js) with client registry and heartbeat
+- [ ] 08-02: Add SSE endpoint (GET /api/sse/events) in Express backend with JWT validation
+- [ ] 08-03: Build NotificationBell component with badge counter, NotificationContext, and useSSE hook
 
-### Phase 4: Public Pages
+### Phase 9: Student Notifications + i18n
 
-**Mục tiêu:** Redesign 9 public pages
+**Goal**: Students receive real-time in-app notifications when their application status changes, and users can switch between Vietnamese and English
 
-**Deliverables:**
-| Page | Components | Notes |
-|------|-----------|-------|
-| TrangChu | Hero, Stats, News, CTA | Giảm delays, CSS animations, Skeleton |
-| DangKyXetTuyen | Multi-step form | react-hook-form + zod |
-| TraCuuKetQua | Search + Result Card | Shadcn pattern |
-| ThongTinTuyenSinh | Grid layout, Accordion | Major cards |
-| LienHe | Form + Map | Shadcn form |
-| CauHoiThuongGap | Accordion | Shadcn Accordion |
-| HoSoNguoiDung | Tabs, Avatar, Form | Shadcn pattern |
-| DangKyTuVan | Tabs, Form | Shadcn pattern |
+**Depends on**: Phase 8
 
-**Estimates:** 3-4 ngày
+**Requirements**: RT-03, I18N-01, I18N-02, I18N-03
 
----
+**Success Criteria** (what must be TRUE):
 
-### Phase 5: Admin Pages
+1. Authenticated student browser establishes SSE connection tied to their studentId
+2. Student receives in-app toast notification when admin updates their application status
+3. User can switch language between Vietnamese and English via LanguageSwitcher in header
+4. Language preference persists across browser sessions (localStorage)
+5. SEO meta tags (title, description) update dynamically based on current language
 
-**Mục tiêu:** Redesign 6 admin pages + admin layout
+**Plans**: 3 plans
 
-**Deliverables:**
-| Page | Components | Notes |
-|------|-----------|-------|
-| TongQuan | Stats, Charts, Table | Dashboard |
-| QuanLyHoSo | Table, Filters, Dialog | Full CRUD |
-| BaoCao | Charts, Tables, Filters | Reports |
-| CaiDat | Tabs, Switch, Form | Settings |
-| QuanLyFAQ | Table, Accordion, Dialog | FAQ CRUD |
-| HoSoQuanLi | Table, Filters | Profile management |
-
-**Estimates:** 3-4 ngày
+Plans:
+- [ ] 09-01: Wire SSE student notifications — trigger broadcast on status update, render in-app toast
+- [ ] 09-02: Set up i18n infrastructure with react-i18next, LanguageSwitcher, locale files (VI/EN)
+- [ ] 09-03: Add SEO meta tags with react-helmet-async, update per language, wrap common strings
 
 ---
 
-### Phase 6: Polish & Performance
+## Progress
 
-**Mục tiêu:** Hoàn thiện animation, accessibility, responsive, cleanup
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 7. PWA Infrastructure | 0/3 | Not started | - |
+| 8. Real-time + Admin | 0/3 | Not started | - |
+| 9. Student RT + i18n | 0/3 | Not started | - |
 
-**Deliverables:**
-- Animation optimization: bỏ Math.random(), giảm loops, CSS keyframes
-- Skeleton loading trên tất cả data fetching pages
-- Accessibility audit: keyboard nav, screen reader, color contrast
-- Responsive audit: tablet + mobile breakpoints
-- Console.log removal (production clean)
-- Bundle size optimization: tree-shaking, lazy loading
-- Code cleanup: xóa unused components, duplicate code
-
-**Estimates:** 1-2 ngày
+**Coverage:** 9/9 requirements mapped
 
 ---
 
-## Traceability
-
-| Phase | Requirements | Status |
-|-------|-------------|--------|
-| Phase 1 | UI-01 (partial: foundation) | ○ Pending |
-| Phase 2 | UI-01 (partial: components), UI-04 | ○ Pending |
-| Phase 3 | UI-01 (partial: layout), UI-05 | ○ Pending |
-| Phase 4 | UI-01 (partial: public pages) | ○ Pending |
-| Phase 5 | UI-01 (partial: admin pages), UI-05 | ○ Pending |
-| Phase 6 | UI-02, UI-03, UI-06, UI-07 | ○ Pending |
-
-**Coverage:**
-- Active requirements: 7 total
-- Mapped to phases: 7
-- Unmapped: 0 ✓
-
----
-*Roadmap created: 2026-03-28*
-*Last updated: 2026-03-28 after initial roadmap definition*
+*M2 Roadmap created: 2026-03-31*
