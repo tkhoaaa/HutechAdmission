@@ -12,6 +12,7 @@ import PageTransition from "./components/ui/PageTransition";
 import AdminLayout from "./admin/components/AdminLayout";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
+import OfflineBoundary from "./components/OfflineBoundary";
 
 // Lazy-loaded public pages
 const TrangChu = lazy(() => import("./pages/TrangChu"));
@@ -185,6 +186,7 @@ function PublicLayout() {
 function App() {
   return (
     <HelmetProvider>
+      <OfflineBoundary>
       <DarkModeProvider>
         <UserContextProvider>
           <BrowserRouter>
@@ -271,6 +273,7 @@ function App() {
           </BrowserRouter>
         </UserContextProvider>
       </DarkModeProvider>
+      </OfflineBoundary>
     </HelmetProvider>
   );
 }

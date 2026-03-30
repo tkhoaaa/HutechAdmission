@@ -27,6 +27,7 @@ import {
 import { UserContext } from "../accounts/UserContext";
 import { useDarkMode } from "../contexts/DarkModeContext";
 import { getAvatarUrl } from "../utils/avatarUtils";
+import InstallPrompt from "./InstallPrompt";
 
 const menu = [
   { label: "Trang chủ", path: "/", icon: <FaHome /> },
@@ -493,6 +494,7 @@ function ThanhHeader() {
           </motion.div>
         )}
       </AnimatePresence>
+      <InstallPrompt />
     </motion.header>
   );
 }

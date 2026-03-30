@@ -9,9 +9,9 @@ Requirements for M2 Advanced Features. Each maps to roadmap phases.
 
 ### PWA
 
-- [ ] **PWA-01**: Service Worker được đăng ký tự động tại build time qua vite-plugin-pwa, với Workbox caching strategies (cache-first cho static assets, network-first cho API calls)
-- [ ] **PWA-02**: Khi mất kết nối mạng, user thấy offline page với thông báo và retry button
-- [ ] **PWA-03**: User được prompt cài đặt ứng dụng ("Cài đặt HUTECHS App") qua install prompt API
+- [x] **PWA-01**: Service Worker được đăng ký tự động tại build time qua vite-plugin-pwa, với Workbox caching strategies (cache-first cho static assets, network-first cho API calls)
+- [x] **PWA-02**: Khi mất kết nối mạng, user thấy offline page với thông báo và retry button
+- [x] **PWA-03**: User được prompt cài đặt ứng dụng ("Cài đặt HUTECHS App") qua install prompt API
 - [ ] **PWA-04**: Push notifications qua Firebase Cloud Messaging khi có cập nhật hồ sơ — DEFERRED (cần Firebase project setup)
 
 ### Real-time
@@ -41,9 +41,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PWA-01 | Phase 7 | Pending |
-| PWA-02 | Phase 7 | Pending |
-| PWA-03 | Phase 7 | Pending |
+| PWA-01 | Phase 7 | Complete |
+| PWA-02 | Phase 7 | Complete |
+| PWA-03 | Phase 7 | Complete |
 | RT-01 | Phase 8 | Pending |
 | RT-02 | Phase 8 | Pending |
 | RT-03 | Phase 9 | Pending |
@@ -58,4 +58,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-30*
-*Last updated: 2026-03-31 after roadmap creation (i18n phases corrected to 9)*
+*Last updated: 2026-03-31 — Phase 7 (PWA-01, PWA-02, PWA-03) marked complete*
