@@ -50,12 +50,14 @@ function Button({
   size = "default",
   leftIcon,
   rightIcon,
+  loading,
   children,
   ...props
 }) {
   return (
     <ButtonPrimitive
       data-slot="button"
+      disabled={loading || props.disabled}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
