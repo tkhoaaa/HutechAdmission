@@ -7,6 +7,7 @@ import ChanTrang from "./components/ChanTrang";
 import ScrollToTop from "./components/ScrollToTop";
 import { UserContextProvider } from "./accounts/UserContext";
 import { DarkModeProvider } from "./contexts/DarkModeContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import { Toaster } from "./components/ui/sonner";
 import PageTransition from "./components/ui/PageTransition";
 import AdminLayout from "./admin/components/AdminLayout";
@@ -189,6 +190,7 @@ function App() {
       <OfflineBoundary>
       <DarkModeProvider>
         <UserContextProvider>
+          <NotificationProvider>
           <BrowserRouter>
             <ScrollToTop />
             <Toaster position="top-right" richColors closeButton expand={false} />
@@ -271,6 +273,7 @@ function App() {
             </Routes>
             </ErrorBoundary>
           </BrowserRouter>
+          </NotificationProvider>
         </UserContextProvider>
       </DarkModeProvider>
       </OfflineBoundary>

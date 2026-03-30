@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "../../accounts/UserContext";
 import { useDarkMode } from "../../contexts/DarkModeContext";
 import { getAvatarUrl } from "../../utils/avatarUtils";
-import { adminAPI } from "../../utils/apiClient";
+import NotificationBell from "../../components/NotificationBell";
 import {
   FaBars,
   FaTimes,
@@ -13,7 +13,6 @@ import {
   FaChartBar,
   FaCog,
   FaSignOutAlt,
-  FaBell,
   FaSearch,
   FaChevronDown,
   FaMoon,
@@ -32,24 +31,17 @@ const AdminLayout = ({ children }) => {
   const { user, username, role, isDemoMode, logout } = useContext(UserContext);
   const { darkMode, toggleDarkMode } = useDarkMode();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const location = useLocation();
-  const notificationRef = useRef();
   const profileRef = useRef();
   const navigate = useNavigate();
 
   const displayName = username || user?.username || user?.name || user?.email || "Admin";
   const avatarUrl = getAvatarUrl(user);
-  const [notifications, setNotifications] = useState([]);
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
-        setNotificationsOpen(false);
-      }
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setProfileOpen(false);
       }
@@ -62,39 +54,13 @@ const AdminLayout = ({ children }) => {
     setSidebarOpen(false);
   }, [location]);
 
-  const fetchNotifications = async () => {
-    if (isDemoMode) {
-      setNotifications([
-        { id: 1, title: "Hồ sơ mới cần duyệt", message: "Có 5 hồ sơ mới cần xử lý ngay", time: "5 phút trước", type: "warning", unread: true },
-        { id: 2, title: "Báo cáo tuần đã sẵn sàng", message: "Báo cáo thống kê tuần này đã được tạo", time: "1 giờ trước", type: "info", unread: true },
-        { id: 3, title: "Hệ thống cập nhật", message: "Hệ thống đã được cập nhật thành công", time: "2 giờ trước", type: "success", unread: false },
-        { id: 4, title: "Người dùng mới đăng ký", message: "12 người dùng mới đăng ký hôm nay", time: "3 giờ trước", type: "info", unread: false },
-      ]);
-      return;
-    }
-    setNotificationsLoading(true);
-    try {
-      const res = await adminAPI.getNotifications({ limit: 10 });
-      if (res.success) {
-        setNotifications(res.data.notifications.map(n => ({
-          id: n.id,
-          title: n.title,
-          message: n.content,
-          time: n.createdAt ? new Date(n.createdAt).toLocaleString("vi-VN") : "",
-          type: n.isPublished ? "info" : "warning",
-          unread: !n.isPublished,
-        })));
-      }
-    } catch (err) {
-      console.error("Failed to fetch notifications:", err);
-    } finally {
-      setNotificationsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [isDemoMode]);
+  const notificationConfig = {
+    { id: "tong-quan", label: "Tổng Quan", icon: FaHome, path: "/admin/tong-quan", color: "from-blue-500 to-blue-600", description: "Dashboard chính", badge: "Hot" },
+    { id: "quan-ly-ho-so", label: "Quản Lý Hồ Sơ", icon: FaFileAlt, path: "/admin/quan-ly-ho-so", color: "from-green-500 to-green-600", description: "Xét duyệt hồ sơ", badge: "89" },
+    { id: "quan-ly-faq", label: "Quản Lý FAQ", icon: FaQuestionCircle, path: "/admin/quan-ly-faq", color: "from-purple-500 to-purple-600", description: "Câu hỏi thường gặp" },
+    { id: "bao-cao", label: "Báo Cáo", icon: FaChartBar, path: "/admin/bao-cao", color: "from-orange-500 to-orange-600", description: "Thống kê chi tiết", badge: "New" },
+    { id: "cai-dat", label: "Cài Đặt", icon: FaCog, path: "/admin/cai-dat", color: "from-gray-500 to-gray-600", description: "Thiết lập hệ thống" },
+  ];
 
   const menuItems = [
     { id: "tong-quan", label: "Tổng Quan", icon: FaHome, path: "/admin/tong-quan", color: "from-blue-500 to-blue-600", description: "Dashboard chính", badge: "Hot" },
@@ -103,13 +69,6 @@ const AdminLayout = ({ children }) => {
     { id: "bao-cao", label: "Báo Cáo", icon: FaChartBar, path: "/admin/bao-cao", color: "from-orange-500 to-orange-600", description: "Thống kê chi tiết", badge: "New" },
     { id: "cai-dat", label: "Cài Đặt", icon: FaCog, path: "/admin/cai-dat", color: "from-gray-500 to-gray-600", description: "Thiết lập hệ thống" },
   ];
-
-  const notificationConfig = {
-    warning: "bg-yellow-500",
-    info: "bg-blue-500",
-    success: "bg-green-500",
-    error: "bg-red-500",
-  };
 
   const MenuItem = ({ item, isActive, onClick }) => (
     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
@@ -146,8 +105,6 @@ const AdminLayout = ({ children }) => {
       </Link>
     </motion.div>
   );
-
-  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <div className={`min-h-screen transition-all duration-500 ${darkMode ? "bg-gray-900" : "bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"}`}>
@@ -322,85 +279,7 @@ const AdminLayout = ({ children }) => {
                 </button>
 
                 {/* Notifications */}
-                <motion.div className="relative" ref={notificationRef} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                  <button
-                    onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className={`relative p-4 rounded-2xl transition-all duration-300 ${darkMode ? "text-gray-300 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-100"}`}
-                    aria-label={`Thông báo${unreadCount > 0 ? ` (${unreadCount} chưa đọc)` : ''}`}
-                    aria-expanded={notificationsOpen}
-                  >
-                    <FaBell className="text-xl" aria-hidden="true" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full text-xs text-white flex items-center justify-center font-bold shadow-lg">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </button>
-
-                  <AnimatePresence>
-                    {notificationsOpen && (
-                      <motion.div
-                        className={`absolute right-0 mt-3 w-96 ${darkMode ? "bg-gray-800/95 border-gray-700/30" : "bg-white/95 border-white/30"} backdrop-blur-2xl rounded-3xl shadow-2xl border overflow-hidden`}
-                        initial={{ opacity: 0, scale: 0.9, y: -20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      >
-                        <div className="p-6">
-                          <div className="flex items-center justify-between mb-6">
-                            <h3 className={`text-xl font-bold flex items-center gap-3 ${darkMode ? "text-gray-100" : "text-gray-900"}`}>
-                              <FaBell className="text-blue-500" />
-                              Thông báo
-                            </h3>
-                            <span className={`text-sm font-semibold ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                              {unreadCount} mới
-                            </span>
-                          </div>
-                          <div className="space-y-4 max-h-80 overflow-y-auto">
-                            {notificationsLoading ? (
-                              <div className="flex items-center justify-center py-8">
-                                <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                              </div>
-                            ) : notifications.length === 0 ? (
-                              <div className={`text-center py-8 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                                <FaBell className="mx-auto mb-2 text-2xl opacity-50" />
-                                <p className="text-sm">Không có thông báo nào</p>
-                              </div>
-                            ) : notifications.map((notification) => (
-                              <motion.div
-                                key={notification.id}
-                                className={`flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 cursor-pointer ${
-                                  notification.unread
-                                    ? darkMode ? "bg-blue-900/30 hover:bg-blue-900/50 border border-blue-700/50" : "bg-blue-50 hover:bg-blue-100 border border-blue-200"
-                                    : darkMode ? "bg-gray-700/50 hover:bg-gray-700" : "bg-gray-50 hover:bg-gray-100"
-                                }`}
-                                whileHover={{ scale: 1.02, x: 4 }}
-                              >
-                                <div className={`w-4 h-4 ${notificationConfig[notification.type] || "bg-gray-500"} rounded-full flex-shrink-0 mt-1 animate-pulse`} />
-                                <div className="flex-1 min-w-0">
-                                  <h4 className={`text-sm font-bold mb-1 ${darkMode ? "text-gray-100" : "text-gray-900"}`}>{notification.title}</h4>
-                                  <p className={`text-sm mb-2 line-clamp-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>{notification.message}</p>
-                                  <p className={`text-xs font-medium ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{notification.time}</p>
-                                </div>
-                                {notification.unread && <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0 mt-2" />}
-                              </motion.div>
-                            ))}
-                          </div>
-                          {notifications.length > 0 && (
-                            <div className={`p-4 border-t ${darkMode ? "border-gray-700" : "border-gray-200"} text-center`}>
-                              <button
-                                onClick={() => setNotificationsOpen(false)}
-                                className={`text-sm font-medium ${darkMode ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"}`}
-                              >
-                                Đóng thông báo
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                <NotificationBell />
 
                 {/* Profile */}
                 <motion.div className="relative" ref={profileRef} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
