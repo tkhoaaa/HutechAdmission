@@ -39,12 +39,11 @@ Thí sinh có thể hoàn tất toàn bộ quy trình tuyển sinh từ đăng k
 - ✓ UI/UX Redesign hoàn chỉnh (shadcn/ui, dark mode, responsive) — M1
 - ✓ Code splitting + bundle optimization — M1
 - ✓ Toast migration (react-hot-toast → sonner) — M1
+- ✓ **PWA-01**: Service Worker + Workbox caching (vite-plugin-pwa) — Phase 7
+- ✓ **PWA-02**: Offline page khi mất kết nối (OfflineBoundary) — Phase 7
+- ✓ **PWA-03**: Install prompt để cài đặt ứng dụng (beforeinstallprompt) — Phase 7
 
 ### Active (M2)
-
-- [ ] **PWA-01**: Service Worker với caching strategies
-- [ ] **PWA-02**: Offline page khi mất kết nối
-- [ ] **PWA-03**: Install prompt để cài đặt ứng dụng
 - [ ] **PWA-04**: Push notifications (FCM) khi có cập nhật hồ sơ
 - [ ] **RT-01**: SSE endpoint cho real-time updates
 - [ ] **RT-02**: Admin notification bell với live counter
@@ -83,8 +82,11 @@ Thí sinh có thể hoàn tất toàn bộ quy trình tuyển sinh từ đăng k
 - Node.js server (backend on port 3001)
 
 **PWA state hiện tại:**
-- manifest.json đã có (standalone display, icons, theme color)
-- Không có Service Worker
+- Service Worker hoạt động qua vite-plugin-pwa + Workbox (dist/sw.js)
+- 58 assets precached (1687KB), Google Fonts cache-first 1 năm
+- OfflineBoundary component hiển thị trang "Không có kết nối" khi offline
+- InstallPrompt hiển thị banner "Cài đặt HUTECHS App" qua beforeinstallprompt
+- manifest.json + android-chrome icons (192x192, 512x512)
 
 **i18n state hiện tại:**
 - Hoàn toàn chưa có — hardcoded tiếng Việt
@@ -102,7 +104,7 @@ Thí sinh có thể hoàn tất toàn bộ quy trình tuyển sinh từ đăng k
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| PWA với Workbox | Workbox là thư viện chuẩn, hỗ trợ nhiều caching strategies, được Google maintain | — Pending |
+| PWA với Workbox | Workbox là thư viện chuẩn, hỗ trợ nhiều caching strategies, được Google maintain | Done (Phase 7) |
 | SSE thay vì WebSocket | Unidirectional (server → client), đơn giản hơn, work được với Vercel edge functions | — Pending |
 | react-i18next | Thư viện i18n phổ biến nhất cho React, lazy-load locale files | — Pending |
 | FCM cho push notifications | Firebase Cloud Messaging là giải pháp push notification phổ biến nhất | — Pending |
@@ -126,4 +128,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-30 after M2 milestone initialization*
+*Last updated: 2026-03-31 after Phase 7 completion*
