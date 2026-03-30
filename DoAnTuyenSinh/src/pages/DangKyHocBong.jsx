@@ -89,7 +89,7 @@ function DangKyHocBong() {
         }
       );
 
-      setSuccess("Nop don hoc bong thanh cong!");
+      setSuccess("Nộp đơn học bổng thành công!");
       setForm({
         ho_ten: "",
         ngay_sinh: "",
@@ -115,7 +115,7 @@ function DangKyHocBong() {
       if (Array.isArray(errors) && errors.length > 0) {
         setError(errors.map((e) => e.msg).join(" | "));
       } else {
-        setError(err.response?.data?.message || "Nop don that bai!");
+        setError(err.response?.data?.message || "Nộp đơn thất bại!");
       }
     }
     setLoading(false);
@@ -123,7 +123,7 @@ function DangKyHocBong() {
 
   const loadApplications = async () => {
     if (!user?.email) {
-      setError("Vui long dang nhap de xem danh sach don");
+      setError("Vui lòng đăng nhập để xem danh sách đơn");
       return;
     }
 
@@ -135,7 +135,7 @@ function DangKyHocBong() {
       setApplications(res.data.data || []);
     } catch (err) {
       setError(
-        "Khong the tai danh sach don: " +
+        "Không thể tải danh sách đơn: " +
           (err.response?.data?.message || err.message)
       );
     }
@@ -149,9 +149,9 @@ function DangKyHocBong() {
   return (
     <>
       <SEO
-        title="Dang ky hoc bong - HUTECH"
-        description="Dang ky hoc bong HUTECH 2025 - Hoc bong khuyen khich hoc tap, tai nang, ho tro sinh vien ngheo. Nop don truc tuyen don gian."
-        keywords="dang ky hoc bong, hoc bong HUTECH, hoc bong tai nang, hoc bong khuyen khich"
+        title="Đăng ký học bổng - HUTECH"
+        description="Đăng ký học bổng HUTECH 2025 - Học bổng khuyến khích học tập, tài năng, hỗ trợ sinh viên nghèo. Nộp đơn trực tuyến đơn giản."
+        keywords="đăng ký học bổng, học bổng HUTECH, học bổng tài năng, học bổng khuyến khích"
         canonical="/dang-ky-hoc-bong"
       />
 
@@ -218,7 +218,7 @@ function DangKyHocBong() {
                 <div className="animate-spin-slow">
                   <FaStar className="text-yellow-500" />
                 </div>
-                Hoc bong len den 100% hoc phi
+                Học bổng lên đến 100% học phí
               </motion.div>
 
               <motion.h1
@@ -227,7 +227,7 @@ function DangKyHocBong() {
                 transition={{ delay: 0.7, duration: 0.8 }}
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-4 md:mb-6 leading-tight"
               >
-                Dang Ky Hoc Bong
+                Đăng Ký Học Bổng
               </motion.h1>
 
               <motion.p
@@ -236,10 +236,10 @@ function DangKyHocBong() {
                 transition={{ delay: 0.9, duration: 0.8 }}
                 className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium"
               >
-                Mo ra co hoi hoc tap voi hoc bong gia tri tu HUTECH
+                Mở ra cơ hội học tập với học bổng giá trị từ HUTECH
                 <br />
                 <span className="text-blue-600 dark:text-blue-400 font-semibold">
-                  Ho tro tai chinh cho sinh vien xuat sac va co hoan canh kho khan
+                  Hỗ trợ tài chính cho sinh viên xuất sắc và có hoàn cảnh khó khăn
                 </span>
               </motion.p>
             </motion.div>
@@ -275,10 +275,10 @@ function DangKyHocBong() {
                     className="text-center mb-8"
                   >
                     <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3">
-                      He Thong Hoc Bong HUTECH
+                      Hệ Thống Học Bổng HUTECH
                     </h2>
                     <p className="text-white/90 text-lg">
-                      Chon dich vu ban muon su dung
+                      Chọn dịch vụ bạn muốn sử dụng
                     </p>
                   </motion.div>
 
@@ -323,7 +323,7 @@ function DangKyHocBong() {
                     >
                       <div className="flex items-center gap-3">
                         <FaList className="text-xl" />
-                        Danh sach don da gui
+                        Danh sách đơn da gui
                       </div>
                       {activeTab === "list" && (
                         <motion.div
@@ -374,8 +374,8 @@ function DangKyHocBong() {
                               name="ho_ten"
                               value={form.ho_ten}
                               onChange={handleChange}
-                              placeholder="Ho va ten"
-                              icon={FaUser}
+                              placeholder="Họ và tên"
+                              leftIcon={<FaUser />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
                             />
@@ -384,14 +384,14 @@ function DangKyHocBong() {
                               type="date"
                               value={form.ngay_sinh}
                               onChange={handleChange}
-                              placeholder="Ngay sinh"
-                              icon={FaCalendar}
+                              placeholder="Ngày sinh"
+                              leftIcon={<FaCalendar />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
                             />
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Gioi tinh *
+                                Giới tính *
                               </label>
                               <select
                                 name="gioi_tinh"
@@ -400,9 +400,9 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-blue-200 dark:border-blue-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chon gioi tinh</option>
+                                <option value="">Chọn giới tính</option>
                                 <option value="Nam">Nam</option>
-                                <option value="Nu">Nu</option>
+                                <option value="Nu">Nữ</option>
                               </select>
                             </div>
                             <Input
@@ -410,7 +410,7 @@ function DangKyHocBong() {
                               value={form.cccd}
                               onChange={handleChange}
                               placeholder="CCCD/CMND"
-                              icon={FaIdCard}
+                              leftIcon={<FaIdCard />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
                             />
@@ -419,8 +419,8 @@ function DangKyHocBong() {
                               type="tel"
                               value={form.phone}
                               onChange={handleChange}
-                              placeholder="So dien thoai"
-                              icon={FaPhone}
+                              placeholder="Số điện thoại"
+                              leftIcon={<FaPhone />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
                             />
@@ -430,7 +430,7 @@ function DangKyHocBong() {
                               value={form.email}
                               onChange={handleChange}
                               placeholder="Email"
-                              icon={FaEnvelope}
+                              leftIcon={<FaEnvelope />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
                             />
@@ -439,8 +439,8 @@ function DangKyHocBong() {
                                 name="dia_chi"
                                 value={form.dia_chi}
                                 onChange={handleChange}
-                                placeholder="Dia chi"
-                                icon={FaMapMarkerAlt}
+                                placeholder="Địa chỉ"
+                                leftIcon={<FaMapMarkerAlt />}
                                 required
                                 className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-700 focus:border-blue-500 dark:focus:border-blue-400"
                               />
@@ -472,8 +472,8 @@ function DangKyHocBong() {
                               name="nganh"
                               value={form.nganh}
                               onChange={handleChange}
-                              placeholder="Nganh hoc"
-                              icon={FaGraduationCap}
+                              placeholder="Ngành học"
+                              leftIcon={<FaGraduationCap />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
                             />
@@ -481,8 +481,8 @@ function DangKyHocBong() {
                               name="lop"
                               value={form.lop}
                               onChange={handleChange}
-                              placeholder="Lop"
-                              icon={FaGraduationCap}
+                              placeholder="Lớp"
+                              leftIcon={<FaGraduationCap />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
                             />
@@ -490,8 +490,8 @@ function DangKyHocBong() {
                               name="khoa"
                               value={form.khoa}
                               onChange={handleChange}
-                              placeholder="Khoa"
-                              icon={FaGraduationCap}
+                              placeholder="Khóa"
+                              leftIcon={<FaGraduationCap />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
                             />
@@ -503,14 +503,14 @@ function DangKyHocBong() {
                               max="10"
                               value={form.diem_tb}
                               onChange={handleChange}
-                              placeholder="Diem trung binh"
-                              icon={FaStar}
+                              placeholder="Điểm trung bình"
+                              leftIcon={<FaStar />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400"
                             />
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Loai hoc bong mong muon *
+                                Loại học bổng mong muốn *
                               </label>
                               <select
                                 name="hoc_bong"
@@ -519,21 +519,21 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-emerald-200 dark:border-emerald-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chon loai hoc bong</option>
-                                <option value="Hoc bong khuyen khich hoc tap">
-                                  Hoc bong khuyen khich hoc tap
+                                <option value="">Chọn loại học bổng</option>
+                                <option value="Học bổng khuyến khích học tập">
+                                  Học bổng khuyến khích học tập
                                 </option>
-                                <option value="Hoc bong tai nang">
-                                  Hoc bong tai nang
+                                <option value="Học bổng tài năng">
+                                  Học bổng tài năng
                                 </option>
-                                <option value="Hoc bong ho tro sinh vien ngheo">
-                                  Hoc bong ho tro sinh vien ngheo
+                                <option value="Học bổng hỗ trợ sinh viên nghèo">
+                                  Học bổng hỗ trợ sinh viên nghèo
                                 </option>
                               </select>
                             </div>
                             <div className="md:col-span-3">
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Thanh tich hoc tap
+                                Thành tích học tập
                               </label>
                               <textarea
                                 name="thanh_tich"
@@ -541,7 +541,7 @@ function DangKyHocBong() {
                                 onChange={handleChange}
                                 rows="4"
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-emerald-200 dark:border-emerald-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent transition-all duration-300 resize-none text-slate-700 dark:text-slate-300"
-                                placeholder="Mo ta thanh tich hoc tap, giai thuong..."
+                                placeholder="Mô tả thành tích học tập, giải thưởng..."
                               />
                             </div>
                           </div>
@@ -569,7 +569,7 @@ function DangKyHocBong() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Hoan canh kinh te *
+                                Hoàn cảnh kinh tế *
                               </label>
                               <select
                                 name="kinh_te"
@@ -578,10 +578,10 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-purple-200 dark:border-purple-700 rounded-2xl focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chon hoan canh</option>
-                                <option value="Kho khan">Kho khan</option>
-                                <option value="Trung binh">Trung binh</option>
-                                <option value="Kha giang">Kha giang</option>
+                                <option value="">Chọn hoàn cảnh</option>
+                                <option value="Khó khăn">Khó khăn</option>
+                                <option value="Trung bình">Trung bình</option>
+                                <option value="Khá giỏi">Khá giỏi</option>
                               </select>
                             </div>
                             <Input
@@ -590,8 +590,8 @@ function DangKyHocBong() {
                               min="1"
                               value={form.so_thanh_vien}
                               onChange={handleChange}
-                              placeholder="So thanh vien trong gia dinh"
-                              icon={FaUsers}
+                              placeholder="Số thành viên trong gia đình"
+                              leftIcon={<FaUsers />}
                               required
                               className="w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-purple-200 dark:border-purple-700 focus:border-purple-500 dark:focus:border-purple-400"
                             />
@@ -634,7 +634,7 @@ function DangKyHocBong() {
                             </div>
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                Nguon thong tin *
+                                Nguồn thông tin *
                               </label>
                               <select
                                 name="nguon_thong_tin"
@@ -643,14 +643,14 @@ function DangKyHocBong() {
                                 required
                                 className="w-full px-4 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-orange-200 dark:border-orange-700 rounded-2xl focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-all duration-300 text-slate-700 dark:text-slate-300"
                               >
-                                <option value="">Chon nguon thong tin</option>
-                                <option value="Website truong">
-                                  Website truong
+                                <option value="">Chọn nguồn thông tin</option>
+                                <option value="Website trường">
+                                  Website trường
                                 </option>
-                                <option value="Mang xa hoi">Mang xa hoi</option>
-                                <option value="Ban be">Ban be</option>
-                                <option value="Thay co">Thay co</option>
-                                <option value="Khac">Khac</option>
+                                <option value="Mạng xã hội">Mạng xã hội</option>
+                                <option value="Bạn bè">Bạn bè</option>
+                                <option value="Thầy cô">Thầy cô</option>
+                                <option value="Khác">Khác</option>
                               </select>
                             </div>
                           </div>
@@ -673,11 +673,11 @@ function DangKyHocBong() {
                             <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg hover:rotate-360 transition-transform duration-500">
                               <FaFileUpload className="text-white text-xl" />
                             </div>
-                            File minh chung (tuy chon)
+                            File minh chứng (tùy chọn)
                           </motion.h3>
                           <div className="relative z-10">
                             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-                              Tai len file minh chung (toi da 5 file)
+                              Tải lên file minh chứng (tối đa 5 file)
                             </label>
                             <div className="border-2 border-dashed border-cyan-300 dark:border-cyan-600 rounded-2xl p-8 text-center hover:border-cyan-400 dark:hover:border-cyan-500 transition-all duration-300 bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm hover:scale-[1.02] transition-transform">
                               <input
@@ -696,10 +696,10 @@ function DangKyHocBong() {
                                   <FaFileUpload className="text-4xl md:text-5xl text-cyan-500 dark:text-cyan-400 mx-auto mb-4" />
                                 </div>
                                 <p className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                  Chon file hoac keo tha vao day
+                                  Chọn file hoặc kéo thả vào đây
                                 </p>
                                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                                  Chap nhan: PDF, DOC, DOCX, JPG, PNG (moi file
+                                  Chấp nhận: PDF, DOC, DOCX, JPG, PNG (mỗi file
                                   toi da 5MB)
                                 </p>
                               </label>
@@ -711,7 +711,7 @@ function DangKyHocBong() {
                                 animate={{ opacity: 1, y: 0 }}
                               >
                                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                                  Files da chon:
+                                  Files đã chọn:
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                   {attachments.map((file, index) => (
@@ -751,7 +751,7 @@ function DangKyHocBong() {
                               <div className={loading ? "animate-spin" : ""}>
                                 <FaTrophy className="text-2xl" />
                               </div>
-                              {loading ? "Dang xu ly..." : "Nop don hoc bong"}
+                              {loading ? "Đang xử lý..." : "Nộp đơn học bổng"}
                             </div>
                           </motion.button>
                         </motion.div>
@@ -806,7 +806,7 @@ function DangKyHocBong() {
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                           >
-                            Danh sach don hoc bong da gui
+                            Danh sách đơn hoc bong da gui
                           </motion.h3>
                           <motion.button
                             onClick={loadApplications}
@@ -818,7 +818,7 @@ function DangKyHocBong() {
                             {loadingList ? (
                               <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
                             ) : (
-                              "Lam moi"
+                              "Làm mới"
                             )}
                           </motion.button>
                         </div>
@@ -830,7 +830,7 @@ function DangKyHocBong() {
                             animate={{ opacity: 1 }}
                           >
                             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6 animate-spin" />
-                            <p className="text-slate-600 dark:text-slate-400 text-lg">Dang tai danh sach...</p>
+                            <p className="text-slate-600 dark:text-slate-400 text-lg">Đang tải danh sách...</p>
                           </motion.div>
                         ) : applications.length === 0 ? (
                           <motion.div
@@ -898,19 +898,19 @@ function DangKyHocBong() {
                                     transition={{ delay: index * 0.1 + 0.3 }}
                                   >
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Nganh:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Ngành:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.nganh}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Lop:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Lớp:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.lop}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Khoa:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Khóa:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.khoa}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Diem TB:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Điểm TB:</strong>
                                       <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-lg font-semibold">{app.diem_tb}</span>
                                     </p>
                                   </motion.div>
@@ -921,21 +921,21 @@ function DangKyHocBong() {
                                     transition={{ delay: index * 0.1 + 0.4 }}
                                   >
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Loai hoc bong:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Loại học bổng:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.hoc_bong}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Hoan canh:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Hoàn cảnh:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.kinh_te}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Thanh vien:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Thành viên:</strong>
                                       <span className="text-slate-600 dark:text-slate-400">{app.so_thanh_vien} nguoi</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                      <strong className="text-slate-700 dark:text-slate-300">Trang thai:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-300">Trạng thái:</strong>
                                       <span className={`px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 dark:from-yellow-600 dark:to-orange-600 dark:text-yellow-100 rounded-full text-xs font-bold shadow-lg animate-pulse-soft`}>
-                                        Dang xu ly
+                                        Đang xử lý
                                       </span>
                                     </p>
                                   </motion.div>
