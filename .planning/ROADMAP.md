@@ -8,7 +8,7 @@
 ## Phases
 
 - [ ] **Phase 7: PWA Infrastructure** - Service Worker, offline page, install prompt
-- [ ] **Phase 8: Real-time + Admin Notifications** - SSE endpoint, NotificationBell
+- [x] **Phase 8: Real-time + Admin Notifications** - SSE endpoint, NotificationBell
 - [ ] **Phase 9: Student Notifications + i18n** - Student SSE, LanguageSwitcher, locale files
 
 ---
@@ -54,12 +54,11 @@ Plans:
 4. Admin can open notification dropdown to see list of new application alerts
 5. SSE broadcasts to all connected admin clients when a new application is submitted
 
-**Plans**: 3 plans
+**Plans**: 2 plans (merged into 2 commits)
 
 Plans:
-- [ ] 08-01: Create SSE service (backend/services/sseService.js) with client registry and heartbeat
-- [ ] 08-02: Add SSE endpoint (GET /api/sse/events) in Express backend with JWT validation
-- [ ] 08-03: Build NotificationBell component with badge counter, NotificationContext, and useSSE hook
+- [x] 08-01: Create SSE service (backend/services/sseService.js) with client registry and heartbeat (commit 840a9d26)
+- [x] 08-02: Build NotificationBell component with badge counter, NotificationContext, and useSSE hook (commits b2da2b57, 9ead9ab2)
 
 ### Phase 9: Student Notifications + i18n
 
