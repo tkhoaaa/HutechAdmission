@@ -2304,7 +2304,16 @@ app.get('/api/admin/setup-db', async(req, res) => {
 
         try {
             await pool.execute(`
-                ALTER TABLE applications 
+                ALTER TABLE applications
+                ADD COLUMN nganh_ids JSON AFTER nganh_id
+            `);
+        } catch (err) {
+            if (!err.message.includes('Duplicate column name')) throw err;
+        }
+
+        try {
+            await pool.execute(`
+                ALTER TABLE applications
                 ADD COLUMN diem_thi_thpt JSON NULL AFTER khoi_thi
             `);
         } catch (err) {
@@ -2313,7 +2322,7 @@ app.get('/api/admin/setup-db', async(req, res) => {
 
         try {
             await pool.execute(`
-                ALTER TABLE applications 
+                ALTER TABLE applications
                 ADD COLUMN diem_danh_gia_nang_luc DECIMAL(7,2) NULL AFTER diem_thi_thpt
             `);
         } catch (err) {
