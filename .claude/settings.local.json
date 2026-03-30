@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && npm run build 2>&1)"
+    ]
+  }
+}

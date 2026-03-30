@@ -47,6 +47,10 @@ export default defineConfig({
                     if (id.includes('node_modules/class-variance-authority/')) return 'vendor-cva'
                     if (id.includes('node_modules/cmdk/')) return 'vendor-cmdk'
 
+                    // Packages that use React.createContext() MUST be in vendor-react
+                    if (id.includes('node_modules/@base-ui/')) return 'vendor-react'
+                    if (id.includes('node_modules/@react-spring/')) return 'vendor-react'
+
                     // Other node_modules
                     if (id.includes('node_modules/')) return 'vendor-misc'
                 }
