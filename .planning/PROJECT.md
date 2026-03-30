@@ -8,9 +8,18 @@ Website tuyển sinh trực tuyến của Trường Đại học HUTECH — cho 
 
 Thí sinh có thể hoàn tất toàn bộ quy trình tuyển sinh từ đăng ký đến tra cứu kết quả trên nền tảng web hiện đại, chuyên nghiệp, nhanh chóng.
 
+## Current Milestone: M2 — Advanced Features
+
+**Goal:** Thêm 3 tính năng nâng cao: PWA hoàn chỉnh, real-time notifications, và đa ngôn ngữ (i18n).
+
+**Target features:**
+- Option A — PWA: Service Worker + offline support + install prompt + push notifications
+- Option B — Real-time: SSE cho admin thấy hồ sơ mới, thí sinh thấy cập nhật kết quả
+- Option C — i18n: Tiếng Việt + Tiếng Anh, lazy-load locale files
+
 ## Requirements
 
-### Validated
+### Validated (M1)
 
 - ✓ Đăng ký / Đăng nhập tài khoản — v1
 - ✓ Dark mode toàn trang — v1
@@ -27,83 +36,94 @@ Thí sinh có thể hoàn tất toàn bộ quy trình tuyển sinh từ đăng k
 - ✓ Dashboard admin quản lý hồ sơ — v1
 - ✓ Báo cáo thống kê admin — v1
 - ✓ Cài đặt & FAQ quản lý admin — v1
+- ✓ UI/UX Redesign hoàn chỉnh (shadcn/ui, dark mode, responsive) — M1
+- ✓ Code splitting + bundle optimization — M1
+- ✓ Toast migration (react-hot-toast → sonner) — M1
 
-### Active
+### Active (M2)
 
-- [ ] **UI-01**: Thiết kế lại toàn bộ UI/UX theo shadcn/ui + design system hiện đại
-- [ ] **UI-02**: Tối ưu animation (giảm motion thừa, cải thiện performance)
-- [ ] **UI-03**: Hoàn thiện accessibility (ARIA, keyboard navigation)
-- [ ] **UI-04**: Xây dựng shared component library nhất quán (shadcn/ui pattern)
-- [ ] **UI-05**: Thống nhất dark mode cho admin pages
-- [ ] **UI-06**: Cải thiện responsive design toàn trang
-- [ ] **UI-07**: Performance audit & fix (Math.random(), bundle size, loading states)
+- [ ] **PWA-01**: Service Worker với caching strategies
+- [ ] **PWA-02**: Offline page khi mất kết nối
+- [ ] **PWA-03**: Install prompt để cài đặt ứng dụng
+- [ ] **PWA-04**: Push notifications (FCM) khi có cập nhật hồ sơ
+- [ ] **RT-01**: SSE endpoint cho real-time updates
+- [ ] **RT-02**: Admin notification bell với live counter
+- [ ] **RT-03**: Thí sinh nhận thông báo khi kết quả được cập nhật
+- [ ] **I18N-01**: i18n infrastructure (react-i18next)
+- [ ] **I18N-02**: Language switcher trong header
+- [ ] **I18N-03**: Locale files tiếng Việt + tiếng Anh
 
 ### Out of Scope
 
-- Thay đổi logic nghiệp vụ (business logic giữ nguyên) — UI/UX only
-- Thêm tính năng mới ngoài spec hiện tại — chỉ refactor UI
-- Backend/API refactoring — chỉ frontend
-- Thêm unit tests — có thể bổ sung sau UI xong
-- Chuyển đổi TypeScript — JavaScript đủ cho scope hiện tại
+- Thay đổi logic nghiệp vụ (business logic giữ nguyên) — chỉ thêm features
+- Backend/API refactoring — chỉ thêm SSE endpoint
+- TypeScript migration — JavaScript đủ cho scope hiện tại
+- Payment gateway — không trong scope M2
 
 ## Context
 
-**Tech Stack hiện tại:**
-- React 18 + Vite
-- Tailwind CSS 3.x (custom config)
+**Tech Stack hiện tại (sau M1):**
+- React 18 + Vite 7
+- Tailwind CSS 3.x (custom config, CSS variables)
 - Framer Motion (animations)
-- React Router v6
+- React Router v6.30
 - Recharts (charts)
 - react-icons (icons)
-- react-hot-toast (notifications)
+- sonner (toast notifications)
+- axios (HTTP client)
+- @base-ui/react (shadcn-style components)
 
-**Design System hiện tại:**
-- 16+ UI components tự xây (Button, Card, Input, Modal, etc.)
-- 12 color variants cho primary, secondary, accent
-- Glassmorphism pattern với backdrop-blur
-- Floating particles decoration
-- Framer Motion entrance/hover animations
+**Backend:**
+- Express.js + MySQL
+- JWT authentication
+- Nodemailer email templates
 
-**Vấn đề UI/UX đã xác định:**
-1. `Math.random()` trong JSX render (Header, Footer, Auth pages) → DOM re-render không cần thiết
-2. Animation loops vô hạn → tốn CPU/GPU
-3. Page entrance delays > 1s → UX chậm
-4. Admin pages không có dark mode → không nhất quán
-5. Custom Select/Dropdown không có keyboard navigation → accessibility kém
-6. Console.log debug còn nhiều → production không clean
-7. Component duplication (FormField ≈ Input)
-8. Components quá lớn (Header 800+ lines)
-9. Animation variants duplicate ở nhiều page
-10. No skeleton loading cho data fetching
-11. Tailwind config quá dài (400+ lines) với CSS variables không sử dụng
-12. Table component chưa hoàn thiện (dùng cards thay table)
+**Deployment:**
+- Vercel (frontend, automatic deploy)
+- Node.js server (backend on port 3001)
 
-**Project Structure:**
-- `src/accounts/` — Auth pages (DangNhap, DangKyTaiKhoan, QuenMatKhau)
-- `src/admin/` — Admin pages (6 pages + AdminLayout)
-- `src/components/ui/` — 16 atomic UI components
-- `src/pages/` — 9 public pages
-- `src/contexts/` — DarkModeContext, ThemeContext (duplicate)
-- `src/utils/` — animations, apiClient, avatarUtils
+**PWA state hiện tại:**
+- manifest.json đã có (standalone display, icons, theme color)
+- Không có Service Worker
+
+**i18n state hiện tại:**
+- Hoàn toàn chưa có — hardcoded tiếng Việt
 
 ## Constraints
 
 - **Tech Stack**: React + Vite + Tailwind — không đổi framework
 - **Backward Compatibility**: Giữ nguyên tất cả routes, business logic, API contracts
-- **Bundle Size**: Không tăng đáng kể bundle size (hiện tại chưa optimize)
+- **Bundle Size**: Không tăng quá 50KB sau khi thêm PWA + i18n
 - **Browser Support**: Hỗ trợ Chrome/Firefox/Edge/Safari phiên bản mới nhất
-- **Performance**: Lighthouse score >= 80 cho cả desktop và mobile
+- **PWA**: Service Worker phải work offline (cache-first cho assets, network-first cho API)
+- **Real-time**: Dùng SSE (Server-Sent Events) thay vì WebSocket — đơn giản hơn cho unidirectional updates
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Dùng shadcn/ui | Copy-paste vào project, sở hữu 100% code, integrate hoàn toàn với Tailwind hiện có | — Pending |
-| Giữ Framer Motion | Animation library đã dùng, chỉ cần tối ưu cách dùng | — Pending |
-| Thay react-hot-toast bằng Sonner (shadcn) | Nhất quán với shadcn pattern, API tương tự | — Pending |
-| Design tokens qua CSS Variables | Pattern chuẩn, dùng cho cả light/dark mode | — Pending |
-| V0/Vercel cho rapid prototyping | AI-assisted UI generation, review & integrate thủ công | — Pending |
-| Xóa ThemeContext, giữ DarkModeContext | Loại bỏ duplicate context | — Pending |
+| PWA với Workbox | Workbox là thư viện chuẩn, hỗ trợ nhiều caching strategies, được Google maintain | — Pending |
+| SSE thay vì WebSocket | Unidirectional (server → client), đơn giản hơn, work được với Vercel edge functions | — Pending |
+| react-i18next | Thư viện i18n phổ biến nhất cho React, lazy-load locale files | — Pending |
+| FCM cho push notifications | Firebase Cloud Messaging là giải pháp push notification phổ biến nhất | — Pending |
+| react-router-dom v6 | Ổn định, tương thích với React 18, API đơn giản | — Pending |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd:transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after initial GSD setup*
+*Last updated: 2026-03-30 after M2 milestone initialization*
