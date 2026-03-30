@@ -34,9 +34,9 @@
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: Install and configure vite-plugin-pwa in vite.config.js with Workbox caching strategies
-- [ ] 07-02: Create offline fallback page (public/offline.html) and OfflineBoundary component
-- [ ] 07-03: Implement deferred install prompt banner with InstallPrompt component and useOffline hook
+- [x] 07-01: Install and configure vite-plugin-pwa in vite.config.js with Workbox caching strategies (2026-03-31, commit 3ecd6c0)
+- [x] 07-02: Create offline fallback page (public/offline.html) and OfflineBoundary component
+- [x] 07-03: Implement deferred install prompt banner with InstallPrompt component and useOffline hook
 
 ### Phase 8: Real-time + Admin Notifications
 
@@ -90,7 +90,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. PWA Infrastructure | 0/3 | Not started | - |
+| 7. PWA Infrastructure | 3/3 | Complete | 2026-03-31 |
 | 8. Real-time + Admin | 0/3 | Not started | - |
 | 9. Student RT + i18n | 0/3 | Not started | - |
 
