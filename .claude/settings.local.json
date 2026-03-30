@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && npm run build 2>&1)"
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && npm run build 2>&1)",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && npm ls @base-ui/react @react-spring/web cmdk tw-animate-css 2>&1 | head -20)",
+      "Bash(cd \"C:/Users/Admin/source/repos/DoAnTuyenSinh/DoAnTuyenSinh\" && node -e \"\nconst fs = require\\('fs'\\);\nconst content = fs.readFileSync\\('dist/assets/vendor-misc-D4t57_SC.js', 'utf8'\\);\nconsole.log\\('=== First 800 chars of vendor-misc ==='\\);\nconsole.log\\(content.substring\\(0, 800\\)\\);\nconsole\\(\\);\nconsole.log\\('=== Where createContext is defined \\(first occurrence context\\) ==='\\);\nconst idx = content.indexOf\\('.createContext'\\);\nconsole.log\\(content.substring\\(Math.max\\(0, idx-300\\), idx+50\\)\\);\n\" 2>&1)"
     ]
   }
 }

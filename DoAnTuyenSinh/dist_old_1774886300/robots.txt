@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Cho phép tất cả trang được index
+Disallow: /accounts/
+Disallow: /admin/
+Disallow: /*.json$
+
+# Sitemap location
+Sitemap: https://do-an-tuyen-sinh-khoa.vercel.app/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1 

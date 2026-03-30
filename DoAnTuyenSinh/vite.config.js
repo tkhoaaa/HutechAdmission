@@ -15,44 +15,37 @@ export default defineConfig({
         outDir: 'dist',
         sourcemap: false,
         minify: 'esbuild',
-        chunkSizeWarningLimit: 500,
+        chunkSizeWarningLimit: 600,
         rollupOptions: {
             output: {
-                manualChunks: (id) => {
-                    // Core vendor chunk
-                    if (id.includes('node_modules/react/')) return 'vendor-react'
-                    if (id.includes('node_modules/react-dom/')) return 'vendor-react'
-                    if (id.includes('node_modules/react-router-dom/')) return 'vendor-router'
+                // Let Vite handle chunking naturally — manualChunks was causing
+                // createContext to be called before React finished loading on Vercel
+                manualChunks(id) {
+                    if (!id.includes('node_modules')) return
 
-                    // Animation libraries
-                    if (id.includes('node_modules/framer-motion/')) return 'vendor-motion'
-                    if (id.includes('node_modules/motion/')) return 'vendor-motion'
+                    // Split vendor into logical groups without forcing dependencies
+                    if (/node_modules\/(@?react|react-dom|scheduler)\//.test(id)) return
+                    if (/node_modules\/(react-router|@?react-router)\//.test(id)) return
 
-                    // HTTP & data
-                    if (id.includes('node_modules/axios/')) return 'vendor-http'
-                    if (id.includes('node_modules/sonner/')) return 'vendor-ui'
+                    // Heavy libraries — vite will naturally deduplicate
+                    if (/node_modules\/(recharts|d3-.*|resize-observer)\//.test(id)) return
 
-                    // Heavy charting — keep with react to avoid forwardRef init order bugs
-                    if (id.includes('node_modules/recharts/')) return 'vendor-react'
-                    if (id.includes('node_modules/d3-')) return 'vendor-react'
-                    if (id.includes('node_modules/resize-observer')) return 'vendor-react'
-
-                    // Icon libraries
-                    if (id.includes('node_modules/react-icons/')) return 'vendor-icons'
-                    if (id.includes('node_modules/lucide-react/')) return 'vendor-icons'
-
-                    // UI utilities — split each into own chunk to avoid minification bugs
-                    if (id.includes('node_modules/tailwind-merge/')) return 'vendor-tailwind-merge'
-                    if (id.includes('node_modules/clsx/')) return 'vendor-clsx'
-                    if (id.includes('node_modules/class-variance-authority/')) return 'vendor-cva'
-                    if (id.includes('node_modules/cmdk/')) return 'vendor-cmdk'
-
-                    // Packages that use React.createContext() MUST be in vendor-react
-                    if (id.includes('node_modules/@base-ui/')) return 'vendor-react'
-                    if (id.includes('node_modules/@react-spring/')) return 'vendor-react'
-
-                    // Other node_modules
-                    if (id.includes('node_modules/')) return 'vendor-misc'
+                    // Each top-level vendor gets its own chunk
+                    const chunks = [
+                        'react', 'react-dom', 'scheduler',
+                        'react-router-dom', 'react-router',
+                        'framer-motion', 'motion',
+                        'axios', 'sonner',
+                        'react-icons', 'lucide-react',
+                        '@base-ui', '@react-spring',
+                        '@radix-ui', 'cmdk', 'tw-animate-css',
+                        'tailwind-merge', 'clsx', 'class-variance-authority',
+                    ]
+                    for (const name of chunks) {
+                        if (id.includes(`/node_modules/${name}/`)) {
+                            return `vendor-${name.replace(/@/g, '').replace(/\//g, '-')}`
+                        }
+                    }
                 }
             }
         }
