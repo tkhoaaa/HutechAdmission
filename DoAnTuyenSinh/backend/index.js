@@ -21,6 +21,7 @@ import { validateEmailConfig } from './config/emailConfig.js';
 import jwt from 'jsonwebtoken';
 import { authenticateToken, authenticateAdminFAQ } from './middleware/auth.js';
 import deviceService from './services/deviceService.js';
+import sseService from './services/sseService.js';
 
 const app = express();
 const PORT = 3001;
@@ -62,6 +63,35 @@ app.use(cors({
     ],
     credentials: true
 }));
+
+// SSE endpoint for real-time notifications
+app.get('/api/sse/events', authenticateToken, (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    const userId = req.user.id;
+    const role = req.user.role;
+    const channelKey = (role === 'admin' || role === 'staff') ? 'admin' : userId;
+
+    sseService.addClient(channelKey, res);
+    res.write(`event: connected\ndata: ${JSON.stringify({ channel: channelKey, message: 'SSE connected' })}\n\n`);
+
+    const heartbeat = setInterval(() => {
+        if (!res.writableEnded) {
+            res.write(': heartbeat\n\n');
+        } else {
+            clearInterval(heartbeat);
+        }
+    }, 30000);
+
+    req.on('close', () => {
+        clearInterval(heartbeat);
+        sseService.removeClient(channelKey, res);
+    });
+});
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -701,6 +731,15 @@ app.post(`${authPrefix}/apply`, [
                 user_id || null
             ]
         );
+
+        // Broadcast new application notification to all admins
+        sseService.broadcast('admin', 'new_application', {
+            id: result.insertId,
+            candidateName: ho_ten || email,
+            email: email,
+            major: nganh_id,
+            timestamp: new Date().toISOString()
+        });
 
         // Gửi email xác nhận nộp hồ sơ
         try {
