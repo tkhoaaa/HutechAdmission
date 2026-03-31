@@ -40,7 +40,8 @@ const Toaster = ({
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)"
+          "--border-radius": "var(--radius)",
+          zIndex: 1050  // Above modal z-[1001], below image preview z-[1100]
         }
       }
       toastOptions={{

@@ -24,7 +24,8 @@ import deviceService from './services/deviceService.js';
 import sseService from './services/sseService.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3001';
 
 // Trust proxy để lấy IP address chính xác
 app.set('trust proxy', true);
@@ -66,6 +67,11 @@ app.use(cors({
 
 // SSE endpoint for real-time notifications
 app.get('/api/sse/events', authenticateToken, (req, res) => {
+    // If authenticateToken returned early (401), req.user won't be set — don't set up SSE
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: 'Access token required' });
+    }
+
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Connection', 'keep-alive');
@@ -93,12 +99,39 @@ app.get('/api/sse/events', authenticateToken, (req, res) => {
     });
 });
 
+// Multer config for application documents (học bạ, CCCD) — must be before routes
+const applicationStorage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const dir = path.join('uploads', 'applications');
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir);
+    },
+    filename: function(req, file, cb) {
+        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, unique + path.extname(file.originalname));
+    }
+});
+const uploadApplication = multer({
+    storage: applicationStorage,
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Chỉ chấp nhận file ảnh hoặc PDF'));
+        }
+    }
+});
+
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files (avatars, attachments)
 app.use('/uploads', express.static('uploads'));
+
+// Serve uploads with full URL prefix (for API responses)
+app.locals.uploadsUrl = API_BASE_URL;
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -634,15 +667,23 @@ app.get(`${authPrefix}/majors/:majorId/exam-blocks`, async(req, res) => {
 // ========== ADMISSION APPLICATION ROUTES ========== //
 
 // Nộp hồ sơ xét tuyển
-app.post(`${authPrefix}/apply`, [
-    body('ho_ten').notEmpty().withMessage('Họ tên không được để trống'),
-    body('ngay_sinh').notEmpty().withMessage('Ngày sinh không được để trống'),
-    body('cccd').notEmpty().withMessage('CCCD không được để trống'),
-    body('sdt').notEmpty().withMessage('Số điện thoại không được để trống'),
-    body('email').isEmail().withMessage('Email không hợp lệ'),
-    body('phuong_thuc_xet_tuyen').isIn(['hoc_ba', 'thi_thpt', 'danh_gia_nang_luc']).withMessage('Phương thức xét tuyển không hợp lệ'),
-], async(req, res) => {
-    try {
+app.post(`${authPrefix}/apply`,
+    uploadApplication.fields([
+        { name: 'hoc_ba', maxCount: 10 },
+        { name: 'cccd_front', maxCount: 1 },
+        { name: 'cccd_back', maxCount: 1 },
+        { name: 'other', maxCount: 5 }
+    ]),
+    [
+        body('ho_ten').notEmpty().withMessage('Họ tên không được để trống'),
+        body('ngay_sinh').notEmpty().withMessage('Ngày sinh không được để trống'),
+        body('cccd').notEmpty().withMessage('CCCD không được để trống'),
+        body('sdt').notEmpty().withMessage('Số điện thoại không được để trống'),
+        body('email').isEmail().withMessage('Email không hợp lệ'),
+        body('phuong_thuc_xet_tuyen').isIn(['hoc_ba', 'thi_thpt', 'danh_gia_nang_luc']).withMessage('Phương thức xét tuyển không hợp lệ'),
+    ],
+    async(req, res) => {
+        try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({
@@ -703,13 +744,21 @@ app.post(`${authPrefix}/apply`, [
         // Generate application code
         const applicationCode = 'HS' + Date.now();
 
+        // Build attachments object from uploaded files
+        const attachments = {
+            hoc_ba: (req.files && req.files['hoc_ba']) ? req.files['hoc_ba'].map(f => `/uploads/applications/${f.filename}`) : [],
+            cccd_front: (req.files && req.files['cccd_front']) ? `/uploads/applications/${req.files['cccd_front'][0].filename}` : null,
+            cccd_back: (req.files && req.files['cccd_back']) ? `/uploads/applications/${req.files['cccd_back'][0].filename}` : null,
+            other: (req.files && req.files['other']) ? req.files['other'].map(f => `/uploads/applications/${f.filename}`) : []
+        };
+
         // Insert application with new fields - Convert undefined to null
         const [result] = await pool.execute(
-            `INSERT INTO applications 
-            (application_code, ho_ten, ngay_sinh, cccd, sdt, email, noi_hoc_12, truong_thpt, ten_lop_12, dia_chi, 
+            `INSERT INTO applications
+            (application_code, ho_ten, ngay_sinh, cccd, sdt, email, noi_hoc_12, truong_thpt, ten_lop_12, dia_chi,
              nganh_id, nganh_ids, phuong_thuc_xet_tuyen, khoi_thi, diem_thi_thpt, diem_danh_gia_nang_luc,
-             diem_hk1, diem_ca_nam, user_id, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())`, [
+             diem_hk1, diem_ca_nam, user_id, attachments, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())`, [
                 applicationCode,
                 ho_ten,
                 ngay_sinh,
@@ -721,23 +770,30 @@ app.post(`${authPrefix}/apply`, [
                 ten_lop_12,
                 dia_chi,
                 nganh_id,
-                JSON.stringify(nganh_ids),
+                nganh_ids ? JSON.stringify(nganh_ids) : null,
                 phuong_thuc_xet_tuyen,
                 khoi_thi || null,
                 diem_thi_thpt ? JSON.stringify(diem_thi_thpt) : null,
                 diem_danh_gia_nang_luc || null,
                 diem_hk1 || null,
                 diem_ca_nam || null,
-                user_id || null
+                user_id || null,
+                JSON.stringify(attachments)
             ]
         );
 
         // Broadcast new application notification to all admins
+        let candidateAvatar = null;
+        if (user_id) {
+            const [userRows] = await pool.execute('SELECT avatar FROM users WHERE id = ?', [user_id]);
+            if (userRows.length > 0) candidateAvatar = userRows[0].avatar;
+        }
         sseService.broadcast('admin', 'new_application', {
             id: result.insertId,
             candidateName: ho_ten || email,
             email: email,
             major: nganh_id,
+            candidateAvatar: candidateAvatar,
             timestamp: new Date().toISOString()
         });
 
@@ -932,16 +988,20 @@ app.get('/api/admin/applications', async(req, res) => {
         const pageNum = Math.max(1, parseInt(page) || 1);
         const offsetNum = (pageNum - 1) * limitNum;
 
-        // Main query with JOIN to nganh table - LIMIT/OFFSET không dùng prepared statement
+        // Main query with JOIN to nganh + users tables - LIMIT/OFFSET không dùng prepared statement
         const mainQuery = `
-            SELECT 
+            SELECT
                 a.id, a.application_code, a.ho_ten, a.ngay_sinh, a.cccd, a.sdt, a.email,
                 a.dia_chi, a.noi_hoc_12, a.truong_thpt, a.ten_lop_12,
                 a.nganh_id, a.diem_hk1, a.diem_ca_nam, a.status, a.assigned_to,
                 a.created_at, a.updated_at,
-                n.ten_nganh as major_name, n.ma_nganh as major_code
+                a.phuong_thuc_xet_tuyen,
+                a.attachments,
+                n.ten_nganh as major_name, n.ma_nganh as major_code,
+                u.avatar as candidate_avatar
             FROM applications a
             LEFT JOIN nganh n ON a.nganh_id = n.id
+            LEFT JOIN users u ON a.user_id = u.id
             ${whereClause}
             ORDER BY a.created_at DESC
             LIMIT ${limitNum} OFFSET ${offsetNum}
@@ -952,6 +1012,7 @@ app.get('/api/admin/applications', async(req, res) => {
             SELECT COUNT(DISTINCT a.id) as count
             FROM applications a
             LEFT JOIN nganh n ON a.nganh_id = n.id
+            LEFT JOIN users u ON a.user_id = u.id
             ${whereClause}
         `;
 
@@ -1040,14 +1101,18 @@ app.get('/api/admin/applications', async(req, res) => {
 
             // Fallback: query đơn giản không có parameters
             const fallbackQuery = `
-                SELECT 
+                SELECT
                     a.id, a.application_code, a.ho_ten, a.ngay_sinh, a.cccd, a.sdt, a.email,
                     a.dia_chi, a.noi_hoc_12, a.truong_thpt, a.ten_lop_12,
                     a.nganh_id, a.diem_hk1, a.diem_ca_nam, a.status, a.assigned_to,
                     a.created_at, a.updated_at,
-                    n.ten_nganh as major_name, n.ma_nganh as major_code
+                    a.phuong_thuc_xet_tuyen,
+                    n.ten_nganh as major_name, n.ma_nganh as major_code,
+                    u.avatar as candidate_avatar,
+                    a.attachments
             FROM applications a
             LEFT JOIN nganh n ON a.nganh_id = n.id
+            LEFT JOIN users u ON a.user_id = u.id
                 ORDER BY a.created_at DESC
                 LIMIT 20
         `;
@@ -1066,12 +1131,16 @@ app.get('/api/admin/applications', async(req, res) => {
             cccd: app.cccd,
             major: app.major_name || 'Ngành không xác định',
             majorCode: app.major_code,
-            admissionMethod: 'Học bạ THPT',
+            admissionMethod: app.phuong_thuc_xet_tuyen === 'hoc_ba' ? 'Học bạ THPT' : app.phuong_thuc_xet_tuyen === 'thi_thpt' ? 'Điểm thi THPT' : app.phuong_thuc_xet_tuyen === 'danh_gia_nang_luc' ? 'Đánh giá năng lực' : (app.phuong_thuc_xet_tuyen || 'Học bạ THPT'),
             submittedAt: app.created_at,
             status: app.status,
             gpa: calculateGPAOptimized(app.diem_ca_nam), // Optimized GPA calculation
-            documents: getDocumentsList(app), // Dynamic documents list
+            attachments: parseAttachments(app.attachments), // Structured attachments from uploaded files
             assignedTo: app.assigned_to,
+            candidateAvatar: (app.candidate_avatar && app.candidate_avatar.startsWith('http'))
+                ? app.candidate_avatar
+                : (app.candidate_avatar ? `${API_BASE_URL}${app.candidate_avatar}` : null),
+            phuong_thuc_xet_tuyen: app.phuong_thuc_xet_tuyen,
             // Additional info for debugging
             rawScores: app.diem_ca_nam,
             birthDate: app.ngay_sinh,
@@ -1110,6 +1179,59 @@ app.get('/api/admin/applications', async(req, res) => {
             message: 'Lỗi khi lấy danh sách hồ sơ',
             error: error.message
         });
+    }
+});
+
+// Tra cứu hồ sơ công khai theo mã hồ sơ
+app.get('/api/tra-cuu', async(req, res) => {
+    try {
+        const { code } = req.query;
+        if (!code || !code.trim()) {
+            return res.status(400).json({ success: false, message: 'Vui lòng nhập mã hồ sơ' });
+        }
+
+        const [rows] = await pool.execute(
+            `SELECT a.*, n.ten_nganh as major_name, n.ma_nganh as major_code
+             FROM applications a
+             LEFT JOIN nganh n ON a.nganh_id = n.id
+             WHERE a.application_code = ?`,
+            [code.trim()]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy hồ sơ với mã này' });
+        }
+
+        const app = rows[0];
+
+        // Determine result status
+        let trangThai = 'dang_xet_tuyen';
+        if (app.status === 'approved') trangThai = 'da_trung_tuyen';
+        else if (app.status === 'rejected') trangThai = 'khong_dat';
+
+        res.json({
+            success: true,
+            data: {
+                hoTen: app.ho_ten,
+                maSoHoSo: app.application_code,
+                cccd: app.cccd,
+                ngaySinh: app.ngay_sinh ? new Date(app.ngay_sinh).toLocaleDateString('vi-VN') : null,
+                sdt: app.sdt,
+                email: app.email,
+                trangThai,
+                nganhTrungTuyen: app.status === 'approved' ? app.major_name : null,
+                nganhDangKy: app.major_name ? [app.major_name] : [],
+                diemXetTuyen: app.diem_ca_nam ? parseFloat(JSON.parse(app.diem_ca_nam).reduce((s, d) => s + parseFloat(d.diem || 0), 0).toFixed(2)) : null,
+                diemChuan: 22.0,
+                ngayNopHoSo: app.created_at ? new Date(app.created_at).toLocaleDateString('vi-VN') : null,
+                ngayXetTuyen: app.updated_at ? new Date(app.updated_at).toLocaleDateString('vi-VN') : null,
+                phuongThuc: app.phuong_thuc_xet_tuyen,
+                majorName: app.major_name
+            }
+        });
+    } catch (error) {
+        console.error('Tra cứu error:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server khi tra cứu hồ sơ' });
     }
 });
 
@@ -1191,7 +1313,70 @@ function calculateGPAOptimized(diemJSON) {
     }
 }
 
-// Get documents list based on application data
+// Parse attachments JSON into structured document array for frontend
+// Prepends API_BASE_URL to relative upload paths so frontend can access them
+function parseAttachments(attachmentsJson) {
+    if (!attachmentsJson) return [];
+    try {
+        const data = typeof attachmentsJson === 'string' ? JSON.parse(attachmentsJson) : attachmentsJson;
+        const docs = [];
+
+        const makeUrl = (path) => {
+            if (!path) return null;
+            return path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+        };
+
+        if (Array.isArray(data.hoc_ba) && data.hoc_ba.length > 0) {
+            data.hoc_ba.forEach((url, i) => {
+                docs.push({
+                    id: `hoc-ba-${i}`,
+                    label: `Học bạ THPT (${i + 1})`,
+                    url: makeUrl(url),
+                    type: url.endsWith('.pdf') ? 'pdf' : 'image',
+                    category: 'hoc-ba'
+                });
+            });
+        }
+
+        if (data.cccd_front) {
+            docs.push({
+                id: 'cccd-front',
+                label: 'CCCD mặt trước',
+                url: makeUrl(data.cccd_front),
+                type: data.cccd_front.endsWith('.pdf') ? 'pdf' : 'image',
+                category: 'cccd'
+            });
+        }
+
+        if (data.cccd_back) {
+            docs.push({
+                id: 'cccd-back',
+                label: 'CCCD mặt sau',
+                url: makeUrl(data.cccd_back),
+                type: data.cccd_back.endsWith('.pdf') ? 'pdf' : 'image',
+                category: 'cccd'
+            });
+        }
+
+        if (Array.isArray(data.other) && data.other.length > 0) {
+            data.other.forEach((url, i) => {
+                docs.push({
+                    id: `other-${i}`,
+                    label: `Tài liệu khác (${i + 1})`,
+                    url: makeUrl(url),
+                    type: url.endsWith('.pdf') ? 'pdf' : 'image',
+                    category: 'other'
+                });
+            });
+        }
+
+        return docs;
+    } catch (e) {
+        return [];
+    }
+}
+
+// Get documents list based on application data (legacy)
 function getDocumentsList(app) {
     const documents = ['Học bạ THPT'];
 
@@ -2260,6 +2445,15 @@ app.put('/api/admin/settings', async(req, res) => {
 // Database setup endpoint
 app.get('/api/admin/setup-db', async(req, res) => {
     try {
+        // Thêm cột full_name vào bảng users nếu chưa có
+        try {
+            await pool.execute(`
+                ALTER TABLE users ADD COLUMN full_name VARCHAR(255) NULL AFTER username
+            `);
+        } catch (err) {
+            if (!err.message.includes('Duplicate column name')) throw err;
+        }
+
         // Tạo bảng nganh nếu chưa có
         await pool.execute(`
             CREATE TABLE IF NOT EXISTS nganh (
@@ -2324,6 +2518,15 @@ app.get('/api/admin/setup-db', async(req, res) => {
             await pool.execute(`
                 ALTER TABLE applications
                 ADD COLUMN diem_danh_gia_nang_luc DECIMAL(7,2) NULL AFTER diem_thi_thpt
+            `);
+        } catch (err) {
+            if (!err.message.includes('Duplicate column name')) throw err;
+        }
+
+        try {
+            await pool.execute(`
+                ALTER TABLE applications
+                ADD COLUMN attachments JSON NULL AFTER diem_danh_gia_nang_luc
             `);
         } catch (err) {
             if (!err.message.includes('Duplicate column name')) throw err;

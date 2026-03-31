@@ -54,14 +54,6 @@ const AdminLayout = ({ children }) => {
     setSidebarOpen(false);
   }, [location]);
 
-  const notificationConfig = {
-    { id: "tong-quan", label: "Tổng Quan", icon: FaHome, path: "/admin/tong-quan", color: "from-blue-500 to-blue-600", description: "Dashboard chính", badge: "Hot" },
-    { id: "quan-ly-ho-so", label: "Quản Lý Hồ Sơ", icon: FaFileAlt, path: "/admin/quan-ly-ho-so", color: "from-green-500 to-green-600", description: "Xét duyệt hồ sơ", badge: "89" },
-    { id: "quan-ly-faq", label: "Quản Lý FAQ", icon: FaQuestionCircle, path: "/admin/quan-ly-faq", color: "from-purple-500 to-purple-600", description: "Câu hỏi thường gặp" },
-    { id: "bao-cao", label: "Báo Cáo", icon: FaChartBar, path: "/admin/bao-cao", color: "from-orange-500 to-orange-600", description: "Thống kê chi tiết", badge: "New" },
-    { id: "cai-dat", label: "Cài Đặt", icon: FaCog, path: "/admin/cai-dat", color: "from-gray-500 to-gray-600", description: "Thiết lập hệ thống" },
-  ];
-
   const menuItems = [
     { id: "tong-quan", label: "Tổng Quan", icon: FaHome, path: "/admin/tong-quan", color: "from-blue-500 to-blue-600", description: "Dashboard chính", badge: "Hot" },
     { id: "quan-ly-ho-so", label: "Quản Lý Hồ Sơ", icon: FaFileAlt, path: "/admin/quan-ly-ho-so", color: "from-green-500 to-green-600", description: "Xét duyệt hồ sơ", badge: "89" },
@@ -138,7 +130,7 @@ const AdminLayout = ({ children }) => {
       <div className={`flex min-h-screen ${isDemoMode ? 'pt-10' : ''}`}>
         {/* Sidebar */}
         <motion.aside
-          className={`fixed inset-y-0 left-0 z-50 w-80 ${
+          className={`fixed inset-y-0 left-0 z-30 w-80 ${
             darkMode ? "bg-gray-800/90 border-gray-700/30" : "bg-white/90 border-white/30"
           } backdrop-blur-2xl shadow-2xl border-r lg:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -219,7 +211,7 @@ const AdminLayout = ({ children }) => {
             <div className="flex items-center justify-between px-8 py-5">
               {/* Left side */}
               <div className="flex items-center gap-6">
-                <button
+                <motion.button
                   onClick={() => navigate("/")}
                   className={`p-3 rounded-2xl transition-all duration-300 font-bold flex items-center gap-2 ${darkMode ? "text-blue-400 hover:bg-blue-900/50" : "text-blue-600 hover:bg-blue-100"}`}
                   whileHover={{ scale: 1.1 }}
@@ -228,8 +220,8 @@ const AdminLayout = ({ children }) => {
                 >
                   <FaHome className="text-lg" />
                   Trang chủ
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => setSidebarOpen(true)}
                   className={`lg:hidden p-4 rounded-2xl transition-all duration-300 ${darkMode ? "text-gray-400" : "text-gray-500"}`}
                   whileHover={{ scale: 1.15 }}
@@ -237,7 +229,7 @@ const AdminLayout = ({ children }) => {
                   aria-label="Mở thanh điều hướng"
                 >
                   <FaBars className="text-xl" aria-hidden="true" />
-                </button>
+                </motion.button>
 
                 {/* Search */}
                 <motion.div
@@ -266,7 +258,7 @@ const AdminLayout = ({ children }) => {
               {/* Right side */}
               <div className="flex items-center gap-4">
                 {/* Dark Mode */}
-                <button
+                <motion.button
                   onClick={toggleDarkMode}
                   className={`p-4 rounded-2xl transition-all duration-300 ${darkMode ? "text-gray-300 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-100"}`}
                   whileHover={{ scale: 1.15 }}
@@ -276,14 +268,14 @@ const AdminLayout = ({ children }) => {
                   <motion.div animate={{ rotate: darkMode ? 180 : 0 }} transition={{ duration: 0.5 }}>
                     {darkMode ? <FaSun className="text-yellow-500 text-xl" aria-hidden="true" /> : <FaMoon className="text-xl" aria-hidden="true" />}
                   </motion.div>
-                </button>
+                </motion.button>
 
                 {/* Notifications */}
                 <NotificationBell />
 
                 {/* Profile */}
                 <motion.div className="relative" ref={profileRef} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <button
+                  <motion.button
                     onClick={() => setProfileOpen(!profileOpen)}
                     className={`flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 cursor-pointer ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
                     whileHover={{ x: 4 }}
@@ -304,7 +296,7 @@ const AdminLayout = ({ children }) => {
                       <p className={`text-xs font-semibold ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Quản trị viên • Online</p>
                     </div>
                     <FaChevronDown className={`text-lg ${darkMode ? "text-gray-400" : "text-gray-400"}`} />
-                  </button>
+                  </motion.button>
 
                   <AnimatePresence>
                     {profileOpen && (

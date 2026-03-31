@@ -5,7 +5,12 @@ export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
-    if (!token) {
+    // Also support token via query param (for SSE EventSource which can't set headers)
+    const queryToken = req.query.token;
+
+    const finalToken = token || queryToken;
+
+    if (!finalToken) {
         return res.status(401).json({
             success: false,
             message: 'Access token required'
@@ -13,7 +18,7 @@ export const authenticateToken = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        const decoded = jwt.verify(finalToken, process.env.JWT_SECRET || 'your-secret-key');
         req.user = decoded;
         next();
     } catch (error) {

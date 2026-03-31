@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaSearch,
@@ -17,56 +17,14 @@ import {
   FaStar,
   FaTrophy,
 } from "react-icons/fa";
+import axios from "axios";
 import SEO from "../components/SEO";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 import { useDarkMode } from "../contexts/DarkModeContext";
 
-// Mock data for demo
-const mockResults = {
-  "HS001": {
-    hoTen: "Nguyễn Văn An",
-    maSoHoSo: "HS001",
-    cccd: "123456789012",
-    ngaySinh: "15/03/2005",
-    sdt: "0901234567",
-    email: "nguyenvanan@email.com",
-    trangThai: "da_trung_tuyen",
-    nganhTrungTuyen: "Công nghệ Thông tin",
-    maNganh: "CNTT01",
-    diemXetTuyen: 24.5,
-    diemChuan: 22.0,
-    thuTu: 15,
-    ngayNopHoSo: "20/02/2024",
-    ngayXetTuyen: "15/03/2024"
-  },
-  "HS002": {
-    hoTen: "Trần Thị Bình",
-    maSoHoSo: "HS002",
-    cccd: "987654321098",
-    ngaySinh: "22/07/2005",
-    sdt: "0907654321",
-    email: "tranthibinh@email.com",
-    trangThai: "dang_xet_tuyen",
-    nganhDangKy: ["Quản trị Kinh doanh", "Marketing"],
-    ngayNopHoSo: "25/02/2024"
-  },
-  "HS003": {
-    hoTen: "Lê Văn Cường",
-    maSoHoSo: "HS003",
-    cccd: "456789123456",
-    ngaySinh: "10/12/2004",
-    sdt: "0912345678",
-    email: "levancuong@email.com",
-    trangThai: "khong_dat",
-    nganhDangKy: ["Kỹ thuật Phần mềm"],
-    diemXetTuyen: 18.5,
-    diemChuan: 20.0,
-    ngayNopHoSo: "18/02/2024",
-    ngayXetTuyen: "15/03/2024"
-  }
-};
+const API_BASE = "http://localhost:3001";
 
 function TraCuuKetQua() {
   const { darkMode } = useDarkMode();
@@ -85,15 +43,21 @@ function TraCuuKetQua() {
     setError("");
     setKetQua(null);
 
-    setTimeout(() => {
-      const result = mockResults[maHoSo.toUpperCase()];
-      if (result) {
-        setKetQua(result);
+    try {
+      const res = await axios.get(`${API_BASE}/api/tra-cuu`, {
+        params: { code: maHoSo.trim() }
+      });
+      if (res.data.success) {
+        setKetQua(res.data.data);
       } else {
-        setError("Không tìm thấy hồ sơ với mã này. Vui lòng kiểm tra lại.");
+        setError(res.data.message || "Không tìm thấy hồ sơ với mã này.");
       }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Đã xảy ra lỗi khi tra cứu. Vui lòng thử lại.";
+      setError(msg);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const getStatusInfo = (trangThai) => {
@@ -238,7 +202,7 @@ function TraCuuKetQua() {
                       onChange={(e) => setMaHoSo(e.target.value.toUpperCase())}
                       leftIcon={<FaIdCard className="text-blue-500" />}
                       error={error}
-                      onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleTraCuu()}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && !isLoading) handleTraCuu(); }}
                       size="lg"
                       className="text-lg"
                     />
@@ -264,7 +228,7 @@ function TraCuuKetQua() {
                   >
                     <p className="flex items-center justify-center gap-2">
                       <FaInfoCircle className="text-blue-500" />
-                      Mã demo: HS001 (Đã trúng tuyển), HS002 (Đang xét tuyển), HS003 (Không đạt)
+                      Mã hồ sơ được gửi qua email sau khi đăng ký xét tuyển
                     </p>
                   </motion.p>
                 </Card.Content>

@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { UserContext } from '../../accounts/UserContext';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 import { DEMO_APPLICATIONS, DEMO_MAJORS } from '../../config/demoData';
+import ApplicationDetailModal from '../../components/ApplicationDetailModal';
 import {
   FaSearch,
   FaFilter,
@@ -603,163 +604,17 @@ const QuanLyHoSo = () => {
         </motion.div>
       </div>
 
-      {/* Detail Modal */}
-      <AnimatePresence>
-        {showDetailModal && selectedApplication && (
-          <motion.div
-            className="fixed inset-0 z-50 overflow-y-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="flex items-center justify-center min-h-screen px-4">
-              <motion.div
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={() => setShowDetailModal(false)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              ></motion.div>
-              <motion.div
-                className={`relative ${modalBg} rounded-2xl max-w-4xl w-full p-8 shadow-2xl border ${modalBorder}`}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: "spring" }}
-              >
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className={`text-2xl font-bold ${modalText}`}>
-                    Chi tiết hồ sơ - {selectedApplication.ho_ten || selectedApplication.studentName}
-                  </h3>
-                  <button
-                    onClick={() => setShowDetailModal(false)}
-                    className={`${darkMode ? "text-gray-400 hover:text-gray-200 hover:bg-gray-700" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"} p-2 rounded-lg hover:scale-110 active:scale-90 transition-all duration-200`}
-                    aria-label="Đóng"
-                  >
-                    <FaTimes aria-hidden="true" />
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-                        <FaGraduationCap className={darkMode ? "text-blue-400" : "text-blue-500"} />
-                        Thông tin cá nhân
-                      </h4>
-                      <div className={`space-y-3 p-4 rounded-xl ${sectionBg}`}>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>Họ và tên:</span>
-                          <span className={`font-semibold ${modalText}`}>{selectedApplication.ho_ten || selectedApplication.studentName}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>Email:</span>
-                          <span className={`font-semibold ${modalText}`}>{selectedApplication.email}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>Số điện thoại:</span>
-                          <span className={`font-semibold ${modalText}`}>{selectedApplication.sdt || selectedApplication.phone || 'Chưa có'}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>CCCD:</span>
-                          <span className={`font-semibold ${modalText}`}>{selectedApplication.cccd || 'Chưa có'}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-                        <FaGraduationCap className={darkMode ? "text-green-400" : "text-green-500"} />
-                        Thông tin học tập
-                      </h4>
-                      <div className={`space-y-3 p-4 rounded-xl ${sectionBg}`}>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>Ngành học:</span>
-                          <span className={`font-semibold ${modalText}`}>{selectedApplication.major_name || selectedApplication.major}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>Phương thức xét tuyển:</span>
-                          <span className={`font-semibold ${modalText}`}>{selectedApplication.phuong_thuc_xet_tuyen || selectedApplication.admissionMethod}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>GPA:</span>
-                          <span className={`font-semibold ${modalText}`}>{selectedApplication.gpa || 'N/A'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-                        <FaFileAlt className={darkMode ? "text-purple-400" : "text-purple-500"} />
-                        Tài liệu đính kèm
-                      </h4>
-                      <div className="space-y-2">
-                        {Array.isArray(selectedApplication.attachments) && selectedApplication.attachments.length > 0 ? (
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            {selectedApplication.attachments.map((file, idx) => (
-                              <div key={idx} className="relative group">
-                                <img
-                                  src={file.startsWith('http') ? file : `/uploads/${file}`}
-                                  alt={`attachment-${idx}`}
-                                  className={`w-full h-32 object-cover rounded-lg border shadow cursor-pointer hover:scale-105 transition-transform ${darkMode ? "border-gray-700" : "border-gray-200"}`}
-                                  onClick={() => window.open(file.startsWith('http') ? file : `/uploads/${file}`, '_blank')}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className={`italic ${modalTextMuted}`}>Không có file đính kèm</div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-                        <FaClock className={darkMode ? "text-orange-400" : "text-orange-500"} />
-                        Thông tin xử lý
-                      </h4>
-                      <div className={`space-y-3 p-4 rounded-xl ${sectionBg}`}>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>Ngày nộp:</span>
-                          <span className={`font-semibold ${modalText}`}>{formatDate(selectedApplication.created_at || selectedApplication.submittedAt)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className={modalTextMuted}>Trạng thái:</span>
-                          {getStatusBadge(selectedApplication.status)}
-                        </div>
-                        {selectedApplication.assignedTo && (
-                          <div className="flex justify-between">
-                            <span className={modalTextMuted}>Người xử lý:</span>
-                            <span className={`font-semibold ${modalText}`}>{selectedApplication.assignedTo}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`flex justify-end space-x-4 pt-8 border-t ${modalBorder}`}>
-                  <button
-                    onClick={() => setShowDetailModal(false)}
-                    className={`px-6 py-3 ${darkMode ? "bg-gray-700 text-gray-200 hover:bg-gray-600" : "bg-gray-200 text-gray-700 hover:bg-gray-300"} rounded-xl hover:scale-105 active:scale-95 transition-all duration-200 font-semibold`}
-                  >
-                    Đóng
-                  </button>
-                  <button
-                    onClick={() => handleStatusChange(selectedApplication.id, "approved")}
-                    className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 hover:scale-105 active:scale-95 transition-all duration-200 font-semibold shadow-lg"
-                  >
-                    <FaCheck className="mr-2 inline" />
-                    Duyệt hồ sơ
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Detail Modal — rendered via Portal to document.body, z-[1000]+ */}
+      <ApplicationDetailModal
+        app={selectedApplication}
+        open={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        darkMode={darkMode}
+        onApprove={(id, status) => {
+          handleStatusChange(id, status);
+          setShowDetailModal(false);
+        }}
+      />
     </div>
   );
 };

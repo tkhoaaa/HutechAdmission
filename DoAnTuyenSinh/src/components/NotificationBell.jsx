@@ -115,7 +115,13 @@ export default function NotificationBell() {
                     whileHover={{ scale: 1.02, x: 4 }}
                     onClick={() => markAsRead(notification.id)}
                   >
-                    <div className={`w-4 h-4 ${typeConfig[notification.type] || "bg-gray-500"} rounded-full flex-shrink-0 mt-1`} />
+                    <div className={`w-10 h-10 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center ${typeConfig[notification.type] || "bg-gray-500"}`}>
+                      {notification.candidateAvatar ? (
+                        <img src={notification.candidateAvatar} alt="" className="w-full h-full object-cover"
+                          onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                      ) : null}
+                      <FaBell className={`w-5 h-5 text-white ${notification.candidateAvatar ? 'hidden' : ''}`} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <h4 className={`text-sm font-bold mb-1 ${darkMode ? "text-gray-100" : "text-gray-900"}`}>{notification.title}</h4>
                       <p className={`text-sm mb-2 line-clamp-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>{notification.message}</p>

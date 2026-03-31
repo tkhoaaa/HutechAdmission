@@ -36,10 +36,10 @@ export function NotificationProvider({ children }) {
         }
 
         const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-        const sseUrl = `${API_BASE}/api/sse/events`;
+        const sseUrl = `${API_BASE}/api/sse/events?token=${encodeURIComponent(token)}`;
 
         try {
-            const es = new EventSource(sseUrl, { withCredentials: true });
+            const es = new EventSource(sseUrl);
             eventSourceRef.current = es;
 
             es.onopen = () => {
@@ -65,6 +65,7 @@ export function NotificationProvider({ children }) {
                         time: 'Vừa xong',
                         unread: true,
                         applicationId: data.id,
+                        candidateAvatar: data.candidateAvatar || null,
                         timestamp: data.timestamp || new Date().toISOString(),
                     };
                     setNotifications(prev => [notification, ...prev].slice(0, 50));

@@ -11,6 +11,7 @@ import {
   FaMapMarkerAlt,
   FaSchool,
   FaFileUpload,
+  FaFilePdf,
   FaCheckCircle,
   FaExclamationTriangle,
   FaPlus,
@@ -57,7 +58,9 @@ function DangKyXetTuyen() {
 
   const [diemDanhGiaNangLuc, setDiemDanhGiaNangLuc] = useState("");
 
-  const [fileHoSo, setFileHoSo] = useState(null);
+  const [filesHocBa, setFilesHocBa] = useState([]);
+  const [fileCccdFront, setFileCccdFront] = useState(null);
+  const [fileCccdBack, setFileCccdBack] = useState(null);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -245,7 +248,21 @@ function DangKyXetTuyen() {
   };
 
   const handleFileChange = (e) => {
-    setFileHoSo(e.target.files[0]);
+    // Multiple files for hoc ba
+    const files = Array.from(e.target.files);
+    setFilesHocBa(prev => [...prev, ...files].slice(0, 10));
+  };
+
+  const handleCccdFrontChange = (e) => {
+    setFileCccdFront(e.target.files[0]);
+  };
+
+  const handleCccdBackChange = (e) => {
+    setFileCccdBack(e.target.files[0]);
+  };
+
+  const removeHocBaFile = (index) => {
+    setFilesHocBa(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -263,29 +280,34 @@ function DangKyXetTuyen() {
     const loadingToast = toast.loading('Đang xử lý đăng ký...');
 
     try {
-      const applicationData = {
-        ...form,
-        nganh_id: parseInt(nganhIds[0]) || null,
-        nganh_ids: nganhIds.filter(Boolean).map((id) => parseInt(id)),
-        phuong_thuc_xet_tuyen: phuongThucXetTuyen,
-        user_id: localStorage.getItem("userId") || null,
-      };
+      // Build FormData for multipart submission (supports file uploads)
+      const fd = new FormData();
+      Object.entries(form).forEach(([key, value]) => fd.append(key, value));
+      fd.append('nganh_id', parseInt(nganhIds[0]) || null);
+      fd.append('nganh_ids', JSON.stringify(nganhIds.filter(Boolean).map((id) => parseInt(id))));
+      fd.append('phuong_thuc_xet_tuyen', phuongThucXetTuyen);
+      fd.append('user_id', localStorage.getItem("userId") || null);
 
       if (phuongThucXetTuyen === "hoc_ba") {
-        applicationData.diem_hk1 = JSON.stringify(diemHK1);
-        applicationData.diem_ca_nam = JSON.stringify(diemCaNam);
+        fd.append('diem_hk1', JSON.stringify(diemHK1));
+        fd.append('diem_ca_nam', JSON.stringify(diemCaNam));
       } else if (phuongThucXetTuyen === "thi_thpt") {
-        applicationData.khoi_thi = selectedKhoiThi;
-        applicationData.diem_thi_thpt = diemThiTHPT;
+        fd.append('khoi_thi', selectedKhoiThi);
+        fd.append('diem_thi_thpt', JSON.stringify(diemThiTHPT));
       } else if (phuongThucXetTuyen === "danh_gia_nang_luc") {
-        applicationData.diem_danh_gia_nang_luc = parseFloat(diemDanhGiaNangLuc);
+        fd.append('diem_danh_gia_nang_luc', parseFloat(diemDanhGiaNangLuc));
       }
+
+      // Append files
+      filesHocBa.forEach(f => fd.append('hoc_ba', f));
+      if (fileCccdFront) fd.append('cccd_front', fileCccdFront);
+      if (fileCccdBack) fd.append('cccd_back', fileCccdBack);
 
       const response = await axios.post(
         "http://localhost:3001/api/auth/apply",
-        applicationData,
+        fd,
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
@@ -316,6 +338,9 @@ function DangKyXetTuyen() {
         setDiemCaNam({});
         setSelectedKhoiThi("");
         setDiemThiTHPT({});
+        setFilesHocBa([]);
+        setFileCccdFront(null);
+        setFileCccdBack(null);
         setDiemDanhGiaNangLuc("");
         setFileHoSo(null);
         setErrors({});
@@ -1180,49 +1205,106 @@ function DangKyXetTuyen() {
                               </div>
                             </motion.div>
 
-                            <div className="space-y-4">
-                              <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                                <HiSparkles className="text-yellow-500" />
-                                Thí sinh đính kèm ảnh chụp hoặc file scan tất cả các trang trong học bạ THPT/ Bảng điểm 3 năm học THPT và mặt trước CCCD.
-                              </p>
-
-                              <div className="flex items-center gap-4">
-                                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-orange-400 dark:border-orange-600 rounded-2xl cursor-pointer bg-white/50 dark:bg-gray-800/50 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300 group">
-                                  <div className="flex flex-col items-center">
-                                    <FaFileUpload className="w-12 h-12 text-orange-500 dark:text-orange-400 mb-3 group-hover:scale-110 transition-transform" />
-                                    <span className="text-orange-600 dark:text-orange-400 font-semibold text-lg">
-                                      Upload File
-                                    </span>
-                                    <span className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                                      Dung lượng tối đa 10MB/file
-                                    </span>
-                                  </div>
+                            <div className="space-y-6">
+                              {/* Học bạ THPT */}
+                              <div>
+                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                  <HiSparkles className="text-yellow-500 text-xs" />
+                                  Học bạ THPT <span className="text-gray-400 font-normal">(tối đa 10 trang, ảnh hoặc PDF)</span>
+                                </p>
+                                <label className="flex flex-col items-center justify-center w-full border-2 border-dashed border-orange-400 dark:border-orange-600 rounded-xl cursor-pointer bg-white/30 dark:bg-gray-800/30 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300 group py-4">
+                                  <FaFileUpload className="w-8 h-8 text-orange-500 dark:text-orange-400 mb-2 group-hover:scale-110 transition-transform" />
+                                  <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">+ Thêm file học bạ</span>
+                                  <span className="text-xs text-gray-400 mt-1">Dung lượng tối đa 10MB/file</span>
                                   <input
                                     type="file"
                                     className="hidden"
                                     onChange={handleFileChange}
                                     accept="image/*,.pdf"
+                                    multiple
                                   />
                                 </label>
-
-                                {fileHoSo && (
-                                  <motion.div
-                                    initial={{ scale: 0.8, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    className="relative"
-                                  >
-                                    <Card className="p-2 bg-white/50 dark:bg-gray-800/50 border border-orange-200/50 dark:border-orange-700/50 rounded-xl">
-                                      <img
-                                        src={URL.createObjectURL(fileHoSo)}
-                                        alt="Preview"
-                                        className="h-32 w-32 object-cover rounded-lg"
-                                      />
-                                    </Card>
-                                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                      <FaCheckCircle className="text-white text-xs" />
-                                    </div>
-                                  </motion.div>
+                                {filesHocBa.length > 0 && (
+                                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mt-3">
+                                    {filesHocBa.map((file, idx) => (
+                                      <div key={idx} className="relative group">
+                                        <div className="relative h-20 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+                                          {file.type.startsWith('image/') ? (
+                                            <img src={URL.createObjectURL(file)} alt={file.name} className="w-full h-full object-cover" />
+                                          ) : (
+                                            <div className="w-full h-full flex flex-col items-center justify-center bg-red-50 dark:bg-red-900/20">
+                                              <FaFilePdf className="text-red-500 text-xl" />
+                                              <span className="text-[10px] text-gray-500 mt-1">PDF</span>
+                                            </div>
+                                          )}
+                                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                                            <button
+                                              type="button"
+                                              onClick={() => removeHocBaFile(idx)}
+                                              className="opacity-0 group-hover:opacity-100 bg-red-500 text-white rounded-full p-1 transition-opacity"
+                                            >
+                                              <FaTrash className="text-xs" />
+                                            </button>
+                                          </div>
+                                        </div>
+                                        <p className="text-[10px] text-gray-400 truncate mt-1">{idx + 1}</p>
+                                      </div>
+                                    ))}
+                                  </div>
                                 )}
+                              </div>
+
+                              {/* CCCD mặt trước + mặt sau */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* CCCD mặt trước */}
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CCCD mặt trước</p>
+                                  <div className="flex items-center gap-3">
+                                    <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-blue-400 dark:border-blue-600 rounded-xl cursor-pointer bg-blue-50/30 dark:bg-blue-900/20 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all group flex-shrink-0">
+                                      <FaIdCard className="w-6 h-6 text-blue-500 dark:text-blue-400 mb-1 group-hover:scale-110 transition-transform" />
+                                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs">Chọn ảnh</span>
+                                      <input
+                                        type="file"
+                                        className="hidden"
+                                        onChange={handleCccdFrontChange}
+                                        accept="image/*,.pdf"
+                                      />
+                                    </label>
+                                    {fileCccdFront && (
+                                      <div className="relative">
+                                        <img src={URL.createObjectURL(fileCccdFront)} alt="CCCD trước" className="h-24 w-32 object-cover rounded-xl border" />
+                                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                          <FaCheckCircle className="text-white text-xs" />
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* CCCD mặt sau */}
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CCCD mặt sau</p>
+                                  <div className="flex items-center gap-3">
+                                    <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-blue-400 dark:border-blue-600 rounded-xl cursor-pointer bg-blue-50/30 dark:bg-blue-900/20 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all group flex-shrink-0">
+                                      <FaIdCard className="w-6 h-6 text-blue-500 dark:text-blue-400 mb-1 group-hover:scale-110 transition-transform" />
+                                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs">Chọn ảnh</span>
+                                      <input
+                                        type="file"
+                                        className="hidden"
+                                        onChange={handleCccdBackChange}
+                                        accept="image/*,.pdf"
+                                      />
+                                    </label>
+                                    {fileCccdBack && (
+                                      <div className="relative">
+                                        <img src={URL.createObjectURL(fileCccdBack)} alt="CCCD sau" className="h-24 w-32 object-cover rounded-xl border" />
+                                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                          <FaCheckCircle className="text-white text-xs" />
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -1288,6 +1370,7 @@ function DangKyXetTuyen() {
                       <AnimatePresence>
                         {success && (
                           <motion.div
+                            key="success-message"
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: -20 }}
@@ -1309,6 +1392,7 @@ function DangKyXetTuyen() {
 
                         {error && (
                           <motion.div
+                            key="error-message"
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: -20 }}
